@@ -1,14 +1,76 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE OverloadedStrings #-}
 
-module VCard (serialize, parse) where
+module VCard (parse, serialize) where
 
-import Data.Text (Text)
+import Control.Monad (void)
+import Control.Monad.Combinators.NonEmpty qualified as NonEmpty
+import Data.Function ((&))
+import Data.List.NonEmpty qualified as NonEmpty
+import Data.Text (Text, pack)
 import Data.Text qualified as Text
-import VCard.Types (VCard)
+import Data.Void (Void)
+import Text.Megaparsec (Parsec, parseMaybe, takeWhileP)
+import Text.Megaparsec.Char (string)
+import VCard.Types (FN (..), VCard (..), VCardEntity (..), Version (..))
 
-serialize :: VCard -> Text
-serialize _ = Text.pack ""
+--
+-- Parsing
+--
+parse :: Text -> Maybe VCardEntity
+parse = parseMaybe vCardEntityParser
 
-parse :: Text -> Maybe VCard
-parse _ = Nothing
+type Parser = Parsec Void Text
+
+vCardEntityParser :: Parser VCardEntity
+vCardEntityParser = VCardEntity <$> NonEmpty.some vCardParser
+
+vCardParser :: Parser VCard
+vCardParser = do
+  void (string ("BEGIN:VCARD" <> crlf))
+  void (string ("VERSION:4.0" <> crlf))
+  fn <- fnParser
+  void (string ("END:VCARD" <> crlf))
+  pure $
+    VCard
+      { vCardVersion = Version_4_0,
+        vCardFN = fn
+      }
+
+fnParser :: Parser FN
+fnParser = do
+  void (string "FN:")
+  fnText <- takeWhileP Nothing (/= '\r')
+  void (string crlf)
+  pure (FN fnText)
+
+--
+-- Serialization
+--
+serialize :: VCardEntity -> Text
+serialize = serializeVCardEntity
+
+serializeVCardEntity :: VCardEntity -> Text
+serializeVCardEntity vCardEntity =
+  unVCardEntity vCardEntity
+    & NonEmpty.toList
+    & map serializeVCard
+    & Text.concat
+
+crlf :: Text
+crlf = pack "\r\n"
+
+serializeVCard :: VCard -> Text
+serializeVCard vCard =
+  Text.concat $
+    map
+      (<> crlf)
+      [ pack "BEGIN:VCARD",
+        pack "VERSION:4.0",
+        serializeFN (vCardFN vCard),
+        pack "END:VCARD"
+      ]
+
+serializeFN :: FN -> Text
+serializeFN fn = Text.pack "FN:" <> unFN fn
