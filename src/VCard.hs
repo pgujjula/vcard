@@ -10,9 +10,9 @@ import Data.Function ((&))
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text, pack)
 import Data.Text qualified as Text
-import Data.Void (Void)
-import Text.Megaparsec (Parsec, parseMaybe, takeWhileP)
+import Text.Megaparsec (parseMaybe, takeWhileP)
 import Text.Megaparsec.Char (string)
+import VCard.Parse (Parser)
 import VCard.Types (FN (..), VCard (..), VCardEntity (..), Version (..))
 import VCard.Util (crlf)
 
@@ -21,8 +21,6 @@ import VCard.Util (crlf)
 --
 parse :: Text -> Maybe VCardEntity
 parse = parseMaybe vCardEntityParser
-
-type Parser = Parsec Void Text
 
 vCardEntityParser :: Parser VCardEntity
 vCardEntityParser = VCardEntity <$> NonEmpty.some vCardParser

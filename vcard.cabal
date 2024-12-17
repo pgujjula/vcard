@@ -35,6 +35,7 @@ source-repository head
 library
   exposed-modules:
       VCard
+      VCard.Parse
       VCard.Types
       VCard.Util
   hs-source-dirs:
