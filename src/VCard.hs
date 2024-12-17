@@ -4,16 +4,12 @@
 
 module VCard (parse, serialize) where
 
-import Control.Monad (void)
-import Control.Monad.Combinators.NonEmpty qualified as NonEmpty
 import Data.Function ((&))
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text, pack)
 import Data.Text qualified as Text
-import Text.Megaparsec (parseMaybe, takeWhileP)
-import Text.Megaparsec.Char (string)
-import VCard.Parse (Parser)
-import VCard.Types (FN (..), VCard (..), VCardEntity (..), Version (..))
+import Text.Megaparsec (parseMaybe)
+import VCard.Types (FN (..), VCard (..), VCardEntity (..), vCardEntityParser)
 import VCard.Util (crlf)
 
 --
@@ -21,28 +17,6 @@ import VCard.Util (crlf)
 --
 parse :: Text -> Maybe VCardEntity
 parse = parseMaybe vCardEntityParser
-
-vCardEntityParser :: Parser VCardEntity
-vCardEntityParser = VCardEntity <$> NonEmpty.some vCardParser
-
-vCardParser :: Parser VCard
-vCardParser = do
-  void (string ("BEGIN:VCARD" <> crlf))
-  void (string ("VERSION:4.0" <> crlf))
-  fn <- fnParser
-  void (string ("END:VCARD" <> crlf))
-  pure $
-    VCard
-      { vCardVersion = Version_4_0,
-        vCardFN = fn
-      }
-
-fnParser :: Parser FN
-fnParser = do
-  void (string "FN:")
-  fnText <- takeWhileP Nothing (/= '\r')
-  void (string crlf)
-  pure (FN fnText)
 
 --
 -- Serialization
