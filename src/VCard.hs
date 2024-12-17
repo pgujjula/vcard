@@ -14,6 +14,7 @@ import Data.Void (Void)
 import Text.Megaparsec (Parsec, parseMaybe, takeWhileP)
 import Text.Megaparsec.Char (string)
 import VCard.Types (FN (..), VCard (..), VCardEntity (..), Version (..))
+import VCard.Util (crlf)
 
 --
 -- Parsing
@@ -57,9 +58,6 @@ serializeVCardEntity vCardEntity =
     & NonEmpty.toList
     & map serializeVCard
     & Text.concat
-
-crlf :: Text
-crlf = pack "\r\n"
 
 serializeVCard :: VCard -> Text
 serializeVCard vCard =
