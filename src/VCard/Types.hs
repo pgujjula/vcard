@@ -60,6 +60,10 @@ instance HasParser Version where
     void (string ("VERSION:4.0" <> crlf))
     pure Version_4_0
 
+instance HasSerializer Version where
+  serializer :: Serializer Version
+  serializer = const (pack "VERSION:4.0")
+
 newtype FN = FN {unFN :: Text}
   deriving (Eq, Show, Ord)
 
