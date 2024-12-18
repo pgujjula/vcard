@@ -8,7 +8,6 @@ module VCard.Types
     VCardEntity (..),
     FN (..),
     Version (..),
-    vCardEntityParser,
   )
 where
 
@@ -23,6 +22,10 @@ import VCard.Util (crlf)
 
 newtype VCardEntity = VCardEntity {unVCardEntity :: NonEmpty VCard}
   deriving (Eq, Show, Ord)
+
+instance HasParser VCardEntity where
+  parser :: Parser VCardEntity
+  parser = VCardEntity <$> NonEmpty.some parser
 
 data VCard = VCard
   { vCardVersion :: Version,
@@ -62,6 +65,3 @@ instance HasParser FN where
     fnText <- takeWhileP Nothing (/= '\r')
     void (string crlf)
     pure (FN fnText)
-
-vCardEntityParser :: Parser VCardEntity
-vCardEntityParser = VCardEntity <$> NonEmpty.some parser

@@ -9,14 +9,15 @@ import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text, pack)
 import Data.Text qualified as Text
 import Text.Megaparsec (parseMaybe)
-import VCard.Types (FN (..), VCard (..), VCardEntity (..), vCardEntityParser)
+import VCard.Parse (parser)
+import VCard.Types (FN (..), VCard (..), VCardEntity (..))
 import VCard.Util (crlf)
 
 --
 -- Parsing
 --
 parse :: Text -> Maybe VCardEntity
-parse = parseMaybe vCardEntityParser
+parse = parseMaybe parser
 
 --
 -- Serialization
