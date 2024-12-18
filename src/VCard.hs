@@ -6,7 +6,8 @@ module VCard (parse, serialize) where
 import Data.Text (Text)
 import Text.Megaparsec (parseMaybe)
 import VCard.Parse (parser)
-import VCard.Types (VCardEntity (..), serializeVCardEntity)
+import VCard.Serialize (serializer)
+import VCard.Types (VCardEntity (..))
 
 --
 -- Parsing
@@ -18,4 +19,4 @@ parse = parseMaybe parser
 -- Serialization
 --
 serialize :: VCardEntity -> Text
-serialize = serializeVCardEntity
+serialize = serializer

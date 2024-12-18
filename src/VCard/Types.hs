@@ -8,7 +8,6 @@ module VCard.Types
     VCardEntity (..),
     FN (..),
     Version (..),
-    serializeVCardEntity,
   )
 where
 
@@ -31,6 +30,14 @@ newtype VCardEntity = VCardEntity {unVCardEntity :: NonEmpty VCard}
 instance HasParser VCardEntity where
   parser :: Parser VCardEntity
   parser = VCardEntity <$> NonEmpty.some parser
+
+instance HasSerializer VCardEntity where
+  serializer :: Serializer VCardEntity
+  serializer vCardEntity =
+    unVCardEntity vCardEntity
+      & NonEmpty.toList
+      & map serializer
+      & Text.concat
 
 data VCard = VCard
   { vCardVersion :: Version,
@@ -90,10 +97,3 @@ instance HasParser FN where
 instance HasSerializer FN where
   serializer :: Serializer FN
   serializer fn = Text.pack "FN:" <> unFN fn
-
-serializeVCardEntity :: VCardEntity -> Text
-serializeVCardEntity vCardEntity =
-  unVCardEntity vCardEntity
-    & NonEmpty.toList
-    & map serializer
-    & Text.concat
