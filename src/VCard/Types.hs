@@ -22,6 +22,7 @@ import Data.Text qualified as Text
 import Text.Megaparsec (takeWhileP)
 import Text.Megaparsec.Char (string)
 import VCard.Parse (HasParser (..), Parser)
+import VCard.Serialize (HasSerializer (..), Serializer)
 import VCard.Util (crlf)
 
 newtype VCardEntity = VCardEntity {unVCardEntity :: NonEmpty VCard}
@@ -70,6 +71,10 @@ instance HasParser FN where
     void (string crlf)
     pure (FN fnText)
 
+instance HasSerializer FN where
+  serializer :: Serializer FN
+  serializer fn = Text.pack "FN:" <> unFN fn
+
 serializeVCardEntity :: VCardEntity -> Text
 serializeVCardEntity vCardEntity =
   unVCardEntity vCardEntity
@@ -84,9 +89,6 @@ serializeVCard vCard =
       (<> crlf)
       [ pack "BEGIN:VCARD",
         pack "VERSION:4.0",
-        serializeFN (vCardFN vCard),
+        serializer (vCardFN vCard),
         pack "END:VCARD"
       ]
-
-serializeFN :: FN -> Text
-serializeFN fn = Text.pack "FN:" <> unFN fn
