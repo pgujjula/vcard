@@ -8,13 +8,17 @@ module VCard.Types
     VCardEntity (..),
     FN (..),
     Version (..),
+    serializeVCardEntity,
   )
 where
 
 import Control.Monad (void)
 import Control.Monad.Combinators.NonEmpty qualified as NonEmpty
+import Data.Function ((&))
 import Data.List.NonEmpty (NonEmpty)
-import Data.Text (Text)
+import Data.List.NonEmpty qualified as NonEmpty
+import Data.Text (Text, pack)
+import Data.Text qualified as Text
 import Text.Megaparsec (takeWhileP)
 import Text.Megaparsec.Char (string)
 import VCard.Parse (HasParser (..), Parser)
@@ -65,3 +69,24 @@ instance HasParser FN where
     fnText <- takeWhileP Nothing (/= '\r')
     void (string crlf)
     pure (FN fnText)
+
+serializeVCardEntity :: VCardEntity -> Text
+serializeVCardEntity vCardEntity =
+  unVCardEntity vCardEntity
+    & NonEmpty.toList
+    & map serializeVCard
+    & Text.concat
+
+serializeVCard :: VCard -> Text
+serializeVCard vCard =
+  Text.concat $
+    map
+      (<> crlf)
+      [ pack "BEGIN:VCARD",
+        pack "VERSION:4.0",
+        serializeFN (vCardFN vCard),
+        pack "END:VCARD"
+      ]
+
+serializeFN :: FN -> Text
+serializeFN fn = Text.pack "FN:" <> unFN fn
