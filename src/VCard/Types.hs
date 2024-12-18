@@ -30,6 +30,19 @@ data VCard = VCard
   }
   deriving (Eq, Show, Ord)
 
+instance HasParser VCard where
+  parser :: Parser VCard
+  parser = do
+    void (string ("BEGIN:VCARD" <> crlf))
+    version <- parser
+    fn <- parser
+    void (string ("END:VCARD" <> crlf))
+    pure $
+      VCard
+        { vCardVersion = version,
+          vCardFN = fn
+        }
+
 data Version = Version_4_0
   deriving (Eq, Show, Ord)
 
@@ -51,16 +64,4 @@ instance HasParser FN where
     pure (FN fnText)
 
 vCardEntityParser :: Parser VCardEntity
-vCardEntityParser = VCardEntity <$> NonEmpty.some vCardParser
-
-vCardParser :: Parser VCard
-vCardParser = do
-  void (string ("BEGIN:VCARD" <> crlf))
-  version <- parser
-  fn <- parser
-  void (string ("END:VCARD" <> crlf))
-  pure $
-    VCard
-      { vCardVersion = version,
-        vCardFN = fn
-      }
+vCardEntityParser = VCardEntity <$> NonEmpty.some parser
