@@ -51,6 +51,18 @@ instance HasParser VCard where
           vCardFN = fn
         }
 
+instance HasSerializer VCard where
+  serializer :: Serializer VCard
+  serializer vCard =
+    Text.concat $
+      map
+        (<> crlf)
+        [ pack "BEGIN:VCARD",
+          serializer Version_4_0,
+          serializer (vCardFN vCard),
+          pack "END:VCARD"
+        ]
+
 data Version = Version_4_0
   deriving (Eq, Show, Ord)
 
@@ -83,16 +95,5 @@ serializeVCardEntity :: VCardEntity -> Text
 serializeVCardEntity vCardEntity =
   unVCardEntity vCardEntity
     & NonEmpty.toList
-    & map serializeVCard
+    & map serializer
     & Text.concat
-
-serializeVCard :: VCard -> Text
-serializeVCard vCard =
-  Text.concat $
-    map
-      (<> crlf)
-      [ pack "BEGIN:VCARD",
-        pack "VERSION:4.0",
-        serializer (vCardFN vCard),
-        pack "END:VCARD"
-      ]
