@@ -9,14 +9,8 @@ import VCard.Parse (parser)
 import VCard.Serialize (serializer)
 import VCard.Types (VCardEntity (..))
 
---
--- Parsing
---
 parse :: Text -> Maybe VCardEntity
 parse = parseMaybe parser
 
---
--- Serialization
---
 serialize :: VCardEntity -> Text
 serialize = serializer
