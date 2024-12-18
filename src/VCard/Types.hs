@@ -1,5 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module VCard.Types
@@ -17,7 +18,7 @@ import Data.List.NonEmpty (NonEmpty)
 import Data.Text (Text)
 import Text.Megaparsec (takeWhileP)
 import Text.Megaparsec.Char (string)
-import VCard.Parse (Parser)
+import VCard.Parse (HasParser (..), Parser)
 import VCard.Util (crlf)
 
 newtype VCardEntity = VCardEntity {unVCardEntity :: NonEmpty VCard}
@@ -35,6 +36,14 @@ data Version = Version_4_0
 newtype FN = FN {unFN :: Text}
   deriving (Eq, Show, Ord)
 
+instance HasParser FN where
+  parser :: Parser FN
+  parser = do
+    void (string "FN:")
+    fnText <- takeWhileP Nothing (/= '\r')
+    void (string crlf)
+    pure (FN fnText)
+
 vCardEntityParser :: Parser VCardEntity
 vCardEntityParser = VCardEntity <$> NonEmpty.some vCardParser
 
@@ -42,17 +51,10 @@ vCardParser :: Parser VCard
 vCardParser = do
   void (string ("BEGIN:VCARD" <> crlf))
   void (string ("VERSION:4.0" <> crlf))
-  fn <- fnParser
+  fn <- parser
   void (string ("END:VCARD" <> crlf))
   pure $
     VCard
       { vCardVersion = Version_4_0,
         vCardFN = fn
       }
-
-fnParser :: Parser FN
-fnParser = do
-  void (string "FN:")
-  fnText <- takeWhileP Nothing (/= '\r')
-  void (string crlf)
-  pure (FN fnText)
