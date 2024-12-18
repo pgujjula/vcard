@@ -36,6 +36,7 @@ library
   exposed-modules:
       VCard
       VCard.Parse
+      VCard.Serialize
       VCard.Types
       VCard.Util
   hs-source-dirs:
