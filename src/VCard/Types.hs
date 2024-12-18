@@ -33,6 +33,12 @@ data VCard = VCard
 data Version = Version_4_0
   deriving (Eq, Show, Ord)
 
+instance HasParser Version where
+  parser :: Parser Version
+  parser = do
+    void (string ("VERSION:4.0" <> crlf))
+    pure Version_4_0
+
 newtype FN = FN {unFN :: Text}
   deriving (Eq, Show, Ord)
 
@@ -50,11 +56,11 @@ vCardEntityParser = VCardEntity <$> NonEmpty.some vCardParser
 vCardParser :: Parser VCard
 vCardParser = do
   void (string ("BEGIN:VCARD" <> crlf))
-  void (string ("VERSION:4.0" <> crlf))
+  version <- parser
   fn <- parser
   void (string ("END:VCARD" <> crlf))
   pure $
     VCard
-      { vCardVersion = Version_4_0,
+      { vCardVersion = version,
         vCardFN = fn
       }
