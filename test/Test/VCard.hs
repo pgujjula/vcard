@@ -7,14 +7,18 @@ module Test.VCard (tests) where
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
+import Text.Megaparsec (parseMaybe)
 import VCard
+import VCard.Parse (parser)
+import VCard.Serialize (serializer)
 import VCard.Types
 
 tests :: TestTree
 tests =
   testGroup
     "VCard"
-    [ serializeTests
+    [ serializeTests,
+      valueParamTests
     ]
 
 serializeTests :: TestTree
@@ -41,3 +45,12 @@ vcard2 =
     { vCardVersion = Version_4_0,
       vCardFN = FN "Bigfoot"
     }
+
+valueParamTests :: TestTree
+valueParamTests =
+  testCase "valueParam" $ do
+    parseMaybe parser "VALUE=text" @?= Just testValueParam
+    serializer testValueParam @?= "VALUE=text"
+
+testValueParam :: ValueParam
+testValueParam = ValueParam VTText
