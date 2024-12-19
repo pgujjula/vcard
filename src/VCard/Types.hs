@@ -8,6 +8,8 @@ module VCard.Types
     VCardEntity (..),
     FN (..),
     Version (..),
+    ValueParam (..),
+    ValueType (..)
   )
 where
 
@@ -97,3 +99,25 @@ instance HasParser FN where
 instance HasSerializer FN where
   serializer :: Serializer FN
   serializer fn = Text.pack "FN:" <> unFN fn
+
+newtype ValueParam = ValueParam {unValueParam :: ValueType}
+  deriving (Eq, Show, Ord)
+
+data ValueType
+  = VTText
+  | VTURI
+  | VTDate
+  | VTTime
+  | VTDateTime
+  | VTDateAndOrTime
+  | VTTimestamp
+  | VTBoolean
+  | VTInteger
+  | VTFloat
+  | VTUTCOffset
+  | VTLanguageTag
+  | VTXName XName
+  deriving (Eq, Show, Ord)
+
+newtype XName = XName {unXName :: Text}
+  deriving (Eq, Show, Ord)
