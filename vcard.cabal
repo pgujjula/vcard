@@ -1,0 +1,57 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           vcard
+version:        0.0.0.0
+description:    Please see the README on GitHub at <https://github.com/pgujjula/vcard#readme>
+stability:      experimental
+homepage:       https://github.com/pgujjula/vcard#readme
+bug-reports:    https://github.com/pgujjula/vcard/issues
+author:         Preetham Gujjula
+maintainer:     libraries@mail.preetham.io
+copyright:      Preetham Gujjula
+license:        BSD-3-Clause
+build-type:     Simple
+tested-with:
+    GHC == 9.4.8
+  , GHC == 9.6.6
+extra-doc-files:
+    README.md
+    CHANGELOG.md
+    LICENSES/BSD-3-Clause.txt
+
+source-repository head
+  type: git
+  location: https://github.com/pgujjula/vcard
+
+library
+  exposed-modules:
+      VCard
+  hs-source-dirs:
+      src
+  default-extensions:
+      ImportQualifiedPost
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages
+  build-depends:
+      base >=4.17 && <4.18 || >=4.18 && <4.19
+  default-language: Haskell2010
+
+test-suite vcard-tests
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Test.VCard
+  hs-source-dirs:
+      test
+  default-extensions:
+      ImportQualifiedPost
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.17 && <4.18 || >=4.18 && <4.19
+    , tasty >=1.4 && <1.5 || >=1.5 && <1.6
+    , tasty-hunit ==0.10.*
+    , vcard
+  default-language: Haskell2010

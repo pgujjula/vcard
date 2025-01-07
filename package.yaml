@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: Copyright Preetham Gujjula
+# SPDX-License-Identifier: BSD-3-Clause
+spec-version: 0.36.0
+name:         vcard
+version:      0.0.0.0
+# synopsis:   Short description of your package
+description:  Please see the README on GitHub at <https://github.com/pgujjula/vcard#readme>
+# category:   Web
+stability:    experimental
+github:       "pgujjula/vcard"
+author:       "Preetham Gujjula"
+maintainer:   "libraries@mail.preetham.io"
+copyright:    "Preetham Gujjula"
+license:      BSD-3-Clause
+
+tested-with:
+- GHC == 9.4.8
+- GHC == 9.6.6
+
+extra-doc-files:
+- README.md
+- CHANGELOG.md
+- LICENSES/BSD-3-Clause.txt
+
+language: Haskell2010
+
+default-extensions:
+- ImportQualifiedPost
+
+dependencies:
+- base ^>= {4.17, 4.18}
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+- -Wunused-packages
+
+library:
+  source-dirs: src
+
+tests:
+  vcard-tests:
+    main: Main.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - vcard
+    - tasty ^>= {1.4, 1.5}
+    - tasty-hunit ^>= {0.10}
