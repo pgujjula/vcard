@@ -44,16 +44,39 @@ ghc-options:
 
 library:
   source-dirs: src
+  exposed-modules:
+  - VCard
+  - VCard.Types.Param
+  - VCard.Types.Property
+  - VCard.Types.Value
+  - VCard.Types.VCard
+  other-modules:
+  - VCard.Parse
+  - VCard.Serialize
+  - VCard.Types.Property.Version
+  - VCard.Types.VCard.Internal
+  - VCard.Util
+  dependencies:
+  - megaparsec >= 9.0 && < 10
+  - text ^>= {1.2, 2.0, 2.1}
 
 tests:
   vcard-tests:
     main: Main.hs
-    source-dirs: test
+    source-dirs:
+    # To allow importing library internals in the test-suite, we add the add the
+    # library source files in 'src' directly to the test-suite, instead of
+    # adding the library as a dependency. This means that the files in 'src' are
+    # compiled twice, once as part of the library and once as part of the test
+    # suite.
+    - src
+    - test
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - vcard
+    - megaparsec >= 9.0 && < 10
     - tasty ^>= {1.4, 1.5}
     - tasty-hunit ^>= {0.10}
+    - text ^>= {1.2, 2.0, 2.1}
