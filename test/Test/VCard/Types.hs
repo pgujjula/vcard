@@ -12,6 +12,6 @@ tests :: TestTree
 tests =
   testGroup
     "Types"
-    [ Test.VCard.Types.VCard.tests,
-      Test.VCard.Types.Property.tests
+    [ Test.VCard.Types.Property.tests,
+      Test.VCard.Types.VCard.tests
     ]
