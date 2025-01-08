@@ -5,6 +5,8 @@
 
 module Test.VCard.Types.Value.Text (tests) where
 
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty qualified as NE
 import Data.Text qualified
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
@@ -21,23 +23,24 @@ tests =
     ]
 
 validTextTests :: TestTree
-validTextTests =
-  testGroup "valid" $ flip map validTexts $ \(name, text, value) ->
+validTextTests = testGroup "valid" $
+  flip map (NE.toList validTexts) $ \(name, text, value) ->
     testCase name $ do
       parse text @?= Just value
       serialize value @?= text
 
-validTexts :: [(TestName, Data.Text.Text, Text)]
+validTexts :: NonEmpty (TestName, Data.Text.Text, Text)
 validTexts =
-  [ ("basic", "Doc", Text "Doc"),
-    ("backslash", "Doc\\\\Sportello", Text "Doc\\Sportello"),
-    ("comma", "Sportello\\,Doc", Text "Sportello,Doc"),
-    ("newline", "Doc\\nSportello", Text "Doc\nSportello"),
-    ("whitespace_space", "Doc Sportello", Text "Doc Sportello"),
-    ("whitespace_tab", "Doc\tSportello", Text "Doc\tSportello"),
-    ("non_ascii_1", "Vice Caché", Text "Vice Caché"),
-    ("non_ascii_2", "固有瑕疵", Text "固有瑕疵")
-  ]
+  ("basic", "Doc", Text "Doc")
+    :| [ ("empty", "", Text ""),
+         ("backslash", "Doc\\\\Sportello", Text "Doc\\Sportello"),
+         ("comma", "Sportello\\,Doc", Text "Sportello,Doc"),
+         ("newline", "Doc\\nSportello", Text "Doc\nSportello"),
+         ("whitespace_space", "Doc Sportello", Text "Doc Sportello"),
+         ("whitespace_tab", "Doc\tSportello", Text "Doc\tSportello"),
+         ("non_ascii_1", "Vice Caché", Text "Vice Caché"),
+         ("non_ascii_2", "固有瑕疵", Text "固有瑕疵")
+       ]
 
 invalidTextTests :: TestTree
 invalidTextTests =
