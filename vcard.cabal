@@ -38,6 +38,7 @@ library
       VCard.Parse
       VCard.Serialize
       VCard.Types.Property.Version
+      VCard.Types.Value.Text
       VCard.Types.VCard.Internal
       VCard.Util
   hs-source-dirs:
@@ -62,6 +63,7 @@ test-suite vcard-tests
       VCard.Types.Property
       VCard.Types.Property.Version
       VCard.Types.Value
+      VCard.Types.Value.Text
       VCard.Types.VCard
       VCard.Types.VCard.Internal
       VCard.Util

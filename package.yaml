@@ -54,6 +54,7 @@ library:
   - VCard.Parse
   - VCard.Serialize
   - VCard.Types.Property.Version
+  - VCard.Types.Value.Text
   - VCard.Types.VCard.Internal
   - VCard.Util
   dependencies:
