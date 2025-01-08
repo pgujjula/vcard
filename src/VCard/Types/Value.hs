@@ -11,9 +11,10 @@
 -- Types for the property value data types described in Section 4 of RFC 6350.
 module VCard.Types.Value
   ( Text,
+    TextList,
     List,
   )
 where
 
 import VCard.Types.Value.List (List (..))
-import VCard.Types.Value.Text (Text (..))
+import VCard.Types.Value.Text (Text (..), TextList)

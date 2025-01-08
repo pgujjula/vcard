@@ -7,6 +7,7 @@
 
 module VCard.Types.Value.Text
   ( Text (..),
+    TextList,
   )
 where
 
@@ -19,10 +20,13 @@ import Text.Megaparsec (choice, many, oneOf, satisfy, tokensToChunk)
 import Text.Megaparsec.Char (string)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, serializer)
+import VCard.Types.Value.List (List)
 
 -- | Not to be confused with 'Data.Text.Text' from "Data.Text".
 newtype Text = Text {unText :: Data.Text.Text}
   deriving (Eq, Show, Ord)
+
+type TextList = List Text
 
 instance HasParser Text where
   parser :: Parser Text
