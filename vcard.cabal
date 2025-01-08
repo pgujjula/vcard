@@ -71,6 +71,8 @@ test-suite vcard-tests
       Test.VCard.Types
       Test.VCard.Types.Property
       Test.VCard.Types.Property.Version
+      Test.VCard.Types.Value
+      Test.VCard.Types.Value.Text
       Test.VCard.Types.VCard
   hs-source-dirs:
       src
