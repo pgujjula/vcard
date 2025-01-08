@@ -56,10 +56,13 @@ library:
   - VCard.Types.Property.Version
   - VCard.Types.Value.List
   - VCard.Types.Value.Text
+  - VCard.Types.Value.URI
   - VCard.Types.VCard.Internal
   - VCard.Util
   dependencies:
+  - containers ^>= {0.6, 0.7}
   - megaparsec >= 9.0 && < 10
+  - network-uri ^>= {2.6}
   - text ^>= {1.2, 2.0, 2.1}
 
 tests:
@@ -78,7 +81,9 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - containers ^>= {0.6, 0.7}
     - megaparsec >= 9.0 && < 10
+    - network-uri ^>= {2.6}
     - tasty ^>= {1.4, 1.5}
     - tasty-hunit ^>= {0.10}
     - text ^>= {1.2, 2.0, 2.1}
