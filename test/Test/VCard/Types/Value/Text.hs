@@ -15,12 +15,13 @@ import VCard.Serialize (serialize)
 import VCard.Types.Value.Text (Text (..))
 
 tests :: TestTree
-tests =
-  testGroup
-    "Text"
-    [ validTextTests,
-      invalidTextTests
-    ]
+tests = testGroup "Text" [textTests]
+
+--
+-- Text
+--
+textTests :: TestTree
+textTests = testGroup "Text" [validTextTests, invalidTextTests]
 
 validTextTests :: TestTree
 validTextTests = testGroup "valid" $
