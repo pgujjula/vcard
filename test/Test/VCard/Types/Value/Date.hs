@@ -1,23 +1,38 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Test.VCard.Types.Value.Date (tests) where
 
+#if !MIN_VERSION_base(4,18,0)
+import Control.Applicative (liftA2)
+#endif
 import Control.Monad (forM_, replicateM)
-import Data.Finite (finite)
+import Data.Finite (finite, finites)
+import Data.Maybe (isNothing)
+import Data.Set ((\\))
+import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.HUnit (testCase, (@?=))
+import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 import TextShow (showt)
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Types.Value.Date (Day (..), Month (..), Year (..))
+import VCard.Types.Value.Date
+  ( Day (..),
+    Month (..),
+    Year (..),
+    getDay,
+    getMonth,
+    mkMonthDay,
+  )
 
 tests :: TestTree
-tests = testGroup "Date" [dayTests, monthTests, yearTests]
+tests = testGroup "Date" [dayTests, monthTests, yearTests, monthDayTests]
 
 --
 -- Day
@@ -225,3 +240,59 @@ invalidYears =
     "20a9",
     "2000\n"
   ]
+
+--
+-- MonthDay
+--
+monthDayTests :: TestTree
+monthDayTests = testGroup "MonthYear" [mkMonthDayTests]
+
+mkMonthDayTests :: TestTree
+mkMonthDayTests =
+  testGroup
+    "mkMonthDay"
+    [ validMkMonthDayTests,
+      invalidMkMonthDayTests
+    ]
+
+validMkMonthDayTests :: TestTree
+validMkMonthDayTests = testCase "valid" $
+  forM_ validMonthDays $ \(month, day) -> do
+    monthDay <-
+      case mkMonthDay month day of
+        Nothing ->
+          assertFailure $
+            "could not create MonthDay from "
+              <> show month
+              <> " and "
+              <> show day
+        Just x -> pure x
+    getMonth monthDay @?= month
+    getDay monthDay @?= day
+
+invalidMkMonthDayTests :: TestTree
+invalidMkMonthDayTests = testCase "invalid" $ do
+  forM_ invalidMonthDays $ \(month, day) ->
+    assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
+
+validMonthDays :: [(Month, Day)]
+validMonthDays =
+  let months :: [Month]
+      months = map Month [finite 0 .. finite 11]
+
+      maxDays :: [Integer]
+      maxDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+   in flip concatMap (zip months maxDays) $ \(month, maxDay) ->
+        let days :: [Day]
+            days = map Day [finite 0 .. finite (maxDay - 1)]
+         in map (month,) days
+
+invalidMonthDays :: [(Month, Day)]
+invalidMonthDays =
+  Set.toList (Set.fromList allMonthDays \\ Set.fromList validMonthDays)
+
+allMonthDays :: [(Month, Day)]
+allMonthDays =
+  let months = map Month finites
+      days = map Day finites
+   in liftA2 (,) months days
