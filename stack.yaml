@@ -3,3 +3,7 @@
 resolver: lts-21.25
 packages:
 - .
+
+extra-deps:
+- genvalidity-network-uri-0.0.0.0
+- validity-network-uri-0.0.0.0
