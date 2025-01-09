@@ -13,10 +13,10 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import TextShow (showt)
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Types.Value.Date (Day (..))
+import VCard.Types.Value.Date (Day (..), Month (..))
 
 tests :: TestTree
-tests = testGroup "Date" [dayTests]
+tests = testGroup "Date" [dayTests, monthTests]
 
 --
 -- Day
@@ -94,4 +94,87 @@ invalidDays =
     "1a",
     "a1",
     "a\n"
+  ]
+
+--
+-- Month
+--
+monthTests :: TestTree
+monthTests = testGroup "Month" [validMonthTests, invalidMonthTests]
+
+validMonthTests :: TestTree
+validMonthTests = testCase "valid" $ do
+  forM_ validMonths $ \(text, value) -> do
+    parse text @?= Just value
+    serialize value @?= text
+
+validMonths :: [(Text, Month)]
+validMonths =
+  [ ("01", Month (finite 0)),
+    ("02", Month (finite 1)),
+    ("03", Month (finite 2)),
+    ("04", Month (finite 3)),
+    ("05", Month (finite 4)),
+    ("06", Month (finite 5)),
+    ("07", Month (finite 6)),
+    ("08", Month (finite 7)),
+    ("09", Month (finite 8)),
+    ("10", Month (finite 9)),
+    ("11", Month (finite 10)),
+    ("12", Month (finite 11))
+  ]
+
+invalidMonthTests :: TestTree
+invalidMonthTests =
+  testCase "invalid" $
+    forM_ invalidMonths $ \text -> do
+      parse @Month text @?= Nothing
+
+invalidMonths :: [Text]
+invalidMonths =
+  [ "0",
+    "00",
+    "000",
+    "0000",
+    "00\n",
+    "1",
+    "001",
+    "0001",
+    "01\n",
+    "7",
+    "007",
+    "0007",
+    "07\n",
+    "010",
+    "0010",
+    "10\n",
+    "012",
+    "0012",
+    "12\n",
+    "13",
+    "013",
+    "0013",
+    "13\n",
+    "20",
+    "020",
+    "0020",
+    "20\n",
+    "-1",
+    "-01",
+    "-001",
+    "-0001",
+    "-1\n",
+    "-01\n",
+    "-12",
+    "-012",
+    "-0012",
+    "-12\n",
+    "-20",
+    "-020",
+    "-0020",
+    "-20\n",
+    "a",
+    "1a",
+    "a1",
+    "a"
   ]
