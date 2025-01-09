@@ -11,12 +11,20 @@ module VCard.Types.Value.Date
     Day (..),
     HasDay (..),
     YearMonth (..),
+    MonthDay (..),
+    mkMonthDay,
   )
 where
 
 import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
+import Data.Maybe (isJust)
 import Data.Text qualified as Text
+import Data.Time.Calendar.MonthDay
+  ( DayOfMonth,
+    MonthOfYear,
+    monthAndDayToDayOfYearValid,
+  )
 import Text.Megaparsec.Char (digitChar)
 import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
@@ -124,6 +132,46 @@ data YearMonth = YearMonth !Year !Month
   deriving (Eq, Show, Ord)
 
 --
+-- MonthDay
+--
+
+data MonthDay = MonthDay !Month !Day
+  deriving (Eq, Show, Ord)
+
+-- | Create a 'MonthDay'. Yields 'Nothing' if the 'MonthDay' would be invalid.
+--
+-- @
+-- -- Create January 15
+-- >>> isJust (mkMonthDay (Month (finite 0)) (Day (finite 14)))
+-- True
+--
+-- -- Create February 29
+-- >>> isJust (mkMonthDay (Month (finite 1)) (Day (finite 28)))
+-- True
+--
+-- -- Create April 31 (doesn't exist)
+-- >>> isJust (mkMonthDay (Month (finite 3)) (Day (finite 30)))
+-- False
+-- @
+mkMonthDay :: Month -> Day -> Maybe MonthDay
+mkMonthDay month day =
+  let dayOfMonth :: DayOfMonth
+      dayOfMonth = fromInteger . (+ 1) . getFinite . unDay $ day
+
+      monthOfYear :: MonthOfYear
+      monthOfYear = fromInteger . (+ 1) . getFinite . unMonth $ month
+
+      leapYear :: Bool
+      leapYear = True
+
+      validMonthDay :: Bool
+      validMonthDay =
+        isJust (monthAndDayToDayOfYearValid leapYear monthOfYear dayOfMonth)
+   in if validMonthDay
+        then Just (MonthDay month day)
+        else Nothing
+
+--
 -- HasYear
 --
 
@@ -151,6 +199,9 @@ instance HasMonth Month where
 instance HasMonth YearMonth where
   getMonth (YearMonth _ month) = month
 
+instance HasMonth MonthDay where
+  getMonth (MonthDay month _) = month
+
 --
 -- HasDay
 --
@@ -161,6 +212,9 @@ class HasDay a where
 
 instance HasDay Day where
   getDay = id
+
+instance HasDay MonthDay where
+  getDay (MonthDay _ day) = day
 
 -- Utilities
 toDigit :: Char -> Int
