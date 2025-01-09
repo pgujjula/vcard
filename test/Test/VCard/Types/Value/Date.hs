@@ -5,18 +5,19 @@
 
 module Test.VCard.Types.Value.Date (tests) where
 
-import Control.Monad (forM_)
+import Control.Monad (forM_, replicateM)
 import Data.Finite (finite)
 import Data.Text (Text)
+import Data.Text qualified as Text
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import TextShow (showt)
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Types.Value.Date (Day (..), Month (..))
+import VCard.Types.Value.Date (Day (..), Month (..), Year (..))
 
 tests :: TestTree
-tests = testGroup "Date" [dayTests, monthTests]
+tests = testGroup "Date" [dayTests, monthTests, yearTests]
 
 --
 -- Day
@@ -177,4 +178,50 @@ invalidMonths =
     "1a",
     "a1",
     "a"
+  ]
+
+--
+-- Year
+--
+yearTests :: TestTree
+yearTests = testGroup "Year" [validYearTests, invalidYearTests]
+
+validYearTests :: TestTree
+validYearTests = testCase "valid" $ do
+  forM_ validYears $ \(text, value) -> do
+    parse text @?= Just value
+    serialize value @?= text
+
+validYears :: [(Text, Year)]
+validYears = zip yearTexts years
+  where
+    yearTexts :: [Text]
+    yearTexts = map Text.pack $ replicateM 4 ['0' .. '9']
+
+    years :: [Year]
+    years = map (Year . finite) [0 .. 9999]
+
+invalidYearTests :: TestTree
+invalidYearTests =
+  testCase "invalid" $
+    forM_ invalidYears $ \text -> do
+      parse @Year text @?= Nothing
+
+invalidYears :: [Text]
+invalidYears =
+  [ "1",
+    "01",
+    "001",
+    "20",
+    "020",
+    "-1",
+    "-01",
+    "-001",
+    "-0001",
+    "-20",
+    "-020",
+    "-0200",
+    "10000",
+    "20a9",
+    "2000\n"
   ]
