@@ -23,9 +23,17 @@ module VCard.Types.Value
     List,
 
     -- * Section 4.3.1 @DATE@
+
+    -- ** 'Year'
     Year (..),
+
+    -- ** 'Month'
     Month (..),
+
+    -- ** 'Day'
     Day (..),
+
+    -- ** 'YearMonth'
     YearMonth (..),
   )
 where
