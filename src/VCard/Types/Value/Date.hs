@@ -5,6 +5,7 @@
 
 module VCard.Types.Value.Date
   ( Year (..),
+    HasYear (..),
     Month (..),
     Day (..),
     YearMonth (..),
@@ -119,6 +120,20 @@ instance HasSerializer Day where
 -- represents January 1970.
 data YearMonth = YearMonth !Year !Month
   deriving (Eq, Show, Ord)
+
+--
+-- HasYear
+--
+
+-- | Class for types that contain a 'Year'.
+class HasYear a where
+  getYear :: a -> Year
+
+instance HasYear Year where
+  getYear = id
+
+instance HasYear YearMonth where
+  getYear (YearMonth year _) = year
 
 -- Utilities
 toDigit :: Char -> Int

@@ -26,6 +26,7 @@ module VCard.Types.Value
 
     -- ** 'Year'
     Year (..),
+    HasYear (..),
 
     -- ** 'Month'
     Month (..),
@@ -40,6 +41,7 @@ where
 
 import VCard.Types.Value.Date
   ( Day (..),
+    HasYear (..),
     Month (..),
     Year (..),
     YearMonth (..),
