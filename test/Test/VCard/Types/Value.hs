@@ -4,6 +4,7 @@
 module Test.VCard.Types.Value (tests) where
 
 import Test.Tasty (TestTree, testGroup)
+import Test.VCard.Types.Value.Date qualified
 import Test.VCard.Types.Value.Text qualified
 import Test.VCard.Types.Value.URI qualified
 
@@ -12,5 +13,6 @@ tests =
   testGroup
     "Value"
     [ Test.VCard.Types.Value.Text.tests,
-      Test.VCard.Types.Value.URI.tests
+      Test.VCard.Types.Value.URI.tests,
+      Test.VCard.Types.Value.Date.tests
     ]
