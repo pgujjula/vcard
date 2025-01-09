@@ -23,16 +23,16 @@ module VCard.Types.Value
     List,
 
     -- * Section 4.3.1 @DATE@
-    Year,
-    Month,
-    Day,
+    Year (..),
+    Month (..),
+    Day (..),
   )
 where
 
 import VCard.Types.Value.Date
-  ( Day,
-    Month,
-    Year,
+  ( Day (..),
+    Month (..),
+    Year (..),
   )
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
