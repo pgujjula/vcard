@@ -23,12 +23,14 @@ module VCard.Types.Value
     List,
 
     -- * Section 4.3.1 @DATE@
+    Month,
     Day,
   )
 where
 
 import VCard.Types.Value.Date
   ( Day,
+    Month,
   )
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
