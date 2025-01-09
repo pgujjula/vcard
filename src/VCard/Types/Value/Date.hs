@@ -7,6 +7,7 @@ module VCard.Types.Value.Date
   ( Year (..),
     Month (..),
     Day (..),
+    YearMonth (..),
   )
 where
 
@@ -104,6 +105,20 @@ instance HasSerializer Day where
     let dayInt = getFinite day + 1
         (d1, d2) = dayInt `quotRem` 10
      in showt d1 <> showt d2
+
+--
+-- YearMonth
+--
+
+-- | A 'Year' and 'Month' together. For example,
+--
+-- @
+-- 'YearMonth' ('Year' ('Data.Finite.finite' 1970)) ('Month' ('Data.Finite.finite' 0))
+-- @
+--
+-- represents January 1970.
+data YearMonth = YearMonth !Year !Month
+  deriving (Eq, Show, Ord)
 
 -- Utilities
 toDigit :: Char -> Int

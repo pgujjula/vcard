@@ -26,6 +26,7 @@ module VCard.Types.Value
     Year (..),
     Month (..),
     Day (..),
+    YearMonth (..),
   )
 where
 
@@ -33,6 +34,7 @@ import VCard.Types.Value.Date
   ( Day (..),
     Month (..),
     Year (..),
+    YearMonth (..),
   )
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
