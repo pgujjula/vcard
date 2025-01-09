@@ -7,6 +7,7 @@ module VCard.Types.Value.Date
   ( Year (..),
     HasYear (..),
     Month (..),
+    HasMonth (..),
     Day (..),
     YearMonth (..),
   )
@@ -134,6 +135,20 @@ instance HasYear Year where
 
 instance HasYear YearMonth where
   getYear (YearMonth year _) = year
+
+--
+-- HasMonth
+--
+
+-- | Class for types that contain a 'Month'.
+class HasMonth a where
+  getMonth :: a -> Month
+
+instance HasMonth Month where
+  getMonth = id
+
+instance HasMonth YearMonth where
+  getMonth (YearMonth _ month) = month
 
 -- Utilities
 toDigit :: Char -> Int
