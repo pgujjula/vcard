@@ -34,6 +34,7 @@ module VCard.Types.Value
 
     -- ** 'Day'
     Day (..),
+    HasDay (..),
 
     -- ** 'YearMonth'
     YearMonth (..),
@@ -42,6 +43,7 @@ where
 
 import VCard.Types.Value.Date
   ( Day (..),
+    HasDay (..),
     HasMonth (..),
     HasYear (..),
     Month (..),
