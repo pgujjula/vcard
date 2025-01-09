@@ -18,6 +18,10 @@ import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 
+--
+-- Year
+--
+
 -- | A year between 0000 and 9999
 newtype Year = Year {unYear :: Finite 10000}
   deriving (Eq, Show, Ord)
@@ -47,6 +51,10 @@ instance HasSerializer Year where
         (d3, d4) = r2 `quotRem` 10
      in Text.concat (map showt [d1, d2, d3, d4])
 
+--
+-- Month
+--
+
 -- | A month of the year.
 newtype Month = Month {unMonth :: Finite 12}
   deriving (Eq, Show, Ord)
@@ -68,6 +76,10 @@ instance HasSerializer Month where
     let monthInt = getFinite month + 1
         (d1, d2) = monthInt `quotRem` 10
      in showt d1 <> showt d2
+
+--
+-- Day
+--
 
 -- | A day of the month.
 newtype Day = Day {unDay :: Finite 31}
