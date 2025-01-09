@@ -54,6 +54,7 @@ library:
   - VCard.Parse
   - VCard.Serialize
   - VCard.Types.Property.Version
+  - VCard.Types.Value.Date
   - VCard.Types.Value.List
   - VCard.Types.Value.Text
   - VCard.Types.Value.URI
@@ -61,9 +62,11 @@ library:
   - VCard.Util
   dependencies:
   - containers ^>= {0.6, 0.7}
+  - finite-typelits ^>= {0.1, 0.2}
   - megaparsec >= 9.0 && < 10
   - network-uri ^>= {2.6}
   - text ^>= {1.2, 2.0, 2.1}
+  - text-show ^>= {3.10, 3.11}
 
 tests:
   vcard-tests:
@@ -82,6 +85,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - containers ^>= {0.6, 0.7}
+    - finite-typelits ^>= {0.1, 0.2}
     - genvalidity-network-uri ^>= {0.0}
     - megaparsec >= 9.0 && < 10
     - network-uri ^>= {2.6}
@@ -89,3 +93,4 @@ tests:
     - tasty-hunit ^>= {0.10}
     - tasty-quickcheck ^>= {0.10, 0.11}
     - text ^>= {1.2, 2.0, 2.1}
+    - text-show ^>= {3.10, 3.11}

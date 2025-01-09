@@ -21,9 +21,15 @@ module VCard.Types.Value
     -- URI type in the vCard spec.
     URI (..),
     List,
+
+    -- * Section 4.3.1 @DATE@
+    Day,
   )
 where
 
+import VCard.Types.Value.Date
+  ( Day,
+  )
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 import VCard.Types.Value.URI (URI (..))

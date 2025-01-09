@@ -38,6 +38,7 @@ library
       VCard.Parse
       VCard.Serialize
       VCard.Types.Property.Version
+      VCard.Types.Value.Date
       VCard.Types.Value.List
       VCard.Types.Value.Text
       VCard.Types.Value.URI
@@ -51,9 +52,11 @@ library
   build-depends:
       base >=4.17 && <4.18 || >=4.18 && <4.19
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
+    , finite-typelits >=0.1 && <0.2 || >=0.2 && <0.3
     , megaparsec >=9.0 && <10
     , network-uri ==2.6.*
     , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
+    , text-show >=3.10 && <3.11 || >=3.11 && <3.12
   default-language: Haskell2010
 
 test-suite vcard-tests
@@ -67,6 +70,7 @@ test-suite vcard-tests
       VCard.Types.Property
       VCard.Types.Property.Version
       VCard.Types.Value
+      VCard.Types.Value.Date
       VCard.Types.Value.List
       VCard.Types.Value.Text
       VCard.Types.Value.URI
@@ -90,6 +94,7 @@ test-suite vcard-tests
   build-depends:
       base >=4.17 && <4.18 || >=4.18 && <4.19
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
+    , finite-typelits >=0.1 && <0.2 || >=0.2 && <0.3
     , genvalidity-network-uri ==0.0.*
     , megaparsec >=9.0 && <10
     , network-uri ==2.6.*
@@ -97,4 +102,5 @@ test-suite vcard-tests
     , tasty-hunit ==0.10.*
     , tasty-quickcheck >=0.10 && <0.11 || >=0.11 && <0.12
     , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
+    , text-show >=3.10 && <3.11 || >=3.11 && <3.12
   default-language: Haskell2010
