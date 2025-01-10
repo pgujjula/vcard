@@ -30,6 +30,7 @@ import VCard.Types.Value.Date
   ( Day (..),
     Month (..),
     Year (..),
+    YearMonth (..),
     getDay,
     getMonth,
     getYear,
@@ -45,6 +46,7 @@ tests =
       monthTests,
       yearTests,
       yearMonthDayTests,
+      yearMonthTests,
       monthDayTests
     ]
 
@@ -52,7 +54,7 @@ tests =
 -- Day
 --
 dayTests :: TestTree
-dayTests = testGroup "Day" [validDayTests, invalidDayTests]
+dayTests = testGroup "Day" [validDayTests, invalidDayTests, dayBoundsTests]
 
 validDayTests :: TestTree
 validDayTests = testCase "valid" $ do
@@ -76,6 +78,11 @@ invalidDayTests =
   testCase "invalid" $
     forM_ invalidDays $ \text -> do
       parse @Day text @?= Nothing
+
+dayBoundsTests :: TestTree
+dayBoundsTests = testCase "bounds" $ do
+  minBound @?= Day (finite 0)
+  maxBound @?= Day (finite 30)
 
 invalidDays :: [Text]
 invalidDays =
@@ -130,7 +137,13 @@ invalidDays =
 -- Month
 --
 monthTests :: TestTree
-monthTests = testGroup "Month" [validMonthTests, invalidMonthTests]
+monthTests =
+  testGroup
+    "Month"
+    [ validMonthTests,
+      invalidMonthTests,
+      monthBoundsTests
+    ]
 
 validMonthTests :: TestTree
 validMonthTests = testCase "valid" $ do
@@ -209,11 +222,16 @@ invalidMonths =
     "a"
   ]
 
+monthBoundsTests :: TestTree
+monthBoundsTests = testCase "bounds" $ do
+  minBound @?= Month (finite 0)
+  maxBound @?= Month (finite 11)
+
 --
 -- Year
 --
 yearTests :: TestTree
-yearTests = testGroup "Year" [validYearTests, invalidYearTests]
+yearTests = testGroup "Year" [validYearTests, invalidYearTests, yearBoundsTests]
 
 validYearTests :: TestTree
 validYearTests = testCase "valid" $ do
@@ -255,11 +273,21 @@ invalidYears =
     "2000\n"
   ]
 
+yearBoundsTests :: TestTree
+yearBoundsTests = testCase "bounds" $ do
+  minBound @?= Year (finite 0)
+  maxBound @?= Year (finite 9999)
+
 --
 -- YearMonthDay
 --
 yearMonthDayTests :: TestTree
-yearMonthDayTests = testGroup "YearMonthDay" [mkYearMonthDayTests]
+yearMonthDayTests =
+  testGroup
+    "YearMonthDay"
+    [ mkYearMonthDayTests,
+      yearMonthDayBoundsTests
+    ]
 
 mkYearMonthDayTests :: TestTree
 mkYearMonthDayTests =
@@ -335,11 +363,32 @@ allYearMonthDays =
       days = map Day finites
    in liftA3 (,,) years months days
 
+yearMonthDayBoundsTests :: TestTree
+yearMonthDayBoundsTests = testCase "bounds" $ do
+  Just minBound
+    @?= mkYearMonthDay (Year (finite 0)) (Month (finite 0)) (Day (finite 0))
+  Just maxBound
+    @?= mkYearMonthDay
+      (Year (finite 9999))
+      (Month (finite 11))
+      (Day (finite 30))
+
+--
+-- YearMonth
+--
+yearMonthTests :: TestTree
+yearMonthTests = testGroup "YearMonth" [yearMonthBoundsTests]
+
+yearMonthBoundsTests :: TestTree
+yearMonthBoundsTests = testCase "bounds" $ do
+  minBound @?= YearMonth (Year (finite 0)) (Month (finite 0))
+  maxBound @?= YearMonth (Year (finite 9999)) (Month (finite 11))
+
 --
 -- MonthDay
 --
 monthDayTests :: TestTree
-monthDayTests = testGroup "MonthYear" [mkMonthDayTests]
+monthDayTests = testGroup "MonthYear" [mkMonthDayTests, monthDayBoundsTests]
 
 mkMonthDayTests :: TestTree
 mkMonthDayTests =
@@ -390,3 +439,8 @@ allMonthDays =
   let months = map Month finites
       days = map Day finites
    in liftA2 (,) months days
+
+monthDayBoundsTests :: TestTree
+monthDayBoundsTests = testCase "bounds" $ do
+  Just minBound @?= mkMonthDay (Month (finite 0)) (Day (finite 0))
+  Just maxBound @?= mkMonthDay (Month (finite 11)) (Day (finite 30))
