@@ -8,7 +8,9 @@
 module Test.VCard.Types.Value.Date (tests) where
 
 #if !MIN_VERSION_base(4,18,0)
-import Control.Applicative (liftA2)
+import Control.Applicative (liftA2, liftA3)
+#else
+import Control.Applicative (liftA3)
 #endif
 import Control.Monad (forM_, replicateM)
 import Data.Finite (finite, finites)
@@ -17,6 +19,8 @@ import Data.Set ((\\))
 import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Text qualified as Text
+import Data.Time qualified as Time
+import Data.Time.Calendar.OrdinalDate qualified as Time
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 import TextShow (showt)
@@ -28,11 +32,21 @@ import VCard.Types.Value.Date
     Year (..),
     getDay,
     getMonth,
+    getYear,
     mkMonthDay,
+    mkYearMonthDay,
   )
 
 tests :: TestTree
-tests = testGroup "Date" [dayTests, monthTests, yearTests, monthDayTests]
+tests =
+  testGroup
+    "Date"
+    [ dayTests,
+      monthTests,
+      yearTests,
+      yearMonthDayTests,
+      monthDayTests
+    ]
 
 --
 -- Day
@@ -240,6 +254,86 @@ invalidYears =
     "20a9",
     "2000\n"
   ]
+
+--
+-- YearMonthDay
+--
+yearMonthDayTests :: TestTree
+yearMonthDayTests = testGroup "YearMonthDay" [mkYearMonthDayTests]
+
+mkYearMonthDayTests :: TestTree
+mkYearMonthDayTests =
+  testGroup
+    "mkYearMonthDay"
+    [ validMkYearMonthDayTests,
+      invalidMkYearMonthDayTests
+    ]
+
+validMkYearMonthDayTests :: TestTree
+validMkYearMonthDayTests =
+  testCase "valid" $
+    forM_ validYearMonthDays $ \(year, month, day) -> do
+      yearMonthDay <-
+        case mkYearMonthDay year month day of
+          Nothing ->
+            assertFailure $
+              "could not create YearMonthDay from "
+                <> show year
+                <> ", "
+                <> show month
+                <> ", "
+                <> show day
+          Just x -> pure x
+      getYear yearMonthDay @?= year
+      getMonth yearMonthDay @?= month
+      getDay yearMonthDay @?= day
+
+invalidMkYearMonthDayTests :: TestTree
+invalidMkYearMonthDayTests = testCase "invalid" $
+  forM_ invalidYearMonthDays $ \(year, month, day) ->
+    case mkYearMonthDay year month day of
+      Nothing -> pure ()
+      Just yearMonthDay -> assertFailure $ "made invalid " <> show yearMonthDay
+
+validYearMonthDays :: [(Year, Month, Day)]
+validYearMonthDays =
+  let startTimeDay :: Time.Day
+      startTimeDay = Time.fromOrdinalDate 0 1
+
+      endTimeDay :: Time.Day
+      endTimeDay = Time.fromOrdinalDate 9999 365
+
+      timeDays :: [Time.Day]
+      timeDays = [startTimeDay .. endTimeDay]
+   in map timeDayToYearMonthDay timeDays
+
+timeDayToYearMonthDay :: Time.Day -> (Year, Month, Day)
+timeDayToYearMonthDay timeDay =
+  let timeYear :: Time.Year
+      timeMonthOfYear :: Time.MonthOfYear
+      timeDayOfMonth :: Time.DayOfMonth
+      (timeYear, timeMonthOfYear, timeDayOfMonth) = Time.toGregorian timeDay
+
+      year :: Year
+      year = Year (finite timeYear)
+
+      month :: Month
+      month = Month (finite (toInteger (timeMonthOfYear - 1)))
+
+      day :: Day
+      day = Day (finite (toInteger (timeDayOfMonth - 1)))
+   in (year, month, day)
+
+invalidYearMonthDays :: [(Year, Month, Day)]
+invalidYearMonthDays =
+  Set.toList (Set.fromList allYearMonthDays \\ Set.fromList validYearMonthDays)
+
+allYearMonthDays :: [(Year, Month, Day)]
+allYearMonthDays =
+  let years = map Year finites
+      months = map Month finites
+      days = map Day finites
+   in liftA3 (,,) years months days
 
 --
 -- MonthDay
