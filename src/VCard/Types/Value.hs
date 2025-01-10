@@ -36,6 +36,10 @@ module VCard.Types.Value
     Day (..),
     HasDay (..),
 
+    -- ** 'YearMonthDay'
+    YearMonthDay,
+    mkYearMonthDay,
+
     -- ** 'YearMonth'
     YearMonth (..),
 
@@ -54,7 +58,9 @@ import VCard.Types.Value.Date
     MonthDay,
     Year (..),
     YearMonth (..),
+    YearMonthDay (..),
     mkMonthDay,
+    mkYearMonthDay,
   )
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)

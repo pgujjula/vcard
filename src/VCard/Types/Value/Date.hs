@@ -10,6 +10,8 @@ module VCard.Types.Value.Date
     HasMonth (..),
     Day (..),
     HasDay (..),
+    YearMonthDay (..),
+    mkYearMonthDay,
     YearMonth (..),
     MonthDay (..),
     mkMonthDay,
@@ -20,6 +22,7 @@ import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
 import Data.Maybe (isJust)
 import Data.Text qualified as Text
+import Data.Time qualified as Time (isLeapYear)
 import Data.Time.Calendar.MonthDay
   ( DayOfMonth,
     MonthOfYear,
@@ -118,8 +121,52 @@ instance HasSerializer Day where
      in showt d1 <> showt d2
 
 --
--- YearMonth
+-- YearMonthDay
 --
+
+-- | A 'Year', 'Month', and 'Day' together.
+data YearMonthDay = YearMonthDay !Year !Month !Day
+  deriving (Eq, Show, Ord)
+
+-- | Create a 'YearMonthDay'. Yields 'Nothing' if the 'YearMonthDay' would be
+--   invalid.
+--
+-- @
+-- -- Create January 15, 1970
+-- >>> let year = Year (finite 1970)
+-- >>> let month = Month (finite 0)
+-- >>> let day = Day (finite 14)
+-- >>> isJust (mkYearMonthDay year month day)
+-- True
+--
+-- -- Create February 29, 1970 (not a leap year, doesn't exist)
+-- >>> let year = Year (finite 1970)
+-- >>> let month = Month (finite 1)
+-- >>> let day = Day (finite 28)
+-- >>> isJust (mkYearMonthDay year month day)
+-- False
+--
+-- -- Create February 29, 1972 (leap year, exists)
+-- >>> let year = Year (finite 1972)
+-- >>> let month = Month (finite 1)
+-- >>> let day = Day (finite 28)
+-- >>> isJust (mkYearMonthDay year month day)
+-- True
+-- @
+mkYearMonthDay :: Year -> Month -> Day -> Maybe YearMonthDay
+mkYearMonthDay year month day = do
+  monthDay <- mkMonthDay month day
+  if isFeb29 monthDay && not (isLeapYear year)
+    then Nothing
+    else Just (YearMonthDay year month day)
+
+isFeb29 :: MonthDay -> Bool
+isFeb29 (MonthDay month day) =
+  getFinite (unMonth month) == 1
+    && getFinite (unDay day) == 28
+
+isLeapYear :: Year -> Bool
+isLeapYear = Time.isLeapYear . getFinite . unYear
 
 -- | A 'Year' and 'Month' together. For example,
 --
@@ -182,6 +229,9 @@ class HasYear a where
 instance HasYear Year where
   getYear = id
 
+instance HasYear YearMonthDay where
+  getYear (YearMonthDay year _ _) = year
+
 instance HasYear YearMonth where
   getYear (YearMonth year _) = year
 
@@ -195,6 +245,9 @@ class HasMonth a where
 
 instance HasMonth Month where
   getMonth = id
+
+instance HasMonth YearMonthDay where
+  getMonth (YearMonthDay _ month _) = month
 
 instance HasMonth YearMonth where
   getMonth (YearMonth _ month) = month
@@ -212,6 +265,9 @@ class HasDay a where
 
 instance HasDay Day where
   getDay = id
+
+instance HasDay YearMonthDay where
+  getDay (YearMonthDay _ _ day) = day
 
 instance HasDay MonthDay where
   getDay (MonthDay _ day) = day
