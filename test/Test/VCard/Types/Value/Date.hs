@@ -13,13 +13,18 @@ import Control.Applicative (liftA2, liftA3)
 import Control.Applicative (liftA3)
 #endif
 import Control.Monad (forM_, replicateM)
-import Data.Finite (finite, finites)
-import Data.Maybe (isNothing)
+import Data.Finite (finite, finites, getFinite)
+import Data.Maybe (isJust, isNothing)
 import Data.Set ((\\))
 import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Data.Time qualified as Time
+import Data.Time.Calendar.MonthDay
+  ( DayOfMonth,
+    MonthOfYear,
+    monthAndDayToDayOfYearValid,
+  )
 import Data.Time.Calendar.OrdinalDate qualified as Time
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
@@ -419,16 +424,19 @@ invalidMkMonthDayTests = testCase "invalid" $ do
     assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
 
 validMonthDays :: [(Month, Day)]
-validMonthDays =
-  let months :: [Month]
-      months = map Month [finite 0 .. finite 11]
+validMonthDays = filter (uncurry isValid) allMonthDays
+  where
+    isValid :: Month -> Day -> Bool
+    isValid month day =
+      let monthOfYear :: MonthOfYear
+          monthOfYear = (+ 1) . fromInteger . getFinite . unMonth $ month
 
-      maxDays :: [Integer]
-      maxDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-   in flip concatMap (zip months maxDays) $ \(month, maxDay) ->
-        let days :: [Day]
-            days = map Day [finite 0 .. finite (maxDay - 1)]
-         in map (month,) days
+          dayOfMonth :: DayOfMonth
+          dayOfMonth = (+ 1) . fromInteger . getFinite . unDay $ day
+
+          isLeapYear :: Bool
+          isLeapYear = True
+       in isJust (monthAndDayToDayOfYearValid isLeapYear monthOfYear dayOfMonth)
 
 invalidMonthDays :: [(Month, Day)]
 invalidMonthDays =
