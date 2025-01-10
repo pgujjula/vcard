@@ -2,6 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE MultiWayIf #-}
 
 module VCard.Types.Value.Date
   ( Year (..),
@@ -20,14 +21,7 @@ where
 
 import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
-import Data.Maybe (isJust)
 import Data.Text qualified as Text
-import Data.Time qualified as Time (isLeapYear)
-import Data.Time.Calendar.MonthDay
-  ( DayOfMonth,
-    MonthOfYear,
-    monthAndDayToDayOfYearValid,
-  )
 import Text.Megaparsec.Char (digitChar)
 import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
@@ -166,7 +160,13 @@ isFeb29 (MonthDay month day) =
     && getFinite (unDay day) == 28
 
 isLeapYear :: Year -> Bool
-isLeapYear = Time.isLeapYear . getFinite . unYear
+isLeapYear year =
+  let y = getFinite (unYear year)
+   in if
+        | y `rem` 400 == 0 -> True
+        | y `rem` 100 == 0 -> False
+        | y `rem` 4 == 0 -> True
+        | otherwise -> False
 
 -- | A 'Year' and 'Month' together. For example,
 --
@@ -202,19 +202,30 @@ data MonthDay = MonthDay !Month !Day
 -- @
 mkMonthDay :: Month -> Day -> Maybe MonthDay
 mkMonthDay month day =
-  let dayOfMonth :: DayOfMonth
-      dayOfMonth = fromInteger . (+ 1) . getFinite . unDay $ day
+  let -- between 1 and 12
+      monthInteger :: Integer
+      monthInteger = (+ 1) . getFinite . unMonth $ month
 
-      monthOfYear :: MonthOfYear
-      monthOfYear = fromInteger . (+ 1) . getFinite . unMonth $ month
+      -- between 1 and 31
+      dayInteger :: Integer
+      dayInteger = (+ 1) . getFinite . unDay $ day
 
-      leapYear :: Bool
-      leapYear = True
-
-      validMonthDay :: Bool
-      validMonthDay =
-        isJust (monthAndDayToDayOfYearValid leapYear monthOfYear dayOfMonth)
-   in if validMonthDay
+      maxDay :: Integer
+      maxDay =
+        case monthInteger of
+          1 -> 31
+          2 -> 29
+          3 -> 31
+          4 -> 30
+          5 -> 31
+          6 -> 30
+          7 -> 31
+          8 -> 31
+          9 -> 30
+          10 -> 31
+          11 -> 30
+          _ -> 31
+   in if dayInteger <= maxDay
         then Just (MonthDay month day)
         else Nothing
 
