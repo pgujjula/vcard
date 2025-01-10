@@ -40,7 +40,7 @@ import VCard.Serialize (HasSerializer, Serializer, serializer)
 -- | A year between 0000 and 9999. @'Year' ('Data.Finite.finite' 0)@ is year
 -- 0000 and @'Year' ('Data.Finite.finite' 9999)@ is year 9999.
 newtype Year = Year {unYear :: Finite 10000}
-  deriving (Eq, Show, Ord)
+  deriving (Eq, Show, Ord, Bounded)
 
 instance HasParser Year where
   parser :: Parser Year
@@ -74,7 +74,7 @@ instance HasSerializer Year where
 -- | A month of the year. @'Month' ('Data.Finite.finite' 0)@ is January and
 -- @'Month' ('Data.Finite.finite' 11)@ is December.
 newtype Month = Month {unMonth :: Finite 12}
-  deriving (Eq, Show, Ord)
+  deriving (Eq, Show, Ord, Bounded)
 
 instance HasParser Month where
   parser :: Parser Month
@@ -101,7 +101,7 @@ instance HasSerializer Month where
 -- | A day of the month. @'Day' ('Data.Finite.finite' 0)@ is the 1st of the month
 --   and @'Day' ('Data.Finite.finite' 30)@ is the 31st.
 newtype Day = Day {unDay :: Finite 31}
-  deriving (Eq, Show, Ord)
+  deriving (Eq, Show, Ord, Bounded)
 
 instance HasParser Day where
   parser :: Parser Day
@@ -126,7 +126,7 @@ instance HasSerializer Day where
 
 -- | A 'Year', 'Month', and 'Day' together.
 data YearMonthDay = YearMonthDay !Year !Month !Day
-  deriving (Eq, Show, Ord)
+  deriving (Eq, Show, Ord, Bounded)
 
 -- | Create a 'YearMonthDay'. Yields 'Nothing' if the 'YearMonthDay' would be
 --   invalid.
@@ -176,14 +176,14 @@ isLeapYear = Time.isLeapYear . getFinite . unYear
 --
 -- represents January 1970.
 data YearMonth = YearMonth !Year !Month
-  deriving (Eq, Show, Ord)
+  deriving (Eq, Show, Ord, Bounded)
 
 --
 -- MonthDay
 --
 
 data MonthDay = MonthDay !Month !Day
-  deriving (Eq, Show, Ord)
+  deriving (Eq, Show, Ord, Bounded)
 
 -- | Create a 'MonthDay'. Yields 'Nothing' if the 'MonthDay' would be invalid.
 --
