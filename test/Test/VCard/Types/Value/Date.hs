@@ -47,28 +47,28 @@ tests :: TestTree
 tests =
   testGroup
     "Date"
-    [ yearTests,
-      monthTests,
-      dayTests,
-      yearMonthDayTests,
-      yearMonthTests,
-      monthDayTests
+    [ test_Year,
+      test_Month,
+      test_Day,
+      test_YearMonthDay,
+      test_YearMonth,
+      test_MonthDay
     ]
 
 --
 -- Year
 --
-yearTests :: TestTree
-yearTests =
+test_Year :: TestTree
+test_Year =
   testGroup
     "Year"
-    [ validYearTests,
-      invalidYearTests,
-      yearBoundsTests
+    [ test_Year_valid,
+      test_Year_invalid,
+      test_Year_bounds
     ]
 
-validYearTests :: TestTree
-validYearTests =
+test_Year_valid :: TestTree
+test_Year_valid =
   testCase "valid" $
     forM_ validYears $ \(text, value) -> do
       parse text @?= Just value
@@ -83,8 +83,8 @@ validYears = zip yearTexts years
     years :: [Year]
     years = map (Year . finite) [0 .. 9999]
 
-invalidYearTests :: TestTree
-invalidYearTests =
+test_Year_invalid :: TestTree
+test_Year_invalid =
   testCase "invalid" $
     forM_ invalidYears $ \text ->
       parse @Year text @?= Nothing
@@ -108,8 +108,8 @@ invalidYears =
     "2000\n"
   ]
 
-yearBoundsTests :: TestTree
-yearBoundsTests =
+test_Year_bounds :: TestTree
+test_Year_bounds =
   testCase "bounds" $ do
     minBound @?= Year (finite 0)
     maxBound @?= Year (finite 9999)
@@ -117,17 +117,17 @@ yearBoundsTests =
 --
 -- Month
 --
-monthTests :: TestTree
-monthTests =
+test_Month :: TestTree
+test_Month =
   testGroup
     "Month"
-    [ validMonthTests,
-      invalidMonthTests,
-      monthBoundsTests
+    [ test_Month_valid,
+      test_Month_invalid,
+      test_Month_bounds
     ]
 
-validMonthTests :: TestTree
-validMonthTests =
+test_Month_valid :: TestTree
+test_Month_valid =
   testCase "valid" $
     forM_ validMonths $ \(text, value) -> do
       parse text @?= Just value
@@ -149,8 +149,8 @@ validMonths =
     ("12", Month (finite 11))
   ]
 
-invalidMonthTests :: TestTree
-invalidMonthTests =
+test_Month_invalid :: TestTree
+test_Month_invalid =
   testCase "invalid" $
     forM_ invalidMonths $ \text ->
       parse @Month text @?= Nothing
@@ -204,8 +204,8 @@ invalidMonths =
     "a"
   ]
 
-monthBoundsTests :: TestTree
-monthBoundsTests =
+test_Month_bounds :: TestTree
+test_Month_bounds =
   testCase "bounds" $ do
     minBound @?= Month (finite 0)
     maxBound @?= Month (finite 11)
@@ -213,17 +213,17 @@ monthBoundsTests =
 --
 -- Day
 --
-dayTests :: TestTree
-dayTests =
+test_Day :: TestTree
+test_Day =
   testGroup
     "Day"
-    [ validDayTests,
-      invalidDayTests,
-      dayBoundsTests
+    [ test_Day_valid,
+      test_Day_invalid,
+      test_Day_bounds
     ]
 
-validDayTests :: TestTree
-validDayTests =
+test_Day_valid :: TestTree
+test_Day_valid =
   testCase "valid" $
     forM_ validDays $ \(text, value) -> do
       parse text @?= Just value
@@ -240,14 +240,14 @@ validDays = singleDigits ++ doubleDigits
     doubleDigits = flip map [10 .. 31] $ \i ->
       (showt i, Day (finite (i - 1)))
 
-invalidDayTests :: TestTree
-invalidDayTests =
+test_Day_invalid :: TestTree
+test_Day_invalid =
   testCase "invalid" $
     forM_ invalidDays $ \text ->
       parse @Day text @?= Nothing
 
-dayBoundsTests :: TestTree
-dayBoundsTests =
+test_Day_bounds :: TestTree
+test_Day_bounds =
   testCase "bounds" $ do
     minBound @?= Day (finite 0)
     maxBound @?= Day (finite 30)
@@ -304,24 +304,24 @@ invalidDays =
 --
 -- YearMonthDay
 --
-yearMonthDayTests :: TestTree
-yearMonthDayTests =
+test_YearMonthDay :: TestTree
+test_YearMonthDay =
   testGroup
     "YearMonthDay"
-    [ mkYearMonthDayTests,
-      yearMonthDayBoundsTests
+    [ test_YearMonthDay_mkYearMonthDay,
+      test_YearMonthDay_bounds
     ]
 
-mkYearMonthDayTests :: TestTree
-mkYearMonthDayTests =
+test_YearMonthDay_mkYearMonthDay :: TestTree
+test_YearMonthDay_mkYearMonthDay =
   testGroup
     "mkYearMonthDay"
-    [ validMkYearMonthDayTests,
-      invalidMkYearMonthDayTests
+    [ test_YearMonthDay_mkYearMonthDay_valid,
+      test_YearMonthDay_mkYearMonthDay_invalid
     ]
 
-validMkYearMonthDayTests :: TestTree
-validMkYearMonthDayTests =
+test_YearMonthDay_mkYearMonthDay_valid :: TestTree
+test_YearMonthDay_mkYearMonthDay_valid =
   testCase "valid" $
     forM_ validYearMonthDays $ \(year, month, day) -> do
       yearMonthDay <-
@@ -339,8 +339,8 @@ validMkYearMonthDayTests =
       getMonth yearMonthDay @?= month
       getDay yearMonthDay @?= day
 
-invalidMkYearMonthDayTests :: TestTree
-invalidMkYearMonthDayTests =
+test_YearMonthDay_mkYearMonthDay_invalid :: TestTree
+test_YearMonthDay_mkYearMonthDay_invalid =
   testCase "invalid" $
     forM_ invalidYearMonthDays $ \(year, month, day) ->
       case mkYearMonthDay year month day of
@@ -387,8 +387,8 @@ allYearMonthDays =
       days = map Day finites
    in liftA3 (,,) years months days
 
-yearMonthDayBoundsTests :: TestTree
-yearMonthDayBoundsTests =
+test_YearMonthDay_bounds :: TestTree
+test_YearMonthDay_bounds =
   testCase "bounds" $ do
     Just minBound
       @?= mkYearMonthDay (Year (finite 0)) (Month (finite 0)) (Day (finite 0))
@@ -401,15 +401,15 @@ yearMonthDayBoundsTests =
 --
 -- YearMonth
 --
-yearMonthTests :: TestTree
-yearMonthTests =
+test_YearMonth :: TestTree
+test_YearMonth =
   testGroup
     "YearMonth"
-    [ yearMonthBoundsTests
+    [ test_YearMonth_bounds
     ]
 
-yearMonthBoundsTests :: TestTree
-yearMonthBoundsTests =
+test_YearMonth_bounds :: TestTree
+test_YearMonth_bounds =
   testCase "bounds" $ do
     minBound @?= YearMonth (Year (finite 0)) (Month (finite 0))
     maxBound @?= YearMonth (Year (finite 9999)) (Month (finite 11))
@@ -417,24 +417,24 @@ yearMonthBoundsTests =
 --
 -- MonthDay
 --
-monthDayTests :: TestTree
-monthDayTests =
+test_MonthDay :: TestTree
+test_MonthDay =
   testGroup
     "MonthYear"
-    [ mkMonthDayTests,
-      monthDayBoundsTests
+    [ test_MonthDay_mkMonthDay,
+      test_MonthDay_bounds
     ]
 
-mkMonthDayTests :: TestTree
-mkMonthDayTests =
+test_MonthDay_mkMonthDay :: TestTree
+test_MonthDay_mkMonthDay =
   testGroup
     "mkMonthDay"
-    [ validMkMonthDayTests,
-      invalidMkMonthDayTests
+    [ test_MonthDay_mkMonthDay_valid,
+      test_MonthDay_mkMonthDay_invalid
     ]
 
-validMkMonthDayTests :: TestTree
-validMkMonthDayTests =
+test_MonthDay_mkMonthDay_valid :: TestTree
+test_MonthDay_mkMonthDay_valid =
   testCase "valid" $
     forM_ validMonthDays $ \(month, day) -> do
       monthDay <-
@@ -449,8 +449,8 @@ validMkMonthDayTests =
       getMonth monthDay @?= month
       getDay monthDay @?= day
 
-invalidMkMonthDayTests :: TestTree
-invalidMkMonthDayTests =
+test_MonthDay_mkMonthDay_invalid :: TestTree
+test_MonthDay_mkMonthDay_invalid =
   testCase "invalid" $
     forM_ invalidMonthDays $ \(month, day) ->
       assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
@@ -480,8 +480,8 @@ allMonthDays =
       days = map Day finites
    in liftA2 (,) months days
 
-monthDayBoundsTests :: TestTree
-monthDayBoundsTests =
+test_MonthDay_bounds :: TestTree
+test_MonthDay_bounds =
   testCase "bounds" $ do
     Just minBound @?= mkMonthDay (Month (finite 0)) (Day (finite 0))
     Just maxBound @?= mkMonthDay (Month (finite 11)) (Day (finite 30))

@@ -17,18 +17,18 @@ tests :: TestTree
 tests =
   testGroup
     "VCard"
-    [ vCardTests,
-      vCardEntityTests
+    [ test_VCard,
+      test_VCardEntity
     ]
 
-vCardTests :: TestTree
-vCardTests =
+test_VCard :: TestTree
+test_VCard =
   testCase "VCard" $ do
     parse testVCardText @?= Just testVCard
     serialize testVCard @?= testVCardText
 
-vCardEntityTests :: TestTree
-vCardEntityTests =
+test_VCardEntity :: TestTree
+test_VCardEntity =
   testCase "VCardEntity" $ do
     parse testVCardEntityText @?= Just testVCardEntity
     serialize testVCardEntity @?= testVCardEntityText

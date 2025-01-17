@@ -20,23 +20,23 @@ tests :: TestTree
 tests =
   testGroup
     "Text"
-    [ textTests,
-      textListTests
+    [ test_Text,
+      test_TextList
     ]
 
 --
 -- Text
 --
-textTests :: TestTree
-textTests =
+test_Text :: TestTree
+test_Text =
   testGroup
     "Text"
-    [ validTextTests,
-      invalidTextTests
+    [ test_Text_valid,
+      test_Text_invalid
     ]
 
-validTextTests :: TestTree
-validTextTests =
+test_Text_valid :: TestTree
+test_Text_valid =
   testGroup "valid" $
     flip map (NE.toList validTexts) $ \(name, text, value) ->
       testCase name $ do
@@ -56,8 +56,8 @@ validTexts =
          ("non_ascii_2", "固有瑕疵", Text "固有瑕疵")
        ]
 
-invalidTextTests :: TestTree
-invalidTextTests =
+test_Text_invalid :: TestTree
+test_Text_invalid =
   testGroup "invalid" $ flip map invalidTexts $ \(name, text) ->
     testCase name (parse @Text text @?= Nothing)
 
@@ -74,16 +74,16 @@ invalidTexts =
 --
 -- TextList
 --
-textListTests :: TestTree
-textListTests =
+test_TextList :: TestTree
+test_TextList =
   testGroup
     "TextList"
-    [ validTextListTests,
-      invalidTextListTests
+    [ test_TextList_valid,
+      test_TextList_invalid
     ]
 
-validTextListTests :: TestTree
-validTextListTests =
+test_TextList_valid :: TestTree
+test_TextList_valid =
   testGroup "valid" $ flip map validTextLists $ \(name, text, value) ->
     testCase name $ do
       parse text @?= Just value
@@ -108,8 +108,8 @@ validTextLists = individualLists ++ [combinedList]
           combinedValue = List (NE.map (\(_, _, value) -> value) validTexts)
        in ("all_combined", combinedText, combinedValue)
 
-invalidTextListTests :: TestTree
-invalidTextListTests =
+test_TextList_invalid :: TestTree
+test_TextList_invalid =
   testGroup "invalid" $ flip map invalidTextLists $ \(name, text) ->
     testCase name (parse @Text text @?= Nothing)
 

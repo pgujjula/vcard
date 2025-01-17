@@ -17,18 +17,18 @@ tests :: TestTree
 tests =
   testGroup
     "Version"
-    [ validVersionTests,
-      invalidVersionTests
+    [ test_Version_valid,
+      test_Version_invalid
     ]
 
-validVersionTests :: TestTree
-validVersionTests =
+test_Version_valid :: TestTree
+test_Version_valid =
   testCase "valid" $ do
     parse testVersionText @?= Just testVersion
     serialize testVersion @?= testVersionText
 
-invalidVersionTests :: TestTree
-invalidVersionTests =
+test_Version_invalid :: TestTree
+test_Version_invalid =
   testCase "invalid" $
     forM_ invalidVersionTexts $ \t ->
       parse @Version t @?= Nothing

@@ -21,26 +21,26 @@ tests :: TestTree
 tests =
   testGroup
     "URI"
-    [ validURITests,
-      invalidURITests
+    [ test_URI_valid,
+      test_URI_invalid
     ]
 
-validURITests :: TestTree
-validURITests =
+test_URI_valid :: TestTree
+test_URI_valid =
   testGroup
     "valid"
-    [ completeURITests,
-      prefixURITests
+    [ test_URI_valid_complete,
+      test_URI_valid_prefix
     ]
 
-completeURITests :: TestTree
-completeURITests =
+test_URI_valid_complete :: TestTree
+test_URI_valid_complete =
   testProperty "parse_entire_string" $ do
     uriText <- Text.pack . show <$> genURI
     pure $ fmap serialize (parse @URI uriText) === Just uriText
 
-prefixURITests :: TestTree
-prefixURITests =
+test_URI_valid_prefix :: TestTree
+test_URI_valid_prefix =
   testProperty "parse_prefix" $ do
     uriText <- Text.pack . show <$> genURI
     suffix <- elements nonURITexts
@@ -49,25 +49,25 @@ prefixURITests =
       fmap serialize (parseMaybe (parser @URI <* string suffix) fullText)
         === Just uriText
 
-invalidURITests :: TestTree
-invalidURITests =
+test_URI_invalid :: TestTree
+test_URI_invalid =
   testGroup
     "invalid"
-    [ strayPrefixTests,
-      strayInfixCharTests,
-      straySuffixCharTests
+    [ test_URI_invalid_strayPrefix,
+      test_URI_invalid_strayInfix,
+      test_URI_invalid_straySuffix
     ]
 
-strayPrefixTests :: TestTree
-strayPrefixTests =
+test_URI_invalid_strayPrefix :: TestTree
+test_URI_invalid_strayPrefix =
   testProperty "stray_prefix" $ do
     uriText <- Text.pack . show <$> genURI
     prefix <- elements nonURITexts
     let invalidURI = prefix <> uriText
     pure $ parseMaybe (parser @URI) invalidURI === Nothing
 
-strayInfixCharTests :: TestTree
-strayInfixCharTests =
+test_URI_invalid_strayInfix :: TestTree
+test_URI_invalid_strayInfix =
   testProperty "stray_infix" $ do
     uriText <- Text.pack . show <$> genURI
     infix' <- elements nonURITexts
@@ -81,8 +81,8 @@ strayInfixCharTests =
                 <> Text.drop middleIndex uriText
         pure $ parseMaybe (parser @URI) invalidURI === Nothing
 
-straySuffixCharTests :: TestTree
-straySuffixCharTests =
+test_URI_invalid_straySuffix :: TestTree
+test_URI_invalid_straySuffix =
   testProperty "stray_suffix" $ do
     uriText <- Text.pack . show <$> genURI
     suffix <- elements nonURITexts
