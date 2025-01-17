@@ -62,16 +62,35 @@ test_Year :: TestTree
 test_Year =
   testGroup
     "Year"
-    [ test_Year_valid,
-      test_Year_invalid,
+    [ test_Year_parse,
+      test_Year_serialize,
       test_Year_bounds
     ]
 
-test_Year_valid :: TestTree
-test_Year_valid =
+test_Year_parse :: TestTree
+test_Year_parse =
+  testGroup
+    "parse"
+    [ test_Year_parse_valid,
+      test_Year_parse_invalid
+    ]
+
+test_Year_parse_valid :: TestTree
+test_Year_parse_valid =
   testCase "valid" $
-    forM_ validYears $ \(text, value) -> do
-      parse text @?= Just value
+    forM_ validYears $ \(text, value) ->
+      parse @Year text @?= Just value
+
+test_Year_parse_invalid :: TestTree
+test_Year_parse_invalid =
+  testCase "invalid" $
+    forM_ invalidYears $ \text ->
+      parse @Year text @?= Nothing
+
+test_Year_serialize :: TestTree
+test_Year_serialize =
+  testCase "serialize" $
+    forM_ validYears $ \(text, value) ->
       serialize value @?= text
 
 validYears :: [(Text, Year)]
@@ -82,12 +101,6 @@ validYears = zip yearTexts years
 
     years :: [Year]
     years = map (Year . finite) [0 .. 9999]
-
-test_Year_invalid :: TestTree
-test_Year_invalid =
-  testCase "invalid" $
-    forM_ invalidYears $ \text ->
-      parse @Year text @?= Nothing
 
 invalidYears :: [Text]
 invalidYears =
@@ -121,16 +134,35 @@ test_Month :: TestTree
 test_Month =
   testGroup
     "Month"
-    [ test_Month_valid,
-      test_Month_invalid,
+    [ test_Month_parse,
+      test_Month_serialize,
       test_Month_bounds
     ]
 
-test_Month_valid :: TestTree
-test_Month_valid =
+test_Month_parse :: TestTree
+test_Month_parse =
+  testGroup
+    "parse"
+    [ test_Month_parse_valid,
+      test_Month_parse_invalid
+    ]
+
+test_Month_parse_valid :: TestTree
+test_Month_parse_valid =
   testCase "valid" $
-    forM_ validMonths $ \(text, value) -> do
-      parse text @?= Just value
+    forM_ validMonths $ \(text, value) ->
+      parse @Month text @?= Just value
+
+test_Month_parse_invalid :: TestTree
+test_Month_parse_invalid =
+  testCase "invalid" $
+    forM_ invalidMonths $ \text ->
+      parse @Month text @?= Nothing
+
+test_Month_serialize :: TestTree
+test_Month_serialize =
+  testCase "serialize" $
+    forM_ validMonths $ \(text, value) ->
       serialize value @?= text
 
 validMonths :: [(Text, Month)]
@@ -148,12 +180,6 @@ validMonths =
     ("11", Month (finite 10)),
     ("12", Month (finite 11))
   ]
-
-test_Month_invalid :: TestTree
-test_Month_invalid =
-  testCase "invalid" $
-    forM_ invalidMonths $ \text ->
-      parse @Month text @?= Nothing
 
 invalidMonths :: [Text]
 invalidMonths =
@@ -217,16 +243,35 @@ test_Day :: TestTree
 test_Day =
   testGroup
     "Day"
-    [ test_Day_valid,
-      test_Day_invalid,
+    [ test_Day_parse,
+      test_Day_serialize,
       test_Day_bounds
     ]
 
-test_Day_valid :: TestTree
-test_Day_valid =
+test_Day_parse :: TestTree
+test_Day_parse =
+  testGroup
+    "parse"
+    [ test_Day_parse_valid,
+      test_Day_parse_invalid
+    ]
+
+test_Day_parse_valid :: TestTree
+test_Day_parse_valid =
   testCase "valid" $
-    forM_ validDays $ \(text, value) -> do
-      parse text @?= Just value
+    forM_ validDays $ \(text, value) ->
+      parse @Day text @?= Just value
+
+test_Day_parse_invalid :: TestTree
+test_Day_parse_invalid =
+  testCase "invalid" $
+    forM_ invalidDays $ \text ->
+      parse @Day text @?= Nothing
+
+test_Day_serialize :: TestTree
+test_Day_serialize =
+  testCase "serialize" $
+    forM_ validDays $ \(text, value) ->
       serialize value @?= text
 
 validDays :: [(Text, Day)]
@@ -239,12 +284,6 @@ validDays = singleDigits ++ doubleDigits
     doubleDigits :: [(Text, Day)]
     doubleDigits = flip map [10 .. 31] $ \i ->
       (showt i, Day (finite (i - 1)))
-
-test_Day_invalid :: TestTree
-test_Day_invalid =
-  testCase "invalid" $
-    forM_ invalidDays $ \text ->
-      parse @Day text @?= Nothing
 
 test_Day_bounds :: TestTree
 test_Day_bounds =
