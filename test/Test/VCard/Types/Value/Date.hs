@@ -62,7 +62,7 @@ yearTests :: TestTree
 yearTests = testGroup "Year" [validYearTests, invalidYearTests, yearBoundsTests]
 
 validYearTests :: TestTree
-validYearTests = testCase "valid" $ do
+validYearTests = testCase "valid" $
   forM_ validYears $ \(text, value) -> do
     parse text @?= Just value
     serialize value @?= text
@@ -79,7 +79,7 @@ validYears = zip yearTexts years
 invalidYearTests :: TestTree
 invalidYearTests =
   testCase "invalid" $
-    forM_ invalidYears $ \text -> do
+    forM_ invalidYears $ \text ->
       parse @Year text @?= Nothing
 
 invalidYears :: [Text]
@@ -119,7 +119,7 @@ monthTests =
     ]
 
 validMonthTests :: TestTree
-validMonthTests = testCase "valid" $ do
+validMonthTests = testCase "valid" $
   forM_ validMonths $ \(text, value) -> do
     parse text @?= Just value
     serialize value @?= text
@@ -143,7 +143,7 @@ validMonths =
 invalidMonthTests :: TestTree
 invalidMonthTests =
   testCase "invalid" $
-    forM_ invalidMonths $ \text -> do
+    forM_ invalidMonths $ \text ->
       parse @Month text @?= Nothing
 
 invalidMonths :: [Text]
@@ -207,7 +207,7 @@ dayTests :: TestTree
 dayTests = testGroup "Day" [validDayTests, invalidDayTests, dayBoundsTests]
 
 validDayTests :: TestTree
-validDayTests = testCase "valid" $ do
+validDayTests = testCase "valid" $
   forM_ validDays $ \(text, value) -> do
     parse text @?= Just value
     serialize value @?= text
@@ -226,7 +226,7 @@ validDays = singleDigits ++ doubleDigits
 invalidDayTests :: TestTree
 invalidDayTests =
   testCase "invalid" $
-    forM_ invalidDays $ \text -> do
+    forM_ invalidDays $ \text ->
       parse @Day text @?= Nothing
 
 dayBoundsTests :: TestTree
@@ -419,7 +419,7 @@ validMkMonthDayTests = testCase "valid" $
     getDay monthDay @?= day
 
 invalidMkMonthDayTests :: TestTree
-invalidMkMonthDayTests = testCase "invalid" $ do
+invalidMkMonthDayTests = testCase "invalid" $
   forM_ invalidMonthDays $ \(month, day) ->
     assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
 
