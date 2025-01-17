@@ -47,13 +47,64 @@ tests :: TestTree
 tests =
   testGroup
     "Date"
-    [ monthTests,
-      yearTests,
+    [ yearTests,
+      monthTests,
       dayTests,
       yearMonthDayTests,
       yearMonthTests,
       monthDayTests
     ]
+
+--
+-- Year
+--
+yearTests :: TestTree
+yearTests = testGroup "Year" [validYearTests, invalidYearTests, yearBoundsTests]
+
+validYearTests :: TestTree
+validYearTests = testCase "valid" $ do
+  forM_ validYears $ \(text, value) -> do
+    parse text @?= Just value
+    serialize value @?= text
+
+validYears :: [(Text, Year)]
+validYears = zip yearTexts years
+  where
+    yearTexts :: [Text]
+    yearTexts = map Text.pack $ replicateM 4 ['0' .. '9']
+
+    years :: [Year]
+    years = map (Year . finite) [0 .. 9999]
+
+invalidYearTests :: TestTree
+invalidYearTests =
+  testCase "invalid" $
+    forM_ invalidYears $ \text -> do
+      parse @Year text @?= Nothing
+
+invalidYears :: [Text]
+invalidYears =
+  [ "1",
+    "01",
+    "001",
+    "20",
+    "020",
+    "-1",
+    "-01",
+    "-001",
+    "-0001",
+    "-20",
+    "-020",
+    "-0200",
+    "10000",
+    "20a9",
+    "2000\n"
+  ]
+
+yearBoundsTests :: TestTree
+yearBoundsTests = testCase "bounds" $ do
+  minBound @?= Year (finite 0)
+  maxBound @?= Year (finite 9999)
 
 --
 -- Month
@@ -148,57 +199,6 @@ monthBoundsTests :: TestTree
 monthBoundsTests = testCase "bounds" $ do
   minBound @?= Month (finite 0)
   maxBound @?= Month (finite 11)
-
---
--- Year
---
-yearTests :: TestTree
-yearTests = testGroup "Year" [validYearTests, invalidYearTests, yearBoundsTests]
-
-validYearTests :: TestTree
-validYearTests = testCase "valid" $ do
-  forM_ validYears $ \(text, value) -> do
-    parse text @?= Just value
-    serialize value @?= text
-
-validYears :: [(Text, Year)]
-validYears = zip yearTexts years
-  where
-    yearTexts :: [Text]
-    yearTexts = map Text.pack $ replicateM 4 ['0' .. '9']
-
-    years :: [Year]
-    years = map (Year . finite) [0 .. 9999]
-
-invalidYearTests :: TestTree
-invalidYearTests =
-  testCase "invalid" $
-    forM_ invalidYears $ \text -> do
-      parse @Year text @?= Nothing
-
-invalidYears :: [Text]
-invalidYears =
-  [ "1",
-    "01",
-    "001",
-    "20",
-    "020",
-    "-1",
-    "-01",
-    "-001",
-    "-0001",
-    "-20",
-    "-020",
-    "-0200",
-    "10000",
-    "20a9",
-    "2000\n"
-  ]
-
-yearBoundsTests :: TestTree
-yearBoundsTests = testCase "bounds" $ do
-  minBound @?= Year (finite 0)
-  maxBound @?= Year (finite 9999)
 
 --
 -- Day
