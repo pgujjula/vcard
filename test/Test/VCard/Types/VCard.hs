@@ -22,14 +22,16 @@ tests =
     ]
 
 vCardTests :: TestTree
-vCardTests = testCase "VCard" $ do
-  parse testVCardText @?= Just testVCard
-  serialize testVCard @?= testVCardText
+vCardTests =
+  testCase "VCard" $ do
+    parse testVCardText @?= Just testVCard
+    serialize testVCard @?= testVCardText
 
 vCardEntityTests :: TestTree
-vCardEntityTests = testCase "VCardEntity" $ do
-  parse testVCardEntityText @?= Just testVCardEntity
-  serialize testVCardEntity @?= testVCardEntityText
+vCardEntityTests =
+  testCase "VCardEntity" $ do
+    parse testVCardEntityText @?= Just testVCardEntity
+    serialize testVCardEntity @?= testVCardEntityText
 
 testVCard :: VCard
 testVCard =

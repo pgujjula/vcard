@@ -22,9 +22,10 @@ tests =
     ]
 
 validVersionTests :: TestTree
-validVersionTests = testCase "valid" $ do
-  parse testVersionText @?= Just testVersion
-  serialize testVersion @?= testVersionText
+validVersionTests =
+  testCase "valid" $ do
+    parse testVersionText @?= Just testVersion
+    serialize testVersion @?= testVersionText
 
 invalidVersionTests :: TestTree
 invalidVersionTests =

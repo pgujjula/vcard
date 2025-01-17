@@ -17,20 +17,31 @@ import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 
 tests :: TestTree
-tests = testGroup "Text" [textTests, textListTests]
+tests =
+  testGroup
+    "Text"
+    [ textTests,
+      textListTests
+    ]
 
 --
 -- Text
 --
 textTests :: TestTree
-textTests = testGroup "Text" [validTextTests, invalidTextTests]
+textTests =
+  testGroup
+    "Text"
+    [ validTextTests,
+      invalidTextTests
+    ]
 
 validTextTests :: TestTree
-validTextTests = testGroup "valid" $
-  flip map (NE.toList validTexts) $ \(name, text, value) ->
-    testCase name $ do
-      parse text @?= Just value
-      serialize value @?= text
+validTextTests =
+  testGroup "valid" $
+    flip map (NE.toList validTexts) $ \(name, text, value) ->
+      testCase name $ do
+        parse text @?= Just value
+        serialize value @?= text
 
 validTexts :: NonEmpty (TestName, Data.Text.Text, Text)
 validTexts =
@@ -64,7 +75,12 @@ invalidTexts =
 -- TextList
 --
 textListTests :: TestTree
-textListTests = testGroup "TextList" [validTextListTests, invalidTextListTests]
+textListTests =
+  testGroup
+    "TextList"
+    [ validTextListTests,
+      invalidTextListTests
+    ]
 
 validTextListTests :: TestTree
 validTextListTests =
