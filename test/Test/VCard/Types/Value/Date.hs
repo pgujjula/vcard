@@ -2,7 +2,6 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Test.VCard.Types.Value.Date (tests) where
