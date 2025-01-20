@@ -2,6 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Test.VCard.Types.Value.Date (tests) where
@@ -33,8 +34,10 @@ import VCard.Serialize (serialize)
 import VCard.Types.Value.Date
   ( Day (..),
     Month (..),
+    MonthDay (..),
     Year (..),
     YearMonth (..),
+    YearMonthDay (..),
     getDay,
     getMonth,
     getYear,
@@ -121,10 +124,7 @@ invalidYears =
   ]
 
 test_Year_bounds :: TestTree
-test_Year_bounds =
-  testCase "bounds" $ do
-    minBound @?= Year (finite 0)
-    maxBound @?= Year (finite 9999)
+test_Year_bounds = testBounds (Year (finite 0), Year (finite 9999))
 
 --
 -- Month
@@ -230,10 +230,7 @@ invalidMonths =
   ]
 
 test_Month_bounds :: TestTree
-test_Month_bounds =
-  testCase "bounds" $ do
-    minBound @?= Month (finite 0)
-    maxBound @?= Month (finite 11)
+test_Month_bounds = testBounds (Month (finite 0), Month (finite 11))
 
 --
 -- Day
@@ -285,10 +282,7 @@ validDays = singleDigits ++ doubleDigits
       (showt i, Day (finite (i - 1)))
 
 test_Day_bounds :: TestTree
-test_Day_bounds =
-  testCase "bounds" $ do
-    minBound @?= Day (finite 0)
-    maxBound @?= Day (finite 30)
+test_Day_bounds = testBounds (Day (finite 0), Day (finite 30))
 
 invalidDays :: [Text]
 invalidDays =
@@ -427,14 +421,10 @@ allYearMonthDays =
 
 test_YearMonthDay_bounds :: TestTree
 test_YearMonthDay_bounds =
-  testCase "bounds" $ do
-    Just minBound
-      @?= mkYearMonthDay (Year (finite 0)) (Month (finite 0)) (Day (finite 0))
-    Just maxBound
-      @?= mkYearMonthDay
-        (Year (finite 9999))
-        (Month (finite 11))
-        (Day (finite 30))
+  testBounds
+    ( YearMonthDay (Year (finite 0)) (Month (finite 0)) (Day (finite 0)),
+      YearMonthDay (Year (finite 9999)) (Month (finite 11)) (Day (finite 30))
+    )
 
 --
 -- YearMonth
@@ -448,9 +438,10 @@ test_YearMonth =
 
 test_YearMonth_bounds :: TestTree
 test_YearMonth_bounds =
-  testCase "bounds" $ do
-    minBound @?= YearMonth (Year (finite 0)) (Month (finite 0))
-    maxBound @?= YearMonth (Year (finite 9999)) (Month (finite 11))
+  testBounds
+    ( YearMonth (Year (finite 0)) (Month (finite 0)),
+      YearMonth (Year (finite 9999)) (Month (finite 11))
+    )
 
 --
 -- MonthDay
@@ -520,6 +511,16 @@ allMonthDays =
 
 test_MonthDay_bounds :: TestTree
 test_MonthDay_bounds =
+  testBounds
+    ( MonthDay (Month (finite 0)) (Day (finite 0)),
+      MonthDay (Month (finite 11)) (Day (finite 30))
+    )
+
+--
+-- Testing utility functions
+--
+testBounds :: forall a. (Show a, Eq a, Bounded a) => (a, a) -> TestTree
+testBounds (expectedMinBound, expectedMaxBound) =
   testCase "bounds" $ do
-    Just minBound @?= mkMonthDay (Month (finite 0)) (Day (finite 0))
-    Just maxBound @?= mkMonthDay (Month (finite 11)) (Day (finite 30))
+    minBound @?= expectedMinBound
+    maxBound @?= expectedMaxBound
