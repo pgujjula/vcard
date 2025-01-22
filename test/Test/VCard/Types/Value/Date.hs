@@ -102,7 +102,7 @@ validYears = zip yearTexts years
     yearTexts = map Text.pack $ replicateM 4 ['0' .. '9']
 
     years :: [Year]
-    years = map (Year . finite) [0 .. 9999]
+    years = map y [0000 .. 9999]
 
 invalidYears :: [Text]
 invalidYears =
@@ -124,7 +124,7 @@ invalidYears =
   ]
 
 test_Year_bounds :: TestTree
-test_Year_bounds = testBounds (Year (finite 0), Year (finite 9999))
+test_Year_bounds = testBounds (y 0000, y 9999)
 
 --
 -- Month
@@ -166,18 +166,18 @@ test_Month_serialize =
 
 validMonths :: [(Text, Month)]
 validMonths =
-  [ ("01", Month (finite 0)),
-    ("02", Month (finite 1)),
-    ("03", Month (finite 2)),
-    ("04", Month (finite 3)),
-    ("05", Month (finite 4)),
-    ("06", Month (finite 5)),
-    ("07", Month (finite 6)),
-    ("08", Month (finite 7)),
-    ("09", Month (finite 8)),
-    ("10", Month (finite 9)),
-    ("11", Month (finite 10)),
-    ("12", Month (finite 11))
+  [ ("01", m 01),
+    ("02", m 02),
+    ("03", m 03),
+    ("04", m 04),
+    ("05", m 05),
+    ("06", m 06),
+    ("07", m 07),
+    ("08", m 08),
+    ("09", m 09),
+    ("10", m 10),
+    ("11", m 11),
+    ("12", m 12)
   ]
 
 invalidMonths :: [Text]
@@ -230,7 +230,7 @@ invalidMonths =
   ]
 
 test_Month_bounds :: TestTree
-test_Month_bounds = testBounds (Month (finite 0), Month (finite 11))
+test_Month_bounds = testBounds (m 01, m 12)
 
 --
 -- Day
@@ -275,14 +275,14 @@ validDays = singleDigits ++ doubleDigits
   where
     singleDigits :: [(Text, Day)]
     singleDigits = flip map [1 .. 9] $ \i ->
-      ("0" <> showt i, Day (finite (i - 1)))
+      ("0" <> showt i, d i)
 
     doubleDigits :: [(Text, Day)]
     doubleDigits = flip map [10 .. 31] $ \i ->
-      (showt i, Day (finite (i - 1)))
+      (showt i, d i)
 
 test_Day_bounds :: TestTree
-test_Day_bounds = testBounds (Day (finite 0), Day (finite 30))
+test_Day_bounds = testBounds (d 01, d 31)
 
 invalidDays :: [Text]
 invalidDays =
@@ -399,13 +399,13 @@ timeDayToYearMonthDay timeDay =
       (timeYear, timeMonthOfYear, timeDayOfMonth) = Time.toGregorian timeDay
 
       year :: Year
-      year = Year (finite timeYear)
+      year = y timeYear
 
       month :: Month
-      month = Month (finite (toInteger (timeMonthOfYear - 1)))
+      month = m (toInteger timeMonthOfYear)
 
       day :: Day
-      day = Day (finite (toInteger (timeDayOfMonth - 1)))
+      day = d (toInteger timeDayOfMonth)
    in (year, month, day)
 
 invalidYearMonthDays :: [(Year, Month, Day)]
@@ -420,11 +420,7 @@ allYearMonthDays =
    in liftA3 (,,) years months days
 
 test_YearMonthDay_bounds :: TestTree
-test_YearMonthDay_bounds =
-  testBounds
-    ( YearMonthDay (Year (finite 0)) (Month (finite 0)) (Day (finite 0)),
-      YearMonthDay (Year (finite 9999)) (Month (finite 11)) (Day (finite 30))
-    )
+test_YearMonthDay_bounds = testBounds (ymd 0000 01 01, ymd 9999 12 31)
 
 --
 -- YearMonth
@@ -437,11 +433,7 @@ test_YearMonth =
     ]
 
 test_YearMonth_bounds :: TestTree
-test_YearMonth_bounds =
-  testBounds
-    ( YearMonth (Year (finite 0)) (Month (finite 0)),
-      YearMonth (Year (finite 9999)) (Month (finite 11))
-    )
+test_YearMonth_bounds = testBounds (ym 0000 01, ym 9999 12)
 
 --
 -- MonthDay
@@ -510,11 +502,7 @@ allMonthDays =
    in liftA2 (,) months days
 
 test_MonthDay_bounds :: TestTree
-test_MonthDay_bounds =
-  testBounds
-    ( MonthDay (Month (finite 0)) (Day (finite 0)),
-      MonthDay (Month (finite 11)) (Day (finite 30))
-    )
+test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
 
 --
 -- Testing utility functions
@@ -524,3 +512,24 @@ testBounds (expectedMinBound, expectedMaxBound) =
   testCase "bounds" $ do
     minBound @?= expectedMinBound
     maxBound @?= expectedMaxBound
+
+--
+-- Year, Month, Day construction utilities
+--
+y :: Integer -> Year
+y year = Year (finite year)
+
+m :: Integer -> Month
+m month = Month (finite (month - 1))
+
+d :: Integer -> Day
+d day = Day (finite (day - 1))
+
+ymd :: Integer -> Integer -> Integer -> YearMonthDay
+ymd year month day = YearMonthDay (y year) (m month) (d day)
+
+ym :: Integer -> Integer -> YearMonth
+ym year month = YearMonth (y year) (m month)
+
+md :: Integer -> Integer -> MonthDay
+md month day = MonthDay (m month) (d day)
