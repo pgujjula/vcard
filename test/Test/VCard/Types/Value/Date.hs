@@ -87,7 +87,8 @@ test_Year_parse_unit =
   testGroup
     "unit"
     [ test_Year_parse_unit_valid,
-      test_Year_parse_unit_invalid
+      test_Year_parse_unit_invalidSemantics,
+      test_Year_parse_unit_invalidSyntax
     ]
 
 test_Year_parse_exhaustive :: TestTree
@@ -95,24 +96,28 @@ test_Year_parse_exhaustive =
   testGroup
     "exhaustive"
     [ test_Year_parse_exhaustive_valid,
-      test_Year_parse_exhaustive_invalid
+      test_Year_parse_exhaustive_invalidSemantics
     ]
 
 test_Year_parse_unit_valid :: TestTree
 test_Year_parse_unit_valid =
   testParseValid units_Year_valid
 
-test_Year_parse_unit_invalid :: TestTree
-test_Year_parse_unit_invalid =
-  testParseInvalid (Proxy @Year) invalidYears
+test_Year_parse_unit_invalidSemantics :: TestTree
+test_Year_parse_unit_invalidSemantics =
+  testParseInvalidSemantics (Proxy @Year) units_Year_invalidSemantics
+
+test_Year_parse_unit_invalidSyntax :: TestTree
+test_Year_parse_unit_invalidSyntax =
+  testParseInvalidSyntax (Proxy @Year) units_Year_invalidSyntax
 
 test_Year_parse_exhaustive_valid :: TestTree
 test_Year_parse_exhaustive_valid =
   testParseValid exhaustive_Year_valid
 
-test_Year_parse_exhaustive_invalid :: TestTree
-test_Year_parse_exhaustive_invalid =
-  testParseInvalid (Proxy @Year) exhaustive_Year_invalid
+test_Year_parse_exhaustive_invalidSemantics :: TestTree
+test_Year_parse_exhaustive_invalidSemantics =
+  testParseInvalidSemantics (Proxy @Year) exhaustive_Year_invalid
 
 test_Year_serialize :: TestTree
 test_Year_serialize =
@@ -129,25 +134,6 @@ test_Year_serialize_exhaustive :: TestTree
 test_Year_serialize_exhaustive =
   testSerialize "exhaustive" exhaustive_Year_valid
 
-invalidYears :: [Text]
-invalidYears =
-  [ "1",
-    "01",
-    "001",
-    "20",
-    "020",
-    "-1",
-    "-01",
-    "-001",
-    "-0001",
-    "-20",
-    "-020",
-    "-0200",
-    "10000",
-    "20a9",
-    "2000\n"
-  ]
-
 test_Year_bounds :: TestTree
 test_Year_bounds = testBounds (y 0000, y 9999)
 
@@ -157,6 +143,30 @@ units_Year_valid =
     ("6812", Year 6812),
     ("9999", Year 9999)
   ]
+
+-- All syntactically valid Years are semantically valid
+units_Year_invalidSemantics :: [Text]
+units_Year_invalidSemantics = []
+
+units_Year_invalidSyntax :: [Text]
+units_Year_invalidSyntax =
+  concat
+    [ -- incorrect number of digits
+      ["1", "01", "001", "00001"],
+      ["25", "025", "00025"],
+      -- negative numbers
+      ["-1", "-01", "-001", "-0001", "-00001"],
+      ["-25", "-025", "-0025", "-00025"],
+      -- too large numbers
+      ["10000", "010000"],
+      ["92893", "092893"],
+      -- invalid number formats
+      ["2e3", "1000.0"],
+      -- invalid characters
+      ["15a1", "1b51"],
+      -- leading or trailing whitespace
+      [" 3275", "\n3275", "\r\n3275", "3275 ", "3275\n", "3275\r\n"]
+    ]
 
 --
 -- Month
@@ -183,7 +193,8 @@ test_Month_parse_unit =
   testGroup
     "unit"
     [ test_Month_parse_unit_valid,
-      test_Month_parse_unit_invalid
+      test_Month_parse_unit_invalidSemantics,
+      test_Month_parse_unit_invalidSyntax
     ]
 
 test_Month_parse_exhaustive :: TestTree
@@ -197,15 +208,20 @@ test_Month_parse_exhaustive =
 test_Month_parse_unit_valid :: TestTree
 test_Month_parse_unit_valid = testParseValid units_Month_valid
 
-test_Month_parse_unit_invalid :: TestTree
-test_Month_parse_unit_invalid = testParseInvalid (Proxy @Month) invalidMonths
+test_Month_parse_unit_invalidSemantics :: TestTree
+test_Month_parse_unit_invalidSemantics =
+  testParseInvalidSemantics (Proxy @Month) units_Month_invalidSemantics
+
+test_Month_parse_unit_invalidSyntax :: TestTree
+test_Month_parse_unit_invalidSyntax =
+  testParseInvalidSyntax (Proxy @Month) units_Month_invalidSyntax
 
 test_Month_parse_exhaustive_valid :: TestTree
 test_Month_parse_exhaustive_valid = testParseValid exhaustive_Month_valid
 
 test_Month_parse_exhaustive_invalid :: TestTree
 test_Month_parse_exhaustive_invalid =
-  testParseInvalid (Proxy @Month) exhaustive_Month_invalid
+  testParseInvalidSemantics (Proxy @Month) exhaustive_Month_invalid
 
 test_Month_serialize :: TestTree
 test_Month_serialize =
@@ -222,61 +238,38 @@ test_Month_serialize_exhaustive :: TestTree
 test_Month_serialize_exhaustive =
   testSerialize "exhaustive" exhaustive_Month_valid
 
-invalidMonths :: [Text]
-invalidMonths =
-  [ "0",
-    "00",
-    "000",
-    "0000",
-    "00\n",
-    "1",
-    "001",
-    "0001",
-    "01\n",
-    "7",
-    "007",
-    "0007",
-    "07\n",
-    "010",
-    "0010",
-    "10\n",
-    "012",
-    "0012",
-    "12\n",
-    "13",
-    "013",
-    "0013",
-    "13\n",
-    "20",
-    "020",
-    "0020",
-    "20\n",
-    "-1",
-    "-01",
-    "-001",
-    "-0001",
-    "-1\n",
-    "-01\n",
-    "-12",
-    "-012",
-    "-0012",
-    "-12\n",
-    "-20",
-    "-020",
-    "-0020",
-    "-20\n",
-    "a",
-    "1a",
-    "a1",
-    "a"
-  ]
-
 test_Month_bounds :: TestTree
 test_Month_bounds = testBounds (m 01, m 12)
 
 units_Month_valid :: [(Text, Month)]
 units_Month_valid =
   [("01", m 01), ("05", m 05), ("10", m 10), ("12", m 12)]
+
+units_Month_invalidSemantics :: [Text]
+units_Month_invalidSemantics =
+  ["00", "13", "14", "15", "20", "99"]
+
+units_Month_invalidSyntax :: [Text]
+units_Month_invalidSyntax =
+  concat
+    [ -- incorrect number of digits
+      ["1", "001", "0001"],
+      ["7", "007", "0007"],
+      ["010", "0010"],
+      -- negative numbers
+      ["-1", "-01", "-001", "-0001"],
+      ["-11", "-011", "-0011", "-00011"],
+      -- too small/large numbers
+      ["0", "000", "0000"],
+      ["013", "0013"],
+      ["020", "0020"],
+      -- invalid number formats
+      ["1e1", "10.0"],
+      -- invalid characters
+      ["a", "1a", "a1"],
+      -- leading or trailing whitespace
+      [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
+    ]
 
 --
 -- Day
@@ -303,7 +296,8 @@ test_Day_parse_unit =
   testGroup
     "unit"
     [ test_Day_parse_unit_valid,
-      test_Day_parse_unit_invalid
+      test_Day_parse_unit_invalidSemantics,
+      test_Day_parse_unit_invalidSyntax
     ]
 
 test_Day_parse_exhaustive :: TestTree
@@ -317,15 +311,20 @@ test_Day_parse_exhaustive =
 test_Day_parse_unit_valid :: TestTree
 test_Day_parse_unit_valid = testParseValid units_Day_valid
 
-test_Day_parse_unit_invalid :: TestTree
-test_Day_parse_unit_invalid = testParseInvalid (Proxy @Day) invalidDays
+test_Day_parse_unit_invalidSemantics :: TestTree
+test_Day_parse_unit_invalidSemantics =
+  testParseInvalidSemantics (Proxy @Day) units_Day_invalidSemantics
+
+test_Day_parse_unit_invalidSyntax :: TestTree
+test_Day_parse_unit_invalidSyntax =
+  testParseInvalidSemantics (Proxy @Day) units_Day_invalidSyntax
 
 test_Day_parse_exhaustive_valid :: TestTree
 test_Day_parse_exhaustive_valid = testParseValid exhaustive_Day_valid
 
 test_Day_parse_exhaustive_invalid :: TestTree
 test_Day_parse_exhaustive_invalid =
-  testParseInvalid (Proxy @Day) exhaustive_Day_invalid
+  testParseInvalidSemantics (Proxy @Day) exhaustive_Day_invalid
 
 test_Day_serialize :: TestTree
 test_Day_serialize =
@@ -344,58 +343,36 @@ test_Day_serialize_exhaustive = testSerialize "exhaustive" exhaustive_Day_valid
 test_Day_bounds :: TestTree
 test_Day_bounds = testBounds (d 01, d 31)
 
-invalidDays :: [Text]
-invalidDays =
-  [ "0",
-    "00",
-    "000",
-    "0000",
-    "00\n",
-    "1",
-    "001",
-    "0001",
-    "01\n",
-    "7",
-    "007",
-    "0007",
-    "07\n",
-    "030",
-    "0030",
-    "30\n",
-    "031",
-    "0031",
-    "31\n",
-    "32",
-    "032",
-    "0032",
-    "32\n",
-    "40",
-    "040",
-    "0040",
-    "40\n",
-    "-1",
-    "-01",
-    "-001",
-    "-0001",
-    "-1\n",
-    "-01\n",
-    "-12",
-    "-012",
-    "-0012",
-    "-12\n",
-    "-20",
-    "-020",
-    "-0020",
-    "-20\n",
-    "a",
-    "1a",
-    "a1",
-    "a\n"
-  ]
-
 units_Day_valid :: [(Text, Day)]
 units_Day_valid =
   [("01", d 1), ("15", d 15), ("30", d 30), ("31", d 31)]
+
+units_Day_invalidSemantics :: [Text]
+units_Day_invalidSemantics =
+  ["00", "32", "33", "34", "50", "99"]
+
+units_Day_invalidSyntax :: [Text]
+units_Day_invalidSyntax =
+  concat
+    [ -- incorrect number of digits
+      ["1", "001", "0001"],
+      ["7", "007", "0007"],
+      ["030", "0030"],
+      ["031", "0031"],
+      -- negative numbers
+      ["-1", "-01", "-001", "-0001"],
+      ["-12", "-012", "-0012"],
+      -- too small/large numbers
+      ["0", "000", "0000"],
+      ["032", "0032"],
+      ["099", "0099"],
+      -- invalid number formats
+      ["1e1", "10.0"],
+      -- invalid characters
+      ["a", "1a", "a1"],
+      -- leading or trailing whitespace
+      [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
+    ]
 
 --
 -- YearMonthDay
@@ -673,11 +650,24 @@ testParseValid cases =
       parse text @?= Just value
 
 testParseInvalid ::
-  forall a. (Show a, Eq a, HasParser a) => Proxy a -> [Text] -> TestTree
-testParseInvalid _ cases =
-  testCase "invalid" $
+  forall a.
+  (Show a, Eq a, HasParser a) =>
+  TestName ->
+  Proxy a ->
+  [Text] ->
+  TestTree
+testParseInvalid name _ cases =
+  testCase name $
     forM_ cases $ \text ->
       parse text @?= (Nothing :: Maybe a)
+
+testParseInvalidSemantics ::
+  (Show a, Eq a, HasParser a) => Proxy a -> [Text] -> TestTree
+testParseInvalidSemantics = testParseInvalid "invalid_semantics"
+
+testParseInvalidSyntax ::
+  (Show a, Eq a, HasParser a) => Proxy a -> [Text] -> TestTree
+testParseInvalidSyntax = testParseInvalid "invalid_syntax"
 
 testSerialize :: (HasSerializer a) => TestName -> [(Text, a)] -> TestTree
 testSerialize name cases =
