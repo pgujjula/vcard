@@ -27,7 +27,6 @@ import Data.Time.Calendar.MonthDay
     MonthOfYear,
     monthAndDayToDayOfYearValid,
   )
-import Data.Time.Calendar.OrdinalDate qualified as Time
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 import TextShow (showt)
@@ -400,14 +399,6 @@ test_YearMonthDay_mkYearMonthDay_unit =
       test_YearMonthDay_mkYearMonthDay_unit_invalid
     ]
 
-test_YearMonthDay_mkYearMonthDay_exhaustive :: TestTree
-test_YearMonthDay_mkYearMonthDay_exhaustive =
-  testGroup
-    "exhaustive"
-    [ test_YearMonthDay_mkYearMonthDay_exhaustive_valid,
-      test_YearMonthDay_mkYearMonthDay_exhaustive_invalid
-    ]
-
 test_YearMonthDay_mkYearMonthDay_unit_valid :: TestTree
 test_YearMonthDay_mkYearMonthDay_unit_valid =
   testMkYearMonthDayValid units_YearMonthDay_valid
@@ -416,49 +407,12 @@ test_YearMonthDay_mkYearMonthDay_unit_invalid :: TestTree
 test_YearMonthDay_mkYearMonthDay_unit_invalid =
   testMkYearMonthDayInvalid units_YearMonthDay_invalid
 
-test_YearMonthDay_mkYearMonthDay_exhaustive_valid :: TestTree
-test_YearMonthDay_mkYearMonthDay_exhaustive_valid =
-  testMkYearMonthDayValid validYearMonthDays
-
-test_YearMonthDay_mkYearMonthDay_exhaustive_invalid :: TestTree
-test_YearMonthDay_mkYearMonthDay_exhaustive_invalid =
-  testMkYearMonthDayInvalid invalidYearMonthDays
-
-validYearMonthDays :: [(Year, Month, Day)]
-validYearMonthDays =
-  let startTimeDay :: Time.Day
-      startTimeDay = Time.fromOrdinalDate 0 1
-
-      endTimeDay :: Time.Day
-      endTimeDay = Time.fromOrdinalDate 9999 365
-
-      timeDays :: [Time.Day]
-      timeDays = [startTimeDay .. endTimeDay]
-   in map timeDayToYearMonthDay timeDays
-
-timeDayToYearMonthDay :: Time.Day -> (Year, Month, Day)
-timeDayToYearMonthDay timeDay =
-  let timeYear :: Time.Year
-      timeMonthOfYear :: Time.MonthOfYear
-      timeDayOfMonth :: Time.DayOfMonth
-      (timeYear, timeMonthOfYear, timeDayOfMonth) = Time.toGregorian timeDay
-
-      year :: Year
-      year = y timeYear
-
-      month :: Month
-      month = m (toInteger timeMonthOfYear)
-
-      day :: Day
-      day = d (toInteger timeDayOfMonth)
-   in (year, month, day)
-
-invalidYearMonthDays :: [(Year, Month, Day)]
-invalidYearMonthDays =
-  Set.toList (Set.fromList allYearMonthDays \\ Set.fromList validYearMonthDays)
-
-allYearMonthDays :: [(Year, Month, Day)]
-allYearMonthDays = liftA3 (,,) years months days
+test_YearMonthDay_mkYearMonthDay_exhaustive :: TestTree
+test_YearMonthDay_mkYearMonthDay_exhaustive =
+  testCase "exhaustive" $
+    forM_ (liftA3 (,,) years months days) $
+      \(year, month, day) ->
+        mkYearMonthDay year month day @?= timeMkYearMonthDay year month day
 
 test_YearMonthDay_bounds :: TestTree
 test_YearMonthDay_bounds = testBounds (ymd 0000 01 01, ymd 9999 12 31)
@@ -842,6 +796,30 @@ testMkMonthDayInvalid cases =
   testCase "invalid" $
     forM_ cases $ \(month, day) ->
       assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
+
+------------------------------------
+-- Functions with the `time` library
+------------------------------------
+timeMkYearMonthDay :: Year -> Month -> Day -> Maybe YearMonthDay
+timeMkYearMonthDay year month day =
+  let isValid =
+        isJust $
+          Time.fromGregorianValid
+            (toTimeYear year)
+            (toTimeMonth month)
+            (toTimeDay day)
+   in if isValid
+        then Just (YearMonthDay year month day)
+        else Nothing
+
+toTimeYear :: Year -> Time.Year
+toTimeYear = getFinite . unYear
+
+toTimeMonth :: Month -> Time.MonthOfYear
+toTimeMonth = fromInteger . (+ 1) . getFinite . unMonth
+
+toTimeDay :: Day -> Time.DayOfMonth
+toTimeDay = fromInteger . (+ 1) . getFinite . unDay
 
 --------------------------------
 -- Year, Month, Day construction
