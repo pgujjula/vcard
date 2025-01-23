@@ -100,7 +100,7 @@ test_Year_parse_exhaustive =
 
 test_Year_parse_unit_valid :: TestTree
 test_Year_parse_unit_valid =
-  unimplemented "valid"
+  testParseValid units_Year_valid
 
 test_Year_parse_unit_invalid :: TestTree
 test_Year_parse_unit_invalid =
@@ -123,7 +123,7 @@ test_Year_serialize =
     ]
 
 test_Year_serialize_unit :: TestTree
-test_Year_serialize_unit = unimplemented "unit"
+test_Year_serialize_unit = testSerialize "unit" units_Year_valid
 
 test_Year_serialize_exhaustive :: TestTree
 test_Year_serialize_exhaustive =
@@ -150,6 +150,13 @@ invalidYears =
 
 test_Year_bounds :: TestTree
 test_Year_bounds = testBounds (y 0000, y 9999)
+
+units_Year_valid :: [(Text, Year)]
+units_Year_valid =
+  [ ("0000", Year 0000),
+    ("6812", Year 6812),
+    ("9999", Year 9999)
+  ]
 
 --
 -- Month
@@ -188,7 +195,7 @@ test_Month_parse_exhaustive =
     ]
 
 test_Month_parse_unit_valid :: TestTree
-test_Month_parse_unit_valid = unimplemented "valid"
+test_Month_parse_unit_valid = testParseValid units_Month_valid
 
 test_Month_parse_unit_invalid :: TestTree
 test_Month_parse_unit_invalid = testParseInvalid (Proxy @Month) invalidMonths
@@ -209,7 +216,7 @@ test_Month_serialize =
     ]
 
 test_Month_serialize_unit :: TestTree
-test_Month_serialize_unit = unimplemented "unit"
+test_Month_serialize_unit = testSerialize "unit" units_Month_valid
 
 test_Month_serialize_exhaustive :: TestTree
 test_Month_serialize_exhaustive =
@@ -267,6 +274,10 @@ invalidMonths =
 test_Month_bounds :: TestTree
 test_Month_bounds = testBounds (m 01, m 12)
 
+units_Month_valid :: [(Text, Month)]
+units_Month_valid =
+  [("01", m 01), ("05", m 05), ("10", m 10), ("12", m 12)]
+
 --
 -- Day
 --
@@ -304,7 +315,7 @@ test_Day_parse_exhaustive =
     ]
 
 test_Day_parse_unit_valid :: TestTree
-test_Day_parse_unit_valid = unimplemented "valid"
+test_Day_parse_unit_valid = testParseValid units_Day_valid
 
 test_Day_parse_unit_invalid :: TestTree
 test_Day_parse_unit_invalid = testParseInvalid (Proxy @Day) invalidDays
@@ -325,7 +336,7 @@ test_Day_serialize =
     ]
 
 test_Day_serialize_unit :: TestTree
-test_Day_serialize_unit = unimplemented "unit"
+test_Day_serialize_unit = testSerialize "unit" units_Day_valid
 
 test_Day_serialize_exhaustive :: TestTree
 test_Day_serialize_exhaustive = testSerialize "exhaustive" exhaustive_Day_valid
@@ -381,6 +392,10 @@ invalidDays =
     "a1",
     "a\n"
   ]
+
+units_Day_valid :: [(Text, Day)]
+units_Day_valid =
+  [("01", d 1), ("15", d 15), ("30", d 30), ("31", d 31)]
 
 --
 -- YearMonthDay
