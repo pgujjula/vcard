@@ -29,7 +29,6 @@ import Data.Time.Calendar.MonthDay
   )
 import Data.Time.Calendar.OrdinalDate qualified as Time
 import Test.Tasty (TestName, TestTree, testGroup)
-import Test.Tasty.ExpectedFailure (ignoreTestBecause)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 import TextShow (showt)
 import VCard.Parse (HasParser, parse)
@@ -613,32 +612,20 @@ test_MonthDay_mkMonthDay_exhaustive =
     ]
 
 test_MonthDay_mkMonthDay_unit_valid :: TestTree
-test_MonthDay_mkMonthDay_unit_valid = unimplemented "valid"
+test_MonthDay_mkMonthDay_unit_valid =
+  testMkMonthDayValid units_MonthDay_valid
 
 test_MonthDay_mkMonthDay_unit_invalid :: TestTree
-test_MonthDay_mkMonthDay_unit_invalid = unimplemented "invalid"
+test_MonthDay_mkMonthDay_unit_invalid =
+  testMkMonthDayInvalid units_MonthDay_invalid
 
 test_MonthDay_mkMonthDay_exhaustive_valid :: TestTree
 test_MonthDay_mkMonthDay_exhaustive_valid =
-  testCase "valid" $
-    forM_ validMonthDays $ \(month, day) -> do
-      monthDay <-
-        case mkMonthDay month day of
-          Nothing ->
-            assertFailure $
-              "could not create MonthDay from "
-                <> show month
-                <> " and "
-                <> show day
-          Just x -> pure x
-      getMonth monthDay @?= month
-      getDay monthDay @?= day
+  testMkMonthDayValid validMonthDays
 
 test_MonthDay_mkMonthDay_exhaustive_invalid :: TestTree
 test_MonthDay_mkMonthDay_exhaustive_invalid =
-  testCase "invalid" $
-    forM_ invalidMonthDays $ \(month, day) ->
-      assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
+  testMkMonthDayInvalid invalidMonthDays
 
 validMonthDays :: [(Month, Day)]
 validMonthDays = filter (uncurry isValid) allMonthDays
@@ -664,6 +651,46 @@ allMonthDays = liftA2 (,) months days
 
 test_MonthDay_bounds :: TestTree
 test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
+
+units_MonthDay_valid :: [(Month, Day)]
+units_MonthDay_valid =
+  [ -- bounds
+    (m 01, d 01),
+    (m 12, d 31),
+    -- vary month
+    (m 01, d 12),
+    (m 07, d 12),
+    (m 12, d 12),
+    -- vary day
+    (m 07, d 01),
+    (m 07, d 12),
+    (m 07, d 31),
+    -- max day
+    (m 01, d 31),
+    (m 02, d 28),
+    (m 02, d 29), -- February includes leap day
+    (m 03, d 31),
+    (m 04, d 30),
+    (m 05, d 31),
+    (m 06, d 30),
+    (m 07, d 31),
+    (m 08, d 31),
+    (m 09, d 30),
+    (m 10, d 31),
+    (m 11, d 30),
+    (m 12, d 31)
+  ]
+
+units_MonthDay_invalid :: [(Month, Day)]
+units_MonthDay_invalid =
+  [ -- beyond max day
+    (m 02, d 30),
+    (m 02, d 31),
+    (m 04, d 31),
+    (m 06, d 31),
+    (m 09, d 31),
+    (m 11, d 31)
+  ]
 
 -- =========
 -- UTILITIES
@@ -794,6 +821,28 @@ testMkYearMonthDayInvalid cases =
             "made invalid "
               <> show yearMonthDay
 
+testMkMonthDayValid :: [(Month, Day)] -> TestTree
+testMkMonthDayValid cases =
+  testCase "valid" $
+    forM_ cases $ \(month, day) -> do
+      monthDay <-
+        case mkMonthDay month day of
+          Nothing ->
+            assertFailure $
+              "could not create MonthDay from "
+                <> show month
+                <> " and "
+                <> show day
+          Just x -> pure x
+      getMonth monthDay @?= month
+      getDay monthDay @?= day
+
+testMkMonthDayInvalid :: [(Month, Day)] -> TestTree
+testMkMonthDayInvalid cases =
+  testCase "invalid" $
+    forM_ cases $ \(month, day) ->
+      assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
+
 --------------------------------
 -- Year, Month, Day construction
 --------------------------------
@@ -814,8 +863,3 @@ ym year month = YearMonth (y year) (m month)
 
 md :: Integer -> Integer -> MonthDay
 md month day = MonthDay (m month) (d day)
-
-unimplemented :: TestName -> TestTree
-unimplemented name =
-  ignoreTestBecause "UNIMPLEMENTED" $
-    testCase name (assertFailure "")
