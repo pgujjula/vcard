@@ -14,6 +14,7 @@ import Control.Applicative (liftA3)
 #endif
 import Control.Monad (forM_, replicateM)
 import Data.Finite (finite, finites, getFinite)
+import Data.List.Ordered (minus)
 import Data.Maybe (isJust, isNothing)
 import Data.Proxy (Proxy (..))
 import Data.Set ((\\))
@@ -111,7 +112,7 @@ test_Year_parse_exhaustive_valid =
 
 test_Year_parse_exhaustive_invalid :: TestTree
 test_Year_parse_exhaustive_invalid =
-  unimplemented "invalid"
+  testParseInvalid (Proxy @Year) exhaustive_Year_invalid
 
 test_Year_serialize :: TestTree
 test_Year_serialize =
@@ -196,7 +197,8 @@ test_Month_parse_exhaustive_valid :: TestTree
 test_Month_parse_exhaustive_valid = testParseValid exhaustive_Month_valid
 
 test_Month_parse_exhaustive_invalid :: TestTree
-test_Month_parse_exhaustive_invalid = unimplemented "invalid"
+test_Month_parse_exhaustive_invalid =
+  testParseInvalid (Proxy @Month) exhaustive_Month_invalid
 
 test_Month_serialize :: TestTree
 test_Month_serialize =
@@ -311,7 +313,8 @@ test_Day_parse_exhaustive_valid :: TestTree
 test_Day_parse_exhaustive_valid = testParseValid exhaustive_Day_valid
 
 test_Day_parse_exhaustive_invalid :: TestTree
-test_Day_parse_exhaustive_invalid = unimplemented "invalid"
+test_Day_parse_exhaustive_invalid =
+  testParseInvalid (Proxy @Day) exhaustive_Day_invalid
 
 test_Day_serialize :: TestTree
 test_Day_serialize =
@@ -605,6 +608,17 @@ months = map Month finites
 days :: [Day]
 days = map Day finites
 
+-- All `Text`s in the syntactic format of a `Year` (yyyy), `Month` (mm), or
+-- `Day` (mm), but not necessarily semantically valid.
+universe_Year :: [Text]
+universe_Year = map Text.pack (replicateM 4 ['0' .. '9'])
+
+universe_Month :: [Text]
+universe_Month = map Text.pack (replicateM 2 ['0' .. '9'])
+
+universe_Day :: [Text]
+universe_Day = map Text.pack (replicateM 2 ['0' .. '9'])
+
 -- All `Text`s that represent semantically valid `Year`s, `Month`s, or `Day`s,
 -- paired with their parsed value.
 exhaustive_Year_valid :: [(Text, Year)]
@@ -622,9 +636,21 @@ exhaustive_Day_valid =
   let texts = map (Text.justifyRight 2 '0' . showt @Int) [1 .. 31]
    in zip texts days
 
+-- `Text`s that fit the syntactic format of `Year`, `Month`, `Date`, but are not
+-- semantically valid. Example: "13" is in exhaustive_Month_invalid
+exhaustive_Year_invalid :: [Text]
+exhaustive_Year_invalid = universe_Year `minus` map fst exhaustive_Year_valid
+
+exhaustive_Month_invalid :: [Text]
+exhaustive_Month_invalid = universe_Month `minus` map fst exhaustive_Month_valid
+
+exhaustive_Day_invalid :: [Text]
+exhaustive_Day_invalid = universe_Day `minus` map fst exhaustive_Day_valid
+
 --------------------
 -- Testing functions
 --------------------
+
 testParseValid :: (Show a, Eq a, HasParser a) => [(Text, a)] -> TestTree
 testParseValid cases =
   testCase "valid" $
