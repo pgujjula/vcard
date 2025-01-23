@@ -27,7 +27,8 @@ import Data.Time.Calendar.MonthDay
     monthAndDayToDayOfYearValid,
   )
 import Data.Time.Calendar.OrdinalDate qualified as Time
-import Test.Tasty (TestTree, testGroup)
+import Test.Tasty (TestName, TestTree, testGroup)
+import Test.Tasty.ExpectedFailure (ignoreTestBecause)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 import TextShow (showt)
 import VCard.Parse (HasParser, parse)
@@ -74,18 +75,55 @@ test_Year_parse :: TestTree
 test_Year_parse =
   testGroup
     "parse"
-    [ test_Year_parse_valid,
-      test_Year_parse_invalid
+    [ test_Year_parse_unit,
+      test_Year_parse_exhaustive
     ]
 
-test_Year_parse_valid :: TestTree
-test_Year_parse_valid = testParseValid validYears
+test_Year_parse_unit :: TestTree
+test_Year_parse_unit =
+  testGroup
+    "unit"
+    [ test_Year_parse_unit_valid,
+      test_Year_parse_unit_invalid
+    ]
 
-test_Year_parse_invalid :: TestTree
-test_Year_parse_invalid = testParseInvalid (Proxy @Year) invalidYears
+test_Year_parse_exhaustive :: TestTree
+test_Year_parse_exhaustive =
+  testGroup
+    "exhaustive"
+    [ test_Year_parse_exhaustive_valid,
+      test_Year_parse_exhaustive_invalid
+    ]
+
+test_Year_parse_unit_valid :: TestTree
+test_Year_parse_unit_valid =
+  unimplemented "valid"
+
+test_Year_parse_unit_invalid :: TestTree
+test_Year_parse_unit_invalid =
+  testParseInvalid (Proxy @Year) invalidYears
+
+test_Year_parse_exhaustive_valid :: TestTree
+test_Year_parse_exhaustive_valid =
+  testParseValid validYears
+
+test_Year_parse_exhaustive_invalid :: TestTree
+test_Year_parse_exhaustive_invalid =
+  unimplemented "invalid"
 
 test_Year_serialize :: TestTree
-test_Year_serialize = testSerialize validYears
+test_Year_serialize =
+  testGroup
+    "serialize"
+    [ test_Year_serialize_unit,
+      test_Year_serialize_exhaustive
+    ]
+
+test_Year_serialize_unit :: TestTree
+test_Year_serialize_unit = unimplemented "unit"
+
+test_Year_serialize_exhaustive :: TestTree
+test_Year_serialize_exhaustive = testSerialize "exhaustive" validYears
 
 validYears :: [(Text, Year)]
 validYears = zip yearTexts years
@@ -134,18 +172,51 @@ test_Month_parse :: TestTree
 test_Month_parse =
   testGroup
     "parse"
-    [ test_Month_parse_valid,
-      test_Month_parse_invalid
+    [ test_Month_parse_unit,
+      test_Month_parse_exhaustive
     ]
 
-test_Month_parse_valid :: TestTree
-test_Month_parse_valid = testParseValid validMonths
+test_Month_parse_unit :: TestTree
+test_Month_parse_unit =
+  testGroup
+    "unit"
+    [ test_Month_parse_unit_valid,
+      test_Month_parse_unit_invalid
+    ]
 
-test_Month_parse_invalid :: TestTree
-test_Month_parse_invalid = testParseInvalid (Proxy @Month) invalidMonths
+test_Month_parse_exhaustive :: TestTree
+test_Month_parse_exhaustive =
+  testGroup
+    "exhaustive"
+    [ test_Month_parse_exhaustive_valid,
+      test_Month_parse_exhaustive_invalid
+    ]
+
+test_Month_parse_unit_valid :: TestTree
+test_Month_parse_unit_valid = unimplemented "valid"
+
+test_Month_parse_unit_invalid :: TestTree
+test_Month_parse_unit_invalid = testParseInvalid (Proxy @Month) invalidMonths
+
+test_Month_parse_exhaustive_valid :: TestTree
+test_Month_parse_exhaustive_valid = testParseValid validMonths
+
+test_Month_parse_exhaustive_invalid :: TestTree
+test_Month_parse_exhaustive_invalid = unimplemented "invalid"
 
 test_Month_serialize :: TestTree
-test_Month_serialize = testSerialize validMonths
+test_Month_serialize =
+  testGroup
+    "serialize"
+    [ test_Month_serialize_unit,
+      test_Month_serialize_exhaustive
+    ]
+
+test_Month_serialize_unit :: TestTree
+test_Month_serialize_unit = unimplemented "unit"
+
+test_Month_serialize_exhaustive :: TestTree
+test_Month_serialize_exhaustive = testSerialize "exhaustive" validMonths
 
 validMonths :: [(Text, Month)]
 validMonths =
@@ -231,18 +302,51 @@ test_Day_parse :: TestTree
 test_Day_parse =
   testGroup
     "parse"
-    [ test_Day_parse_valid,
-      test_Day_parse_invalid
+    [ test_Day_parse_unit,
+      test_Day_parse_exhaustive
     ]
 
-test_Day_parse_valid :: TestTree
-test_Day_parse_valid = testParseValid validDays
+test_Day_parse_unit :: TestTree
+test_Day_parse_unit =
+  testGroup
+    "unit"
+    [ test_Day_parse_unit_valid,
+      test_Day_parse_unit_invalid
+    ]
 
-test_Day_parse_invalid :: TestTree
-test_Day_parse_invalid = testParseInvalid (Proxy @Day) invalidDays
+test_Day_parse_exhaustive :: TestTree
+test_Day_parse_exhaustive =
+  testGroup
+    "exhaustive"
+    [ test_Day_parse_exhaustive_valid,
+      test_Day_parse_exhaustive_invalid
+    ]
+
+test_Day_parse_unit_valid :: TestTree
+test_Day_parse_unit_valid = unimplemented "valid"
+
+test_Day_parse_unit_invalid :: TestTree
+test_Day_parse_unit_invalid = testParseInvalid (Proxy @Day) invalidDays
+
+test_Day_parse_exhaustive_valid :: TestTree
+test_Day_parse_exhaustive_valid = testParseValid validDays
+
+test_Day_parse_exhaustive_invalid :: TestTree
+test_Day_parse_exhaustive_invalid = unimplemented "invalid"
 
 test_Day_serialize :: TestTree
-test_Day_serialize = testSerialize validDays
+test_Day_serialize =
+  testGroup
+    "serialize"
+    [ test_Day_serialize_unit,
+      test_Day_serialize_exhaustive
+    ]
+
+test_Day_serialize_unit :: TestTree
+test_Day_serialize_unit = unimplemented "unit"
+
+test_Day_serialize_exhaustive :: TestTree
+test_Day_serialize_exhaustive = testSerialize "exhaustive" validDays
 
 validDays :: [(Text, Day)]
 validDays = singleDigits ++ doubleDigits
@@ -322,12 +426,34 @@ test_YearMonthDay_mkYearMonthDay :: TestTree
 test_YearMonthDay_mkYearMonthDay =
   testGroup
     "mkYearMonthDay"
-    [ test_YearMonthDay_mkYearMonthDay_valid,
-      test_YearMonthDay_mkYearMonthDay_invalid
+    [ test_YearMonthDay_mkYearMonthDay_unit,
+      test_YearMonthDay_mkYearMonthDay_exhaustive
     ]
 
-test_YearMonthDay_mkYearMonthDay_valid :: TestTree
-test_YearMonthDay_mkYearMonthDay_valid =
+test_YearMonthDay_mkYearMonthDay_unit :: TestTree
+test_YearMonthDay_mkYearMonthDay_unit =
+  testGroup
+    "unit"
+    [ test_YearMonthDay_mkYearMonthDay_unit_valid,
+      test_YearMonthDay_mkYearMonthDay_unit_invalid
+    ]
+
+test_YearMonthDay_mkYearMonthDay_exhaustive :: TestTree
+test_YearMonthDay_mkYearMonthDay_exhaustive =
+  testGroup
+    "exhaustive"
+    [ test_YearMonthDay_mkYearMonthDay_exhaustive_valid,
+      test_YearMonthDay_mkYearMonthDay_exhaustive_invalid
+    ]
+
+test_YearMonthDay_mkYearMonthDay_unit_valid :: TestTree
+test_YearMonthDay_mkYearMonthDay_unit_valid = unimplemented "valid"
+
+test_YearMonthDay_mkYearMonthDay_unit_invalid :: TestTree
+test_YearMonthDay_mkYearMonthDay_unit_invalid = unimplemented "invalid"
+
+test_YearMonthDay_mkYearMonthDay_exhaustive_valid :: TestTree
+test_YearMonthDay_mkYearMonthDay_exhaustive_valid =
   testCase "valid" $
     forM_ validYearMonthDays $ \(year, month, day) -> do
       yearMonthDay <-
@@ -345,8 +471,8 @@ test_YearMonthDay_mkYearMonthDay_valid =
       getMonth yearMonthDay @?= month
       getDay yearMonthDay @?= day
 
-test_YearMonthDay_mkYearMonthDay_invalid :: TestTree
-test_YearMonthDay_mkYearMonthDay_invalid =
+test_YearMonthDay_mkYearMonthDay_exhaustive_invalid :: TestTree
+test_YearMonthDay_mkYearMonthDay_exhaustive_invalid =
   testCase "invalid" $
     forM_ invalidYearMonthDays $ \(year, month, day) ->
       case mkYearMonthDay year month day of
@@ -424,12 +550,34 @@ test_MonthDay_mkMonthDay :: TestTree
 test_MonthDay_mkMonthDay =
   testGroup
     "mkMonthDay"
-    [ test_MonthDay_mkMonthDay_valid,
-      test_MonthDay_mkMonthDay_invalid
+    [ test_MonthDay_mkMonthDay_unit,
+      test_MonthDay_mkMonthDay_exhaustive
     ]
 
-test_MonthDay_mkMonthDay_valid :: TestTree
-test_MonthDay_mkMonthDay_valid =
+test_MonthDay_mkMonthDay_unit :: TestTree
+test_MonthDay_mkMonthDay_unit =
+  testGroup
+    "unit"
+    [ test_MonthDay_mkMonthDay_unit_valid,
+      test_MonthDay_mkMonthDay_unit_invalid
+    ]
+
+test_MonthDay_mkMonthDay_exhaustive :: TestTree
+test_MonthDay_mkMonthDay_exhaustive =
+  testGroup
+    "exhaustive"
+    [ test_MonthDay_mkMonthDay_exhaustive_valid,
+      test_MonthDay_mkMonthDay_exhaustive_invalid
+    ]
+
+test_MonthDay_mkMonthDay_unit_valid :: TestTree
+test_MonthDay_mkMonthDay_unit_valid = unimplemented "valid"
+
+test_MonthDay_mkMonthDay_unit_invalid :: TestTree
+test_MonthDay_mkMonthDay_unit_invalid = unimplemented "invalid"
+
+test_MonthDay_mkMonthDay_exhaustive_valid :: TestTree
+test_MonthDay_mkMonthDay_exhaustive_valid =
   testCase "valid" $
     forM_ validMonthDays $ \(month, day) -> do
       monthDay <-
@@ -444,8 +592,8 @@ test_MonthDay_mkMonthDay_valid =
       getMonth monthDay @?= month
       getDay monthDay @?= day
 
-test_MonthDay_mkMonthDay_invalid :: TestTree
-test_MonthDay_mkMonthDay_invalid =
+test_MonthDay_mkMonthDay_exhaustive_invalid :: TestTree
+test_MonthDay_mkMonthDay_exhaustive_invalid =
   testCase "invalid" $
     forM_ invalidMonthDays $ \(month, day) ->
       assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
@@ -494,9 +642,9 @@ testParseInvalid _ cases =
     forM_ cases $ \text ->
       parse text @?= (Nothing :: Maybe a)
 
-testSerialize :: (HasSerializer a) => [(Text, a)] -> TestTree
-testSerialize cases =
-  testCase "serialize" $
+testSerialize :: (HasSerializer a) => TestName -> [(Text, a)] -> TestTree
+testSerialize name cases =
+  testCase name $
     forM_ cases $ \(text, value) ->
       serialize value @?= text
 
@@ -526,3 +674,8 @@ ym year month = YearMonth (y year) (m month)
 
 md :: Integer -> Integer -> MonthDay
 md month day = MonthDay (m month) (d day)
+
+unimplemented :: TestName -> TestTree
+unimplemented name =
+  ignoreTestBecause "UNIMPLEMENTED" $
+    testCase name (assertFailure "")
