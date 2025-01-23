@@ -47,6 +47,8 @@ import VCard.Types.Value.Date
     mkYearMonthDay,
   )
 
+{-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
+
 tests :: TestTree
 tests =
   testGroup
@@ -105,7 +107,7 @@ test_Year_parse_unit_invalid =
 
 test_Year_parse_exhaustive_valid :: TestTree
 test_Year_parse_exhaustive_valid =
-  testParseValid validYears
+  testParseValid exhaustive_Year_valid
 
 test_Year_parse_exhaustive_invalid :: TestTree
 test_Year_parse_exhaustive_invalid =
@@ -123,16 +125,8 @@ test_Year_serialize_unit :: TestTree
 test_Year_serialize_unit = unimplemented "unit"
 
 test_Year_serialize_exhaustive :: TestTree
-test_Year_serialize_exhaustive = testSerialize "exhaustive" validYears
-
-validYears :: [(Text, Year)]
-validYears = zip yearTexts years
-  where
-    yearTexts :: [Text]
-    yearTexts = map Text.pack $ replicateM 4 ['0' .. '9']
-
-    years :: [Year]
-    years = map y [0000 .. 9999]
+test_Year_serialize_exhaustive =
+  testSerialize "exhaustive" exhaustive_Year_valid
 
 invalidYears :: [Text]
 invalidYears =
@@ -199,7 +193,7 @@ test_Month_parse_unit_invalid :: TestTree
 test_Month_parse_unit_invalid = testParseInvalid (Proxy @Month) invalidMonths
 
 test_Month_parse_exhaustive_valid :: TestTree
-test_Month_parse_exhaustive_valid = testParseValid validMonths
+test_Month_parse_exhaustive_valid = testParseValid exhaustive_Month_valid
 
 test_Month_parse_exhaustive_invalid :: TestTree
 test_Month_parse_exhaustive_invalid = unimplemented "invalid"
@@ -216,23 +210,8 @@ test_Month_serialize_unit :: TestTree
 test_Month_serialize_unit = unimplemented "unit"
 
 test_Month_serialize_exhaustive :: TestTree
-test_Month_serialize_exhaustive = testSerialize "exhaustive" validMonths
-
-validMonths :: [(Text, Month)]
-validMonths =
-  [ ("01", m 01),
-    ("02", m 02),
-    ("03", m 03),
-    ("04", m 04),
-    ("05", m 05),
-    ("06", m 06),
-    ("07", m 07),
-    ("08", m 08),
-    ("09", m 09),
-    ("10", m 10),
-    ("11", m 11),
-    ("12", m 12)
-  ]
+test_Month_serialize_exhaustive =
+  testSerialize "exhaustive" exhaustive_Month_valid
 
 invalidMonths :: [Text]
 invalidMonths =
@@ -329,7 +308,7 @@ test_Day_parse_unit_invalid :: TestTree
 test_Day_parse_unit_invalid = testParseInvalid (Proxy @Day) invalidDays
 
 test_Day_parse_exhaustive_valid :: TestTree
-test_Day_parse_exhaustive_valid = testParseValid validDays
+test_Day_parse_exhaustive_valid = testParseValid exhaustive_Day_valid
 
 test_Day_parse_exhaustive_invalid :: TestTree
 test_Day_parse_exhaustive_invalid = unimplemented "invalid"
@@ -346,18 +325,7 @@ test_Day_serialize_unit :: TestTree
 test_Day_serialize_unit = unimplemented "unit"
 
 test_Day_serialize_exhaustive :: TestTree
-test_Day_serialize_exhaustive = testSerialize "exhaustive" validDays
-
-validDays :: [(Text, Day)]
-validDays = singleDigits ++ doubleDigits
-  where
-    singleDigits :: [(Text, Day)]
-    singleDigits = flip map [1 .. 9] $ \i ->
-      ("0" <> showt i, d i)
-
-    doubleDigits :: [(Text, Day)]
-    doubleDigits = flip map [10 .. 31] $ \i ->
-      (showt i, d i)
+test_Day_serialize_exhaustive = testSerialize "exhaustive" exhaustive_Day_valid
 
 test_Day_bounds :: TestTree
 test_Day_bounds = testBounds (d 01, d 31)
@@ -513,11 +481,7 @@ invalidYearMonthDays =
   Set.toList (Set.fromList allYearMonthDays \\ Set.fromList validYearMonthDays)
 
 allYearMonthDays :: [(Year, Month, Day)]
-allYearMonthDays =
-  let years = map Year finites
-      months = map Month finites
-      days = map Day finites
-   in liftA3 (,,) years months days
+allYearMonthDays = liftA3 (,,) years months days
 
 test_YearMonthDay_bounds :: TestTree
 test_YearMonthDay_bounds = testBounds (ymd 0000 01 01, ymd 9999 12 31)
@@ -618,17 +582,49 @@ invalidMonthDays =
   Set.toList (Set.fromList allMonthDays \\ Set.fromList validMonthDays)
 
 allMonthDays :: [(Month, Day)]
-allMonthDays =
-  let months = map Month finites
-      days = map Day finites
-   in liftA2 (,) months days
+allMonthDays = liftA2 (,) months days
 
 test_MonthDay_bounds :: TestTree
 test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
 
---
--- Testing utility functions
---
+-- =========
+-- UTILITIES
+-- =========
+
+--------------------------------
+-- Year, Month, Day enumerations
+--------------------------------
+
+-- All `Year`s, `Month`s, and `Day`s
+years :: [Year]
+years = map Year finites
+
+months :: [Month]
+months = map Month finites
+
+days :: [Day]
+days = map Day finites
+
+-- All `Text`s that represent semantically valid `Year`s, `Month`s, or `Day`s,
+-- paired with their parsed value.
+exhaustive_Year_valid :: [(Text, Year)]
+exhaustive_Year_valid =
+  let texts = map Text.pack $ replicateM 4 ['0' .. '9']
+   in zip texts years
+
+exhaustive_Month_valid :: [(Text, Month)]
+exhaustive_Month_valid =
+  let texts = map (Text.justifyRight 2 '0' . showt @Int) [1 .. 12]
+   in zip texts months
+
+exhaustive_Day_valid :: [(Text, Day)]
+exhaustive_Day_valid =
+  let texts = map (Text.justifyRight 2 '0' . showt @Int) [1 .. 31]
+   in zip texts days
+
+--------------------
+-- Testing functions
+--------------------
 testParseValid :: (Show a, Eq a, HasParser a) => [(Text, a)] -> TestTree
 testParseValid cases =
   testCase "valid" $
@@ -654,9 +650,9 @@ testBounds (expectedMinBound, expectedMaxBound) =
     minBound @?= expectedMinBound
     maxBound @?= expectedMaxBound
 
---
--- Year, Month, Day construction utilities
---
+--------------------------------
+-- Year, Month, Day construction
+--------------------------------
 y :: Integer -> Year
 y year = Year (finite year)
 
