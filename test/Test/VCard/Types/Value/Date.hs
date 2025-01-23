@@ -17,15 +17,11 @@ import Data.Finite (finite, finites, getFinite)
 import Data.List.Ordered (minus)
 import Data.Maybe (isJust, isNothing)
 import Data.Proxy (Proxy (..))
-import Data.Set ((\\))
-import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Data.Time qualified as Time
 import Data.Time.Calendar.MonthDay
-  ( DayOfMonth,
-    MonthOfYear,
-    monthAndDayToDayOfYearValid,
+  ( monthAndDayToDayOfYearValid,
   )
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
@@ -557,14 +553,6 @@ test_MonthDay_mkMonthDay_unit =
       test_MonthDay_mkMonthDay_unit_invalid
     ]
 
-test_MonthDay_mkMonthDay_exhaustive :: TestTree
-test_MonthDay_mkMonthDay_exhaustive =
-  testGroup
-    "exhaustive"
-    [ test_MonthDay_mkMonthDay_exhaustive_valid,
-      test_MonthDay_mkMonthDay_exhaustive_invalid
-    ]
-
 test_MonthDay_mkMonthDay_unit_valid :: TestTree
 test_MonthDay_mkMonthDay_unit_valid =
   testMkMonthDayValid units_MonthDay_valid
@@ -573,35 +561,11 @@ test_MonthDay_mkMonthDay_unit_invalid :: TestTree
 test_MonthDay_mkMonthDay_unit_invalid =
   testMkMonthDayInvalid units_MonthDay_invalid
 
-test_MonthDay_mkMonthDay_exhaustive_valid :: TestTree
-test_MonthDay_mkMonthDay_exhaustive_valid =
-  testMkMonthDayValid validMonthDays
-
-test_MonthDay_mkMonthDay_exhaustive_invalid :: TestTree
-test_MonthDay_mkMonthDay_exhaustive_invalid =
-  testMkMonthDayInvalid invalidMonthDays
-
-validMonthDays :: [(Month, Day)]
-validMonthDays = filter (uncurry isValid) allMonthDays
-  where
-    isValid :: Month -> Day -> Bool
-    isValid month day =
-      let monthOfYear :: MonthOfYear
-          monthOfYear = (+ 1) . fromInteger . getFinite . unMonth $ month
-
-          dayOfMonth :: DayOfMonth
-          dayOfMonth = (+ 1) . fromInteger . getFinite . unDay $ day
-
-          isLeapYear :: Bool
-          isLeapYear = True
-       in isJust (monthAndDayToDayOfYearValid isLeapYear monthOfYear dayOfMonth)
-
-invalidMonthDays :: [(Month, Day)]
-invalidMonthDays =
-  Set.toList (Set.fromList allMonthDays \\ Set.fromList validMonthDays)
-
-allMonthDays :: [(Month, Day)]
-allMonthDays = liftA2 (,) months days
+test_MonthDay_mkMonthDay_exhaustive :: TestTree
+test_MonthDay_mkMonthDay_exhaustive =
+  testCase "exhaustive" $
+    forM_ (liftA2 (,) months days) $ \(month, day) ->
+      mkMonthDay month day @?= timeMkMonthDay month day
 
 test_MonthDay_bounds :: TestTree
 test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
@@ -800,6 +764,18 @@ testMkMonthDayInvalid cases =
 ------------------------------------
 -- Functions with the `time` library
 ------------------------------------
+timeMkMonthDay :: Month -> Day -> Maybe MonthDay
+timeMkMonthDay month day =
+  let isValid =
+        isJust $
+          monthAndDayToDayOfYearValid
+            True
+            (toTimeMonth month)
+            (toTimeDay day)
+   in if isValid
+        then Just (MonthDay month day)
+        else Nothing
+
 timeMkYearMonthDay :: Year -> Month -> Day -> Maybe YearMonthDay
 timeMkYearMonthDay year month day =
   let isValid =
