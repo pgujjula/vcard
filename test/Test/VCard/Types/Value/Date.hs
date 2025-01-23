@@ -410,37 +410,20 @@ test_YearMonthDay_mkYearMonthDay_exhaustive =
     ]
 
 test_YearMonthDay_mkYearMonthDay_unit_valid :: TestTree
-test_YearMonthDay_mkYearMonthDay_unit_valid = unimplemented "valid"
+test_YearMonthDay_mkYearMonthDay_unit_valid =
+  testMkYearMonthDayValid units_YearMonthDay_valid
 
 test_YearMonthDay_mkYearMonthDay_unit_invalid :: TestTree
-test_YearMonthDay_mkYearMonthDay_unit_invalid = unimplemented "invalid"
+test_YearMonthDay_mkYearMonthDay_unit_invalid =
+  testMkYearMonthDayInvalid units_YearMonthDay_invalid
 
 test_YearMonthDay_mkYearMonthDay_exhaustive_valid :: TestTree
 test_YearMonthDay_mkYearMonthDay_exhaustive_valid =
-  testCase "valid" $
-    forM_ validYearMonthDays $ \(year, month, day) -> do
-      yearMonthDay <-
-        case mkYearMonthDay year month day of
-          Nothing ->
-            assertFailure $
-              "could not create YearMonthDay from "
-                <> show year
-                <> ", "
-                <> show month
-                <> ", "
-                <> show day
-          Just x -> pure x
-      getYear yearMonthDay @?= year
-      getMonth yearMonthDay @?= month
-      getDay yearMonthDay @?= day
+  testMkYearMonthDayValid validYearMonthDays
 
 test_YearMonthDay_mkYearMonthDay_exhaustive_invalid :: TestTree
 test_YearMonthDay_mkYearMonthDay_exhaustive_invalid =
-  testCase "invalid" $
-    forM_ invalidYearMonthDays $ \(year, month, day) ->
-      case mkYearMonthDay year month day of
-        Nothing -> pure ()
-        Just yearMonthDay -> assertFailure $ "made invalid " <> show yearMonthDay
+  testMkYearMonthDayInvalid invalidYearMonthDays
 
 validYearMonthDays :: [(Year, Month, Day)]
 validYearMonthDays =
@@ -480,6 +463,106 @@ allYearMonthDays = liftA3 (,,) years months days
 
 test_YearMonthDay_bounds :: TestTree
 test_YearMonthDay_bounds = testBounds (ymd 0000 01 01, ymd 9999 12 31)
+
+units_YearMonthDay_valid :: [(Year, Month, Day)]
+units_YearMonthDay_valid =
+  [ -- bounds
+    (y 0000, m 01, d 01),
+    (y 9999, m 12, d 31),
+    -- vary year
+    (y 0000, m 04, d 12),
+    (y 5317, m 04, d 12),
+    (y 9999, m 04, d 12),
+    -- vary month
+    (y 4771, m 01, d 12),
+    (y 4771, m 07, d 12),
+    (y 4771, m 12, d 12),
+    -- vary day
+    (y 3909, m 08, d 01),
+    (y 3909, m 08, d 17),
+    (y 3909, m 08, d 31),
+    -- max day
+    (y 5317, m 01, d 31),
+    (y 5317, m 02, d 28),
+    (y 5317, m 03, d 31),
+    (y 5317, m 04, d 30),
+    (y 5317, m 05, d 31),
+    (y 5317, m 06, d 30),
+    (y 5317, m 07, d 31),
+    (y 5317, m 08, d 31),
+    (y 5317, m 09, d 30),
+    (y 5317, m 10, d 31),
+    (y 5317, m 11, d 30),
+    (y 5317, m 12, d 31),
+    -- non leap years (not multiples of 4)
+    (y 0001, m 02, d 28),
+    (y 4922, m 02, d 28),
+    (y 9999, m 02, d 28),
+    -- leap years (multiples of 4 but not of 100)
+    (y 0004, m 02, d 28),
+    (y 0004, m 02, d 29),
+    (y 6784, m 02, d 28),
+    (y 6784, m 02, d 29),
+    (y 9996, m 02, d 28),
+    (y 9996, m 02, d 29),
+    -- non leap years (multiples of 100 but not of 400)
+    (y 0100, m 02, d 28),
+    (y 6700, m 02, d 28),
+    (y 9900, m 02, d 28),
+    -- leap years (multiples of 400)
+    (y 0000, m 02, d 28),
+    (y 0000, m 02, d 29),
+    (y 6800, m 02, d 28),
+    (y 6800, m 02, d 29),
+    (y 9600, m 02, d 28),
+    (y 9600, m 02, d 29)
+  ]
+
+units_YearMonthDay_invalid :: [(Year, Month, Day)]
+units_YearMonthDay_invalid =
+  [ -- beyond max day
+    (y 5317, m 02, d 29),
+    (y 5317, m 02, d 30),
+    (y 5317, m 02, d 31),
+    (y 5317, m 04, d 31),
+    (y 5317, m 06, d 31),
+    (y 5317, m 09, d 31),
+    (y 5317, m 11, d 31),
+    -- non leap years (not multiples of 4)
+    (y 0001, m 02, d 29),
+    (y 0001, m 02, d 30),
+    (y 0001, m 02, d 31),
+    (y 4922, m 02, d 29),
+    (y 4922, m 02, d 30),
+    (y 4922, m 02, d 31),
+    (y 9999, m 02, d 29),
+    (y 9999, m 02, d 30),
+    (y 9999, m 02, d 31),
+    -- leap years (multiples of 4 but not of 100)
+    (y 0004, m 02, d 30),
+    (y 0004, m 02, d 31),
+    (y 6784, m 02, d 30),
+    (y 6784, m 02, d 31),
+    (y 9996, m 02, d 30),
+    (y 9996, m 02, d 31),
+    -- non leap years (multiples of 100 but not of 400)
+    (y 0100, m 02, d 29),
+    (y 0100, m 02, d 30),
+    (y 0100, m 02, d 31),
+    (y 6700, m 02, d 29),
+    (y 6700, m 02, d 30),
+    (y 6700, m 02, d 31),
+    (y 9900, m 02, d 29),
+    (y 9900, m 02, d 30),
+    (y 9900, m 02, d 31),
+    -- leap years (multiples of 400)
+    (y 0000, m 02, d 30),
+    (y 0000, m 02, d 31),
+    (y 6800, m 02, d 30),
+    (y 6800, m 02, d 31),
+    (y 9600, m 02, d 30),
+    (y 9600, m 02, d 31)
+  ]
 
 --
 -- YearMonth
@@ -680,6 +763,36 @@ testBounds (expectedMinBound, expectedMaxBound) =
   testCase "bounds" $ do
     minBound @?= expectedMinBound
     maxBound @?= expectedMaxBound
+
+testMkYearMonthDayValid :: [(Year, Month, Day)] -> TestTree
+testMkYearMonthDayValid cases =
+  testCase "valid" $
+    forM_ cases $ \(year, month, day) -> do
+      yearMonthDay <-
+        case mkYearMonthDay year month day of
+          Nothing ->
+            assertFailure $
+              "could not create YearMonthDay from "
+                <> show year
+                <> ", "
+                <> show month
+                <> ", "
+                <> show day
+          Just x -> pure x
+      getYear yearMonthDay @?= year
+      getMonth yearMonthDay @?= month
+      getDay yearMonthDay @?= day
+
+testMkYearMonthDayInvalid :: [(Year, Month, Day)] -> TestTree
+testMkYearMonthDayInvalid cases =
+  testCase "invalid" $
+    forM_ cases $ \(year, month, day) ->
+      case mkYearMonthDay year month day of
+        Nothing -> pure ()
+        Just yearMonthDay ->
+          assertFailure $
+            "made invalid "
+              <> show yearMonthDay
 
 --------------------------------
 -- Year, Month, Day construction
