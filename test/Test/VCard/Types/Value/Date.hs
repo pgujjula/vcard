@@ -15,6 +15,7 @@ import Control.Applicative (liftA3)
 import Control.Monad (forM_, replicateM)
 import Data.Finite (finite, finites, getFinite)
 import Data.Maybe (isJust, isNothing)
+import Data.Proxy (Proxy (..))
 import Data.Set ((\\))
 import Data.Set qualified as Set
 import Data.Text (Text)
@@ -29,8 +30,8 @@ import Data.Time.Calendar.OrdinalDate qualified as Time
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 import TextShow (showt)
-import VCard.Parse (parse)
-import VCard.Serialize (serialize)
+import VCard.Parse (HasParser, parse)
+import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Date
   ( Day (..),
     Month (..),
@@ -78,22 +79,13 @@ test_Year_parse =
     ]
 
 test_Year_parse_valid :: TestTree
-test_Year_parse_valid =
-  testCase "valid" $
-    forM_ validYears $ \(text, value) ->
-      parse @Year text @?= Just value
+test_Year_parse_valid = testParseValid validYears
 
 test_Year_parse_invalid :: TestTree
-test_Year_parse_invalid =
-  testCase "invalid" $
-    forM_ invalidYears $ \text ->
-      parse @Year text @?= Nothing
+test_Year_parse_invalid = testParseInvalid (Proxy @Year) invalidYears
 
 test_Year_serialize :: TestTree
-test_Year_serialize =
-  testCase "serialize" $
-    forM_ validYears $ \(text, value) ->
-      serialize value @?= text
+test_Year_serialize = testSerialize validYears
 
 validYears :: [(Text, Year)]
 validYears = zip yearTexts years
@@ -147,22 +139,13 @@ test_Month_parse =
     ]
 
 test_Month_parse_valid :: TestTree
-test_Month_parse_valid =
-  testCase "valid" $
-    forM_ validMonths $ \(text, value) ->
-      parse @Month text @?= Just value
+test_Month_parse_valid = testParseValid validMonths
 
 test_Month_parse_invalid :: TestTree
-test_Month_parse_invalid =
-  testCase "invalid" $
-    forM_ invalidMonths $ \text ->
-      parse @Month text @?= Nothing
+test_Month_parse_invalid = testParseInvalid (Proxy @Month) invalidMonths
 
 test_Month_serialize :: TestTree
-test_Month_serialize =
-  testCase "serialize" $
-    forM_ validMonths $ \(text, value) ->
-      serialize value @?= text
+test_Month_serialize = testSerialize validMonths
 
 validMonths :: [(Text, Month)]
 validMonths =
@@ -253,22 +236,13 @@ test_Day_parse =
     ]
 
 test_Day_parse_valid :: TestTree
-test_Day_parse_valid =
-  testCase "valid" $
-    forM_ validDays $ \(text, value) ->
-      parse @Day text @?= Just value
+test_Day_parse_valid = testParseValid validDays
 
 test_Day_parse_invalid :: TestTree
-test_Day_parse_invalid =
-  testCase "invalid" $
-    forM_ invalidDays $ \text ->
-      parse @Day text @?= Nothing
+test_Day_parse_invalid = testParseInvalid (Proxy @Day) invalidDays
 
 test_Day_serialize :: TestTree
-test_Day_serialize =
-  testCase "serialize" $
-    forM_ validDays $ \(text, value) ->
-      serialize value @?= text
+test_Day_serialize = testSerialize validDays
 
 validDays :: [(Text, Day)]
 validDays = singleDigits ++ doubleDigits
@@ -507,6 +481,25 @@ test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
 --
 -- Testing utility functions
 --
+testParseValid :: (Show a, Eq a, HasParser a) => [(Text, a)] -> TestTree
+testParseValid cases =
+  testCase "valid" $
+    forM_ cases $ \(text, value) ->
+      parse text @?= Just value
+
+testParseInvalid ::
+  forall a. (Show a, Eq a, HasParser a) => Proxy a -> [Text] -> TestTree
+testParseInvalid _ cases =
+  testCase "invalid" $
+    forM_ cases $ \text ->
+      parse text @?= (Nothing :: Maybe a)
+
+testSerialize :: (HasSerializer a) => [(Text, a)] -> TestTree
+testSerialize cases =
+  testCase "serialize" $
+    forM_ cases $ \(text, value) ->
+      serialize value @?= text
+
 testBounds :: forall a. (Show a, Eq a, Bounded a) => (a, a) -> TestTree
 testBounds (expectedMinBound, expectedMaxBound) =
   testCase "bounds" $ do
