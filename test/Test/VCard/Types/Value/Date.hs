@@ -1,9 +1,12 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Test.VCard.Types.Value.Date (tests) where
 
@@ -13,9 +16,10 @@ import Control.Applicative (liftA2, liftA3)
 import Control.Applicative (liftA3)
 #endif
 import Control.Monad (forM_, replicateM)
+import Data.Bifunctor (second)
 import Data.Finite (finite, finites, getFinite)
 import Data.List.Ordered (minus)
-import Data.Maybe (isJust, isNothing)
+import Data.Maybe (isJust, isNothing, maybeToList)
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Data.Text qualified as Text
@@ -29,7 +33,8 @@ import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Date
-  ( Day (..),
+  ( Date (..),
+    Day (..),
     Month (..),
     MonthDay (..),
     Year (..),
@@ -41,6 +46,8 @@ import VCard.Types.Value.Date
     mkMonthDay,
     mkYearMonthDay,
   )
+import Vary ((:|))
+import Vary qualified
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
 
@@ -53,7 +60,8 @@ tests =
       test_Day,
       test_YearMonthDay,
       test_YearMonth,
-      test_MonthDay
+      test_MonthDay,
+      test_Date
     ]
 
 --
@@ -96,6 +104,7 @@ test_Year_serialize =
 test_Year_bounds :: TestTree
 test_Year_bounds = testBounds (y 0000, y 9999)
 
+-- See also: units_Date_valid_Year
 units_Year_valid :: [(Text, Year)]
 units_Year_valid =
   [ ("0000", Year 0000),
@@ -107,6 +116,7 @@ units_Year_valid =
 units_Year_invalidSemantics :: [Text]
 units_Year_invalidSemantics = []
 
+-- See also: units_Date_invalidSyntax_Year
 units_Year_invalidSyntax :: [Text]
 units_Year_invalidSyntax =
   concat
@@ -167,14 +177,17 @@ test_Month_serialize =
 test_Month_bounds :: TestTree
 test_Month_bounds = testBounds (m 01, m 12)
 
+-- See also: units_Date_valid_Month
 units_Month_valid :: [(Text, Month)]
 units_Month_valid =
   [("01", m 01), ("05", m 05), ("10", m 10), ("12", m 12)]
 
+-- See also: units_Date_invalidSemantics_Month
 units_Month_invalidSemantics :: [Text]
 units_Month_invalidSemantics =
   ["00", "13", "14", "15", "20", "99"]
 
+-- See also: units_Date_invalidSyntax_Month
 units_Month_invalidSyntax :: [Text]
 units_Month_invalidSyntax =
   concat
@@ -237,14 +250,17 @@ test_Day_serialize =
 test_Day_bounds :: TestTree
 test_Day_bounds = testBounds (d 01, d 31)
 
+-- See also: units_Date_valid_Day
 units_Day_valid :: [(Text, Day)]
 units_Day_valid =
   [("01", d 1), ("15", d 15), ("30", d 30), ("31", d 31)]
 
+-- See also: units_Date_invalidSemantics_Day
 units_Day_invalidSemantics :: [Text]
 units_Day_invalidSemantics =
   ["00", "32", "33", "34", "50", "99"]
 
+-- See also: units_Date_invalidSyntax_Day
 units_Day_invalidSyntax :: [Text]
 units_Day_invalidSyntax =
   concat
@@ -332,6 +348,7 @@ test_YearMonthDay_mkYearMonthDay_exhaustive =
 test_YearMonthDay_bounds :: TestTree
 test_YearMonthDay_bounds = testBounds (ymd 0000 01 01, ymd 9999 12 31)
 
+-- See also: units_Date_valid_YearMonthDay
 units_YearMonthDay_valid :: [(Year, Month, Day)]
 units_YearMonthDay_valid =
   [ -- bounds
@@ -386,6 +403,7 @@ units_YearMonthDay_valid =
     (y 9600, m 02, d 29)
   ]
 
+-- See also: units_Date_invalidSemantics_YearMonthDay
 units_YearMonthDay_invalid :: [(Year, Month, Day)]
 units_YearMonthDay_invalid =
   [ -- beyond max day
@@ -503,6 +521,7 @@ test_MonthDay_mkMonthDay_exhaustive =
 test_MonthDay_bounds :: TestTree
 test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
 
+-- See also: units_Date_valid_MonthDay
 units_MonthDay_valid :: [(Month, Day)]
 units_MonthDay_valid =
   [ -- bounds
@@ -532,6 +551,7 @@ units_MonthDay_valid =
     (m 12, d 31)
   ]
 
+-- See also: units_Date_invalidSemantics_MonthDay
 units_MonthDay_invalid :: [(Month, Day)]
 units_MonthDay_invalid =
   [ -- beyond max day
@@ -541,6 +561,416 @@ units_MonthDay_invalid =
     (m 06, d 31),
     (m 09, d 31),
     (m 11, d 31)
+  ]
+
+--
+-- Date
+--
+test_Date :: TestTree
+test_Date =
+  testGroup
+    "Date"
+    [ test_Date_parse,
+      test_Date_serialize
+    ]
+
+test_Date_parse :: TestTree
+test_Date_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_Date_valid,
+          testParseInvalidSemantics (Proxy @Date) units_Date_invalidSemantics,
+          testParseInvalidSyntax (Proxy @Date) units_Date_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_Date_valid,
+          testParseInvalidSemantics (Proxy @Date) exhaustive_Date_invalid
+        ]
+    ]
+
+test_Date_serialize :: TestTree
+test_Date_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_Date_valid,
+      testSerialize "exhaustive" exhaustive_Date_valid
+    ]
+
+units_Date_valid :: [(Text, Date)]
+units_Date_valid =
+  concat
+    [ units_Date_valid_Year,
+      units_Date_valid_Month,
+      units_Date_valid_Day,
+      units_Date_valid_YearMonthDay,
+      units_Date_valid_YearMonth,
+      units_Date_valid_MonthDay
+    ]
+
+-- See also: units_Year_valid
+units_Date_valid_Year :: [(Text, Date)]
+units_Date_valid_Year =
+  map
+    (second date)
+    [("0000", y 0000), ("6812", y 6812), ("9999", y 9999)]
+
+-- See also: units_Month_valid
+units_Date_valid_Month :: [(Text, Date)]
+units_Date_valid_Month =
+  map
+    (second date)
+    [("--01", m 01), ("--05", m 05), ("--10", m 10), ("--12", m 12)]
+
+-- See also: units_Day_valid
+units_Date_valid_Day :: [(Text, Date)]
+units_Date_valid_Day =
+  map
+    (second date)
+    [("---01", d 01), ("---15", d 15), ("---30", d 30), ("---31", d 31)]
+
+-- See also: units_YearMonthDay_valid
+units_Date_valid_YearMonthDay :: [(Text, Date)]
+units_Date_valid_YearMonthDay =
+  map
+    (second date)
+    [ -- bounds
+      ("00000101", ymd 0000 01 01),
+      ("99991231", ymd 9999 12 31),
+      -- vary year
+      ("00000412", ymd 0000 04 12),
+      ("53170412", ymd 5317 04 12),
+      ("99990412", ymd 9999 04 12),
+      -- vary month
+      ("47710112", ymd 4771 01 12),
+      ("47710712", ymd 4771 07 12),
+      ("47711212", ymd 4771 12 12),
+      -- vary day
+      ("39090801", ymd 3909 08 01),
+      ("39090817", ymd 3909 08 17),
+      ("39090831", ymd 3909 08 31),
+      -- max day
+      ("53170131", ymd 5317 01 31),
+      ("53170228", ymd 5317 02 28),
+      ("53170331", ymd 5317 03 31),
+      ("53170430", ymd 5317 04 30),
+      ("53170531", ymd 5317 05 31),
+      ("53170630", ymd 5317 06 30),
+      ("53170731", ymd 5317 07 31),
+      ("53170831", ymd 5317 08 31),
+      ("53170930", ymd 5317 09 30),
+      ("53171031", ymd 5317 10 31),
+      ("53171130", ymd 5317 11 30),
+      ("53171231", ymd 5317 12 31),
+      -- non leap years (not multiples of 4)
+      ("00010228", ymd 0001 02 28),
+      ("49220228", ymd 4922 02 28),
+      ("99990228", ymd 9999 02 28),
+      -- leap years (multiples of 4 but not of 100)
+      ("00040228", ymd 0004 02 28),
+      ("00040229", ymd 0004 02 29),
+      ("67840228", ymd 6784 02 28),
+      ("67840229", ymd 6784 02 29),
+      ("99960228", ymd 9996 02 28),
+      ("99960229", ymd 9996 02 29),
+      -- non leap years (multiples of 100 but not of 400)
+      ("01000228", ymd 0100 02 28),
+      ("67000228", ymd 6700 02 28),
+      ("99000228", ymd 9900 02 28),
+      -- leap years (multiples of 400)
+      ("00000228", ymd 0000 02 28),
+      ("00000229", ymd 0000 02 29),
+      ("68000228", ymd 6800 02 28),
+      ("68000229", ymd 6800 02 29),
+      ("96000228", ymd 9600 02 28),
+      ("96000229", ymd 9600 02 29)
+    ]
+
+units_Date_valid_YearMonth :: [(Text, Date)]
+units_Date_valid_YearMonth =
+  map
+    (second date)
+    [ -- bounds
+      ("0000-01", ym 0000 01),
+      ("9999-12", ym 9999 12),
+      -- vary year
+      ("0000-07", ym 0000 07),
+      ("4810-07", ym 4810 07),
+      ("9999-07", ym 9999 07),
+      -- vary month
+      ("4810-01", ym 4810 01),
+      ("4810-07", ym 4810 07),
+      ("4810-12", ym 4810 12)
+    ]
+
+-- See also: units_MonthDay_valid
+units_Date_valid_MonthDay :: [(Text, Date)]
+units_Date_valid_MonthDay =
+  map
+    (second date)
+    [ -- bounds
+      ("--0101", md 01 01),
+      ("--1231", md 12 31),
+      -- vary month
+      ("--0112", md 01 12),
+      ("--0712", md 07 12),
+      ("--1212", md 12 12),
+      -- vary day
+      ("--0701", md 07 01),
+      ("--0712", md 07 12),
+      ("--0731", md 07 31),
+      -- max day
+      ("--0131", md 01 31),
+      ("--0228", md 02 28),
+      ("--0229", md 02 29), -- February includes leap day
+      ("--0331", md 03 31),
+      ("--0430", md 04 30),
+      ("--0531", md 05 31),
+      ("--0630", md 06 30),
+      ("--0731", md 07 31),
+      ("--0831", md 08 31),
+      ("--0930", md 09 30),
+      ("--1031", md 10 31),
+      ("--1130", md 11 30),
+      ("--1231", md 12 31)
+    ]
+
+units_Date_invalidSemantics :: [Text]
+units_Date_invalidSemantics =
+  concat
+    [ units_Date_invalidSemantics_Year,
+      units_Date_invalidSemantics_Month,
+      units_Date_invalidSemantics_Day,
+      units_Date_invalidSemantics_YearMonthDay,
+      units_Date_invalidSemantics_YearMonth,
+      units_Date_invalidSemantics_MonthDay
+    ]
+
+-- all syntactically valid years (yyyy) are also semantically valid
+units_Date_invalidSemantics_Year :: [Text]
+units_Date_invalidSemantics_Year = []
+
+-- See also: units_Month_invalidSemantics
+units_Date_invalidSemantics_Month :: [Text]
+units_Date_invalidSemantics_Month =
+  ["--00", "--13", "--14", "--15", "--20", "--99"]
+
+-- See also: units_Day_invalidSemantics
+units_Date_invalidSemantics_Day :: [Text]
+units_Date_invalidSemantics_Day =
+  ["---00", "---32", "---33", "---34", "---50", "---99"]
+
+-- See also: units_YearMonthDay_invalid
+units_Date_invalidSemantics_YearMonthDay :: [Text]
+units_Date_invalidSemantics_YearMonthDay =
+  [ -- beyond max day
+    "53170229",
+    "53170230",
+    "53170231",
+    "53170431",
+    "53170631",
+    "53170931",
+    "53171131",
+    -- non leap years (not multiples of 4)
+    "00010229",
+    "00010230",
+    "00010231",
+    "49220229",
+    "49220230",
+    "49220231",
+    "99990229",
+    "99990230",
+    "99990231",
+    -- leap years (multiples of 4 but not of 100)
+    "00040230",
+    "00040231",
+    "67840230",
+    "67840231",
+    "99960230",
+    "99960231",
+    -- non leap years (multiples of 100 but not of 400)
+    "01000229",
+    "01000230",
+    "01000231",
+    "67000229",
+    "67000230",
+    "67000231",
+    "99000229",
+    "99000230",
+    "99000231",
+    -- leap years (multiples of 400)
+    "00000230",
+    "00000231",
+    "68000230",
+    "68000231",
+    "96000230",
+    "96000231",
+    -- invalid month numbers
+    "53171312",
+    "53171412",
+    "53171512",
+    "53172012",
+    "53179912",
+    -- invalid day numbers
+    "53170732",
+    "53170733",
+    "53170734",
+    "53170750",
+    "53170799"
+  ]
+
+units_Date_invalidSemantics_YearMonth :: [Text]
+units_Date_invalidSemantics_YearMonth =
+  [ -- invalid month numbers
+    "5317-00",
+    "5317-13",
+    "5317-14",
+    "5317-15",
+    "5317-20",
+    "5317-99"
+  ]
+
+-- See also: units_MonthDay_invalid
+units_Date_invalidSemantics_MonthDay :: [Text]
+units_Date_invalidSemantics_MonthDay =
+  [ -- beyond max day
+    "--0230",
+    "--0231",
+    "--0431",
+    "--0631",
+    "--0931",
+    "--1131",
+    -- invalid month numbers
+    "--1312",
+    "--1412",
+    "--1512",
+    "--2012",
+    "--9912",
+    -- invalid day numbers
+    "--0532",
+    "--0533",
+    "--0534",
+    "--0550",
+    "--0599"
+  ]
+
+units_Date_invalidSyntax :: [Text]
+units_Date_invalidSyntax =
+  concat
+    [ units_Date_invalidSyntax_Year,
+      units_Date_invalidSyntax_Month,
+      units_Date_invalidSyntax_Day,
+      units_Date_invalidSyntax_YearMonthDay,
+      units_Date_invalidSyntax_YearMonth,
+      units_Date_invalidSyntax_MonthDay
+    ]
+
+-- See also: units_Year_invalidSyntax
+units_Date_invalidSyntax_Year :: [Text]
+units_Date_invalidSyntax_Year =
+  concat
+    [ -- incorrect number of digits
+      ["1", "01", "001", "00001"],
+      ["25", "025", "00025"],
+      -- negative numbers
+      ["-1", "-01", "-001", "-0001", "-00001"],
+      ["-25", "-025", "-0025", "-00025"],
+      -- too large numbers
+      ["10000", "010000"],
+      ["92893", "092893"],
+      -- invalid number formats
+      ["2e3", "1000.0"],
+      -- invalid characters
+      ["15a1", "1b51"],
+      -- leading or trailing whitespace
+      [" 3275", "\n3275", "\r\n3275", "3275 ", "3275\n", "3275\r\n"]
+    ]
+
+-- See also: units_Month_invalidSyntax
+units_Date_invalidSyntax_Month :: [Text]
+units_Date_invalidSyntax_Month =
+  concat
+    [ -- incorrect number of digits
+      ["--1", "--001"],
+      ["--7", "--007"],
+      ["--010"],
+      -- too small/large numbers
+      ["--0", "--000", "--013", "--020"],
+      -- invalid number formats
+      ["--1e1", "--10.0"],
+      -- invalid characters
+      ["--a", "--1a", "--a1"],
+      -- leading or trailing whitespace
+      [" --07", "\n--07", "\r\n--07", "--07 ", "--07\n", "--07\r\n"]
+    ]
+
+-- See also: units_Day_invalidSyntax
+units_Date_invalidSyntax_Day :: [Text]
+units_Date_invalidSyntax_Day =
+  concat
+    [ -- incorrect number of digits
+      ["---1", "---001", "---0001"],
+      ["---7", "---007", "---0007"],
+      ["---030", "---0030"],
+      ["---031", "---0031"],
+      -- too small/large numbers
+      ["---0", "---000", "---0000"],
+      ["---032", "---0032"],
+      ["---099", "---0099"],
+      -- invalid number formats
+      ["---1e1", "---10.0"],
+      -- invalid characters
+      ["---a", "---1a", "---a1"],
+      -- leading or trailing whitespace
+      [" ---07", "\n---07", "\r\n---07", "---07 ", "---07\n", "---07\r\n"]
+    ]
+
+units_Date_invalidSyntax_YearMonthDay :: [Text]
+units_Date_invalidSyntax_YearMonthDay =
+  [ -- extra dashes
+    "5317-0412",
+    "531704-12",
+    "5317-04-12",
+    -- incorrect number of digits
+    "053170412",
+    -- leading or trailing whitespace
+    " 53170412",
+    "\n53170412",
+    "\r\n53170412",
+    "53170412 ",
+    "53170412\n",
+    "53170412\r\n"
+  ]
+
+units_Date_invalidSyntax_YearMonth :: [Text]
+units_Date_invalidSyntax_YearMonth =
+  [ -- missing dash
+    "481007",
+    -- incorrect number of digits
+    "04810-07",
+    "4810-007",
+    -- leading or trailing whitespace
+    " 4810-007",
+    "\n4810-007",
+    "\r\n4810-007",
+    "4810-007 ",
+    "4810-007\n",
+    "4810-007\r\n"
+  ]
+
+units_Date_invalidSyntax_MonthDay :: [Text]
+units_Date_invalidSyntax_MonthDay =
+  [ -- extra dash
+    "--07-12",
+    -- leading or trailing whitespace
+    " --0712",
+    "\n--0712",
+    "\r\n--0712",
+    "--0712 ",
+    "--0712\n",
+    "--0712\r\n"
   ]
 
 -- =========
@@ -599,6 +1029,126 @@ exhaustive_Month_invalid = universe_Month `minus` map fst exhaustive_Month_valid
 
 exhaustive_Day_invalid :: [Text]
 exhaustive_Day_invalid = universe_Day `minus` map fst exhaustive_Day_valid
+
+-- Potential dates
+universe_Date_Year :: [Text]
+universe_Date_Year = universe_Year
+
+universe_Date_Month :: [Text]
+universe_Date_Month = map ("--" <>) universe_Month
+
+universe_Date_Day :: [Text]
+universe_Date_Day = map ("---" <>) universe_Day
+
+universe_Date_YearMonthDay :: [Text]
+universe_Date_YearMonthDay = do
+  year <- universe_Year
+  month <- universe_Month
+  day <- universe_Day
+
+  pure (year <> month <> day)
+
+universe_Date_YearMonth :: [Text]
+universe_Date_YearMonth = do
+  year <- universe_Year
+  month <- universe_Month
+
+  pure (year <> "-" <> month)
+
+universe_Date_MonthDay :: [Text]
+universe_Date_MonthDay = do
+  month <- universe_Month
+  day <- universe_Day
+
+  pure ("--" <> month <> day)
+
+-- Valid dates
+exhaustive_Date_valid_Year :: [(Text, Date)]
+exhaustive_Date_valid_Year = map (second date) exhaustive_Year_valid
+
+exhaustive_Date_valid_Month :: [(Text, Date)]
+exhaustive_Date_valid_Month =
+  let mkDateMonth :: Text -> Month -> (Text, Date)
+      mkDateMonth text month = ("--" <> text, date month)
+   in map (uncurry mkDateMonth) exhaustive_Month_valid
+
+exhaustive_Date_valid_Day :: [(Text, Date)]
+exhaustive_Date_valid_Day =
+  let mkDateMonth :: Text -> Day -> (Text, Date)
+      mkDateMonth text day = ("---" <> text, date day)
+   in map (uncurry mkDateMonth) exhaustive_Day_valid
+
+exhaustive_Date_valid_YearMonthDay :: [(Text, Date)]
+exhaustive_Date_valid_YearMonthDay = do
+  (yearText, year) <- exhaustive_Year_valid
+  (monthText, month) <- exhaustive_Month_valid
+  (dayText, day) <- exhaustive_Day_valid
+  yearMonthDay <- maybeToList (timeMkYearMonthDay year month day)
+  let text = yearText <> monthText <> dayText
+  pure (text, date yearMonthDay)
+
+exhaustive_Date_valid_YearMonth :: [(Text, Date)]
+exhaustive_Date_valid_YearMonth = do
+  (yearText, year) <- exhaustive_Year_valid
+  (monthText, month) <- exhaustive_Month_valid
+  let yearMonth = YearMonth year month
+  let text = yearText <> "-" <> monthText
+  pure (text, date yearMonth)
+
+exhaustive_Date_valid_MonthDay :: [(Text, Date)]
+exhaustive_Date_valid_MonthDay = do
+  (monthText, month) <- exhaustive_Month_valid
+  (dayText, day) <- exhaustive_Day_valid
+  monthDay <- maybeToList (timeMkMonthDay month day)
+  let text = "--" <> monthText <> dayText
+  pure (text, date monthDay)
+
+exhaustive_Date_valid :: [(Text, Date)]
+exhaustive_Date_valid =
+  concat
+    [ exhaustive_Date_valid_Year,
+      exhaustive_Date_valid_Month,
+      exhaustive_Date_valid_Day,
+      exhaustive_Date_valid_YearMonthDay,
+      exhaustive_Date_valid_YearMonth,
+      exhaustive_Date_valid_MonthDay
+    ]
+
+-- Invalid dates
+exhaustive_Date_invalid_Year :: [Text]
+exhaustive_Date_invalid_Year =
+  universe_Date_Year `minus` map fst exhaustive_Date_valid_Year
+
+exhaustive_Date_invalid_Month :: [Text]
+exhaustive_Date_invalid_Month =
+  universe_Date_Month `minus` map fst exhaustive_Date_valid_Month
+
+exhaustive_Date_invalid_Day :: [Text]
+exhaustive_Date_invalid_Day =
+  universe_Date_Day `minus` map fst exhaustive_Date_valid_Day
+
+exhaustive_Date_invalid_YearMonthDay :: [Text]
+exhaustive_Date_invalid_YearMonthDay =
+  universe_Date_YearMonthDay `minus` map fst exhaustive_Date_valid_YearMonthDay
+
+exhaustive_Date_invalid_YearMonth :: [Text]
+exhaustive_Date_invalid_YearMonth =
+  universe_Date_YearMonth `minus` map fst exhaustive_Date_valid_YearMonth
+
+exhaustive_Date_invalid_MonthDay :: [Text]
+exhaustive_Date_invalid_MonthDay =
+  universe_Date_MonthDay `minus` map fst exhaustive_Date_valid_MonthDay
+
+exhaustive_Date_invalid :: [Text]
+exhaustive_Date_invalid =
+  concat
+    [ exhaustive_Date_invalid_Year,
+      exhaustive_Date_invalid_Month,
+      exhaustive_Date_invalid_Day,
+      exhaustive_Date_invalid_YearMonthDay,
+      exhaustive_Date_invalid_YearMonth,
+      exhaustive_Date_invalid_MonthDay
+    ]
 
 --------------------
 -- Testing functions
@@ -698,3 +1248,9 @@ ym year month = YearMonth (y year) (m month)
 
 md :: Integer -> Integer -> MonthDay
 md month day = MonthDay (m month) (d day)
+
+date ::
+  (a :| '[Year, Month, Day, YearMonthDay, YearMonth, MonthDay]) =>
+  a ->
+  Date
+date = Date . Vary.from
