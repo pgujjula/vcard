@@ -1286,10 +1286,10 @@ exhaustive_Date_invalid_MonthDay =
 exhaustive_Date_invalid :: [Text]
 exhaustive_Date_invalid =
   concat
-    [ exhaustive_Date_invalid_Year,
+    [ exhaustive_Date_invalid_YearMonthDay,
+      exhaustive_Date_invalid_Year,
       exhaustive_Date_invalid_Month,
       exhaustive_Date_invalid_Day,
-      exhaustive_Date_invalid_YearMonthDay,
       exhaustive_Date_invalid_YearMonth,
       exhaustive_Date_invalid_MonthDay
     ]
