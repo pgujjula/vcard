@@ -72,61 +72,26 @@ test_Year_parse :: TestTree
 test_Year_parse =
   testGroup
     "parse"
-    [ test_Year_parse_unit,
-      test_Year_parse_exhaustive
+    [ testGroup
+        "unit"
+        [ testParseValid units_Year_valid,
+          testParseInvalidSemantics (Proxy @Year) units_Year_invalidSemantics,
+          testParseInvalidSyntax (Proxy @Year) units_Year_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_Year_valid,
+          testParseInvalidSemantics (Proxy @Year) exhaustive_Year_invalid
+        ]
     ]
-
-test_Year_parse_unit :: TestTree
-test_Year_parse_unit =
-  testGroup
-    "unit"
-    [ test_Year_parse_unit_valid,
-      test_Year_parse_unit_invalidSemantics,
-      test_Year_parse_unit_invalidSyntax
-    ]
-
-test_Year_parse_exhaustive :: TestTree
-test_Year_parse_exhaustive =
-  testGroup
-    "exhaustive"
-    [ test_Year_parse_exhaustive_valid,
-      test_Year_parse_exhaustive_invalidSemantics
-    ]
-
-test_Year_parse_unit_valid :: TestTree
-test_Year_parse_unit_valid =
-  testParseValid units_Year_valid
-
-test_Year_parse_unit_invalidSemantics :: TestTree
-test_Year_parse_unit_invalidSemantics =
-  testParseInvalidSemantics (Proxy @Year) units_Year_invalidSemantics
-
-test_Year_parse_unit_invalidSyntax :: TestTree
-test_Year_parse_unit_invalidSyntax =
-  testParseInvalidSyntax (Proxy @Year) units_Year_invalidSyntax
-
-test_Year_parse_exhaustive_valid :: TestTree
-test_Year_parse_exhaustive_valid =
-  testParseValid exhaustive_Year_valid
-
-test_Year_parse_exhaustive_invalidSemantics :: TestTree
-test_Year_parse_exhaustive_invalidSemantics =
-  testParseInvalidSemantics (Proxy @Year) exhaustive_Year_invalid
 
 test_Year_serialize :: TestTree
 test_Year_serialize =
   testGroup
     "serialize"
-    [ test_Year_serialize_unit,
-      test_Year_serialize_exhaustive
+    [ testSerialize "unit" units_Year_valid,
+      testSerialize "exhaustive" exhaustive_Year_valid
     ]
-
-test_Year_serialize_unit :: TestTree
-test_Year_serialize_unit = testSerialize "unit" units_Year_valid
-
-test_Year_serialize_exhaustive :: TestTree
-test_Year_serialize_exhaustive =
-  testSerialize "exhaustive" exhaustive_Year_valid
 
 test_Year_bounds :: TestTree
 test_Year_bounds = testBounds (y 0000, y 9999)
@@ -178,59 +143,26 @@ test_Month_parse :: TestTree
 test_Month_parse =
   testGroup
     "parse"
-    [ test_Month_parse_unit,
-      test_Month_parse_exhaustive
+    [ testGroup
+        "unit"
+        [ testParseValid units_Month_valid,
+          testParseInvalidSemantics (Proxy @Month) units_Month_invalidSemantics,
+          testParseInvalidSyntax (Proxy @Month) units_Month_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_Month_valid,
+          testParseInvalidSemantics (Proxy @Month) exhaustive_Month_invalid
+        ]
     ]
-
-test_Month_parse_unit :: TestTree
-test_Month_parse_unit =
-  testGroup
-    "unit"
-    [ test_Month_parse_unit_valid,
-      test_Month_parse_unit_invalidSemantics,
-      test_Month_parse_unit_invalidSyntax
-    ]
-
-test_Month_parse_exhaustive :: TestTree
-test_Month_parse_exhaustive =
-  testGroup
-    "exhaustive"
-    [ test_Month_parse_exhaustive_valid,
-      test_Month_parse_exhaustive_invalid
-    ]
-
-test_Month_parse_unit_valid :: TestTree
-test_Month_parse_unit_valid = testParseValid units_Month_valid
-
-test_Month_parse_unit_invalidSemantics :: TestTree
-test_Month_parse_unit_invalidSemantics =
-  testParseInvalidSemantics (Proxy @Month) units_Month_invalidSemantics
-
-test_Month_parse_unit_invalidSyntax :: TestTree
-test_Month_parse_unit_invalidSyntax =
-  testParseInvalidSyntax (Proxy @Month) units_Month_invalidSyntax
-
-test_Month_parse_exhaustive_valid :: TestTree
-test_Month_parse_exhaustive_valid = testParseValid exhaustive_Month_valid
-
-test_Month_parse_exhaustive_invalid :: TestTree
-test_Month_parse_exhaustive_invalid =
-  testParseInvalidSemantics (Proxy @Month) exhaustive_Month_invalid
 
 test_Month_serialize :: TestTree
 test_Month_serialize =
   testGroup
     "serialize"
-    [ test_Month_serialize_unit,
-      test_Month_serialize_exhaustive
+    [ testSerialize "unit" units_Month_valid,
+      testSerialize "exhaustive" exhaustive_Month_valid
     ]
-
-test_Month_serialize_unit :: TestTree
-test_Month_serialize_unit = testSerialize "unit" units_Month_valid
-
-test_Month_serialize_exhaustive :: TestTree
-test_Month_serialize_exhaustive =
-  testSerialize "exhaustive" exhaustive_Month_valid
 
 test_Month_bounds :: TestTree
 test_Month_bounds = testBounds (m 01, m 12)
@@ -281,58 +213,26 @@ test_Day_parse :: TestTree
 test_Day_parse =
   testGroup
     "parse"
-    [ test_Day_parse_unit,
-      test_Day_parse_exhaustive
+    [ testGroup
+        "unit"
+        [ testParseValid units_Day_valid,
+          testParseInvalidSemantics (Proxy @Day) units_Day_invalidSemantics,
+          testParseInvalidSyntax (Proxy @Day) units_Day_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_Day_valid,
+          testParseInvalidSemantics (Proxy @Day) exhaustive_Day_invalid
+        ]
     ]
-
-test_Day_parse_unit :: TestTree
-test_Day_parse_unit =
-  testGroup
-    "unit"
-    [ test_Day_parse_unit_valid,
-      test_Day_parse_unit_invalidSemantics,
-      test_Day_parse_unit_invalidSyntax
-    ]
-
-test_Day_parse_exhaustive :: TestTree
-test_Day_parse_exhaustive =
-  testGroup
-    "exhaustive"
-    [ test_Day_parse_exhaustive_valid,
-      test_Day_parse_exhaustive_invalid
-    ]
-
-test_Day_parse_unit_valid :: TestTree
-test_Day_parse_unit_valid = testParseValid units_Day_valid
-
-test_Day_parse_unit_invalidSemantics :: TestTree
-test_Day_parse_unit_invalidSemantics =
-  testParseInvalidSemantics (Proxy @Day) units_Day_invalidSemantics
-
-test_Day_parse_unit_invalidSyntax :: TestTree
-test_Day_parse_unit_invalidSyntax =
-  testParseInvalidSemantics (Proxy @Day) units_Day_invalidSyntax
-
-test_Day_parse_exhaustive_valid :: TestTree
-test_Day_parse_exhaustive_valid = testParseValid exhaustive_Day_valid
-
-test_Day_parse_exhaustive_invalid :: TestTree
-test_Day_parse_exhaustive_invalid =
-  testParseInvalidSemantics (Proxy @Day) exhaustive_Day_invalid
 
 test_Day_serialize :: TestTree
 test_Day_serialize =
   testGroup
     "serialize"
-    [ test_Day_serialize_unit,
-      test_Day_serialize_exhaustive
+    [ testSerialize "unit" units_Day_valid,
+      testSerialize "exhaustive" exhaustive_Day_valid
     ]
-
-test_Day_serialize_unit :: TestTree
-test_Day_serialize_unit = testSerialize "unit" units_Day_valid
-
-test_Day_serialize_exhaustive :: TestTree
-test_Day_serialize_exhaustive = testSerialize "exhaustive" exhaustive_Day_valid
 
 test_Day_bounds :: TestTree
 test_Day_bounds = testBounds (d 01, d 31)
