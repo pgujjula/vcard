@@ -24,6 +24,10 @@ module VCard.Types.Value
 
     -- * Section 4.3.1 @DATE@
 
+    -- ** 'Date'
+    Date (..),
+    DateList,
+
     -- ** 'Year'
     Year (..),
     HasYear (..),
@@ -50,7 +54,9 @@ module VCard.Types.Value
 where
 
 import VCard.Types.Value.Date
-  ( Day (..),
+  ( Date (..),
+    DateList,
+    Day (..),
     HasDay (..),
     HasMonth (..),
     HasYear (..),

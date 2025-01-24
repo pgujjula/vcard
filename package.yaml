@@ -67,6 +67,7 @@ library:
   - network-uri ^>= {2.6}
   - text ^>= {1.2, 2.0, 2.1}
   - text-show ^>= {3.10, 3.11}
+  - vary ^>= {0.1}
 
 tests:
   vcard-tests:
@@ -96,3 +97,4 @@ tests:
     - text ^>= {1.2, 2.0, 2.1}
     - text-show ^>= {3.10, 3.11}
     - time ^>= {1.12, 1.14}
+    - vary ^>= {0.1}

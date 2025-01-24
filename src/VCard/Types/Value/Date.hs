@@ -3,6 +3,8 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeApplications #-}
 
 module VCard.Types.Value.Date
   ( Year (..),
@@ -16,16 +18,23 @@ module VCard.Types.Value.Date
     YearMonth (..),
     MonthDay (..),
     mkMonthDay,
+    Date (..),
+    DateList,
   )
 where
 
+import Control.Monad (void)
 import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
+import Data.Function ((&))
 import Data.Text qualified as Text
-import Text.Megaparsec.Char (digitChar)
+import Text.Megaparsec (choice, try)
+import Text.Megaparsec.Char (char, digitChar, string)
 import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
+import VCard.Types.Value.List (List (..))
+import Vary (Vary, exhaustiveCase, from, on)
 
 --
 -- Year
@@ -228,6 +237,123 @@ mkMonthDay month day =
    in if dayInteger <= maxDay
         then Just (MonthDay month day)
         else Nothing
+
+--
+-- Date
+--
+
+newtype Date = Date
+  {unDate :: Vary '[Year, Month, Day, YearMonthDay, YearMonth, MonthDay]}
+  deriving (Eq, Show, Ord)
+
+instance HasParser Date where
+  parser =
+    choice $
+      map
+        (try . fmap Date)
+        -- The order of these parsers matters. For example, we can't have
+        -- yearDateP before yearMonthDayDateP, because if the string is
+        -- something like "19700101", then yearDateP will match the beginning
+        -- "1970" and parsing will fail on the remainder "0101". So we have to
+        -- place yearDateP after yearMonthDayDateP.
+        [ fmap from dayDateP,
+          fmap from monthDayDateP,
+          fmap from yearMonthDayDateP,
+          fmap from monthDateP,
+          fmap from yearMonthDateP,
+          fmap from yearDateP
+        ]
+
+instance HasSerializer Date where
+  -- dateS is refactored into a separated function to turn off the HLint warning
+  serializer :: Serializer Date
+  serializer = dateS
+
+{-# ANN dateS ("HLint: ignore Move brackets to avoid $" :: String) #-}
+dateS :: Serializer Date
+dateS (Date vary) =
+  vary
+    & ( on @Year yearDateS
+          . on @Month monthDateS
+          . on @Day dayDateS
+          . on @YearMonthDay yearMonthDayDateS
+          . on @YearMonth yearMonthDateS
+          . on @MonthDay monthDayDateS
+          $ exhaustiveCase
+      )
+
+type DateList = List Date
+
+--
+-- Parsers of various date formats
+--
+
+-- Parses "yyyy"
+yearDateP :: Parser Year
+yearDateP = parser @Year
+
+-- Parses "--mm"
+monthDateP :: Parser Month
+monthDateP = string "--" *> parser @Month
+
+-- Parses "---dd"
+dayDateP :: Parser Day
+dayDateP = string "---" *> parser @Day
+
+-- Parses "yyyymmdd"
+yearMonthDayDateP :: Parser YearMonthDay
+yearMonthDayDateP = do
+  year <- parser @Year
+  month <- parser @Month
+  day <- parser @Day
+  case mkYearMonthDay year month day of
+    Just yearMonthDay -> pure yearMonthDay
+    Nothing -> fail "Could not parse YearMonthDay"
+
+-- Parses "yyyy-mm"
+yearMonthDateP :: Parser YearMonth
+yearMonthDateP = YearMonth <$> parser @Year <*> (char '-' *> parser @Month)
+
+-- Parses "--mmdd"
+monthDayDateP :: Parser MonthDay
+monthDayDateP = do
+  void (string "--")
+  month <- parser @Month
+  day <- parser @Day
+  case mkMonthDay month day of
+    Just monthDay -> pure monthDay
+    Nothing -> fail "Could not parse MonthDay"
+
+--
+-- Serializers to various date formats
+--
+
+-- Serializes to "yyyy"
+yearDateS :: Serializer Year
+yearDateS = serializer
+
+-- Serializes to "--mm"
+monthDateS :: Serializer Month
+monthDateS month = "--" <> serializer month
+
+-- Serializes to "---dd"
+dayDateS :: Serializer Day
+dayDateS day = "---" <> serializer day
+
+-- Serializes to "yyyymmdd"
+yearMonthDayDateS :: Serializer YearMonthDay
+yearMonthDayDateS (YearMonthDay year month day) =
+  serializer year <> serializer month <> serializer day
+
+-- Serializes to "yyyymm"
+yearMonthDateS :: Serializer YearMonth
+yearMonthDateS (YearMonth year month) =
+  serializer year <> "-" <> serializer month
+
+-- Serializes to "--mmdd"
+monthDayDateS :: Serializer MonthDay
+monthDayDateS (MonthDay month day) =
+  "--" <> serializer month <> serializer day
 
 --
 -- HasYear
