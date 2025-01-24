@@ -18,6 +18,8 @@ import Control.Applicative (liftA3)
 import Control.Monad (forM_, replicateM)
 import Data.Bifunctor (second)
 import Data.Finite (finite, finites, getFinite)
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty qualified as NonEmpty
 import Data.List.Ordered (minus)
 import Data.Maybe (isJust, isNothing, maybeToList)
 import Data.Proxy (Proxy (..))
@@ -34,6 +36,7 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Date
   ( Date (..),
+    DateList,
     Day (..),
     Month (..),
     MonthDay (..),
@@ -46,6 +49,7 @@ import VCard.Types.Value.Date
     mkMonthDay,
     mkYearMonthDay,
   )
+import VCard.Types.Value.List (List (..))
 import Vary ((:|))
 import Vary qualified
 
@@ -61,7 +65,8 @@ tests =
       test_YearMonthDay,
       test_YearMonth,
       test_MonthDay,
-      test_Date
+      test_Date,
+      test_DateList
     ]
 
 --
@@ -972,6 +977,145 @@ units_Date_invalidSyntax_MonthDay =
     "--0712\n",
     "--0712\r\n"
   ]
+
+--
+-- DateList
+--
+test_DateList :: TestTree
+test_DateList =
+  testGroup
+    "DateList"
+    [ test_DateList_parse,
+      test_DateList_serialize
+    ]
+
+test_DateList_parse :: TestTree
+test_DateList_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_DateList_valid,
+          testParseInvalidSemantics
+            (Proxy @DateList)
+            units_DateList_invalidSemantics,
+          testParseInvalidSyntax (Proxy @DateList) units_DateList_invalidSyntax
+        ]
+    ]
+
+test_DateList_serialize :: TestTree
+test_DateList_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_DateList_valid
+    ]
+
+units_DateList_valid :: [(Text, DateList)]
+units_DateList_valid =
+  concat
+    [ -- singletons
+      map
+        (second (List . NonEmpty.singleton))
+        [ ("7316", date (y 7316)),
+          ("--06", date (m 06)),
+          ("---19", date (d 19)),
+          ("43100327", date (ymd 4310 03 27)),
+          ("1482-02", date (ym 1482 02)),
+          ("--1204", date (md 12 04))
+        ],
+      -- pairs
+      map
+        (second List)
+        [ ( "7316,43100327",
+            date (y 7316) :| [date (ymd 4310 03 27)]
+          ),
+          ( "--06,1482-02",
+            date (m 06) :| [date (ym 1482 02)]
+          ),
+          ( "---19,--1204",
+            date (d 19) :| [date (md 12 04)]
+          )
+        ],
+      -- triples
+      map
+        (second List)
+        [ ( "7316,---19,1482-02",
+            date (y 7316) :| [date (d 19), date (ym 1482 02)]
+          ),
+          ( "--06,43100327,--1204",
+            date (m 06) :| [date (ymd 4310 03 27), date (md 12 04)]
+          )
+        ],
+      -- combined
+      [ ( "7316,--06,---19,43100327,1482-02,--1204",
+          List
+            ( date (y 7316)
+                :| [ date (m 06),
+                     date (d 19),
+                     date (ymd 4310 03 27),
+                     date (ym 1482 02),
+                     date (md 12 04)
+                   ]
+            )
+        )
+      ],
+      -- duplicates
+      map
+        (second List)
+        [ ( "7316,7316",
+            date (y 7316) :| [date (y 7316)]
+          ),
+          ( "--06,1482-02,--06",
+            date (m 06) :| [date (ym 1482 02), date (m 06)]
+          ),
+          ( "---19,---19,---19",
+            date (d 19) :| [date (d 19), date (d 19)]
+          )
+        ]
+    ]
+
+units_DateList_invalidSemantics :: [Text]
+units_DateList_invalidSemantics =
+  [ -- invalid dates
+    "19700229",
+    "--0431",
+    "7316,19700229,---19"
+  ]
+
+units_DateList_invalidSyntax :: [Text]
+units_DateList_invalidSyntax =
+  concat
+    [ -- extraneous leading/trailing whitespace
+      [ " ---19,7316",
+        "\n---19,7316",
+        "\r\n---19,7316",
+        "---19,7316 ",
+        "---19,7316\n",
+        "---19,7316\r\n"
+      ],
+      -- extraneous whitespace between entries
+      [ "7316, --06",
+        "7316,\n--06",
+        "7316,\r\n--06",
+        "7316,--06, ---19",
+        "7316,--06,\n---19",
+        "7316,--06,\r\n---19"
+      ],
+      -- empty strings/extraneous leading or trailing commas
+      [ "",
+        ",",
+        ",,",
+        "7316,",
+        ",7316",
+        ",7316,---19",
+        "7316,---19,"
+      ],
+      -- invalid dates
+      [ "316",
+        "316,--06",
+        "--06,316"
+      ]
+    ]
 
 -- =========
 -- UTILITIES
