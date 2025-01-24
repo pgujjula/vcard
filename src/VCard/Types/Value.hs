@@ -50,6 +50,11 @@ module VCard.Types.Value
     -- ** 'MonthDay'
     MonthDay,
     mkMonthDay,
+
+    -- * Section 4.3.2 @TIME@
+
+    -- ** 'Hour'
+    Hour (..),
   )
 where
 
@@ -70,4 +75,7 @@ import VCard.Types.Value.Date
   )
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
+import VCard.Types.Value.Time
+  ( Hour (..),
+  )
 import VCard.Types.Value.URI (URI (..))

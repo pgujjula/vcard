@@ -41,6 +41,7 @@ library
       VCard.Types.Value.Date
       VCard.Types.Value.List
       VCard.Types.Value.Text
+      VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Types.VCard.Internal
       VCard.Util
@@ -74,6 +75,7 @@ test-suite vcard-tests
       VCard.Types.Value.Date
       VCard.Types.Value.List
       VCard.Types.Value.Text
+      VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Types.VCard
       VCard.Types.VCard.Internal
