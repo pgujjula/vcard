@@ -397,11 +397,30 @@ test_YearMonthDay_mkYearMonthDay_unit =
 
 test_YearMonthDay_mkYearMonthDay_unit_valid :: TestTree
 test_YearMonthDay_mkYearMonthDay_unit_valid =
-  testMkYearMonthDayValid units_YearMonthDay_valid
+  testCase "valid" $
+    forM_ units_YearMonthDay_valid $ \(year, month, day) -> do
+      yearMonthDay <-
+        case mkYearMonthDay year month day of
+          Nothing ->
+            assertFailure $
+              "could not create YearMonthDay from "
+                <> show year
+                <> ", "
+                <> show month
+                <> ", "
+                <> show day
+          Just x -> pure x
+      getYear yearMonthDay @?= year
+      getMonth yearMonthDay @?= month
+      getDay yearMonthDay @?= day
 
 test_YearMonthDay_mkYearMonthDay_unit_invalid :: TestTree
 test_YearMonthDay_mkYearMonthDay_unit_invalid =
-  testMkYearMonthDayInvalid units_YearMonthDay_invalid
+  testCase "invalid" $
+    forM_ units_YearMonthDay_invalid $ \(year, month, day) ->
+      assertBool
+        "made invalid YearMonthDay"
+        (isNothing (mkYearMonthDay year month day))
 
 test_YearMonthDay_mkYearMonthDay_exhaustive :: TestTree
 test_YearMonthDay_mkYearMonthDay_exhaustive =
@@ -555,11 +574,25 @@ test_MonthDay_mkMonthDay_unit =
 
 test_MonthDay_mkMonthDay_unit_valid :: TestTree
 test_MonthDay_mkMonthDay_unit_valid =
-  testMkMonthDayValid units_MonthDay_valid
+  testCase "valid" $
+    forM_ units_MonthDay_valid $ \(month, day) -> do
+      monthDay <-
+        case mkMonthDay month day of
+          Nothing ->
+            assertFailure $
+              "could not create MonthDay from "
+                <> show month
+                <> " and "
+                <> show day
+          Just x -> pure x
+      getMonth monthDay @?= month
+      getDay monthDay @?= day
 
 test_MonthDay_mkMonthDay_unit_invalid :: TestTree
 test_MonthDay_mkMonthDay_unit_invalid =
-  testMkMonthDayInvalid units_MonthDay_invalid
+  testCase "invalid" $
+    forM_ units_MonthDay_invalid $ \(month, day) ->
+      assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
 
 test_MonthDay_mkMonthDay_exhaustive :: TestTree
 test_MonthDay_mkMonthDay_exhaustive =
@@ -708,58 +741,6 @@ testBounds (expectedMinBound, expectedMaxBound) =
   testCase "bounds" $ do
     minBound @?= expectedMinBound
     maxBound @?= expectedMaxBound
-
-testMkYearMonthDayValid :: [(Year, Month, Day)] -> TestTree
-testMkYearMonthDayValid cases =
-  testCase "valid" $
-    forM_ cases $ \(year, month, day) -> do
-      yearMonthDay <-
-        case mkYearMonthDay year month day of
-          Nothing ->
-            assertFailure $
-              "could not create YearMonthDay from "
-                <> show year
-                <> ", "
-                <> show month
-                <> ", "
-                <> show day
-          Just x -> pure x
-      getYear yearMonthDay @?= year
-      getMonth yearMonthDay @?= month
-      getDay yearMonthDay @?= day
-
-testMkYearMonthDayInvalid :: [(Year, Month, Day)] -> TestTree
-testMkYearMonthDayInvalid cases =
-  testCase "invalid" $
-    forM_ cases $ \(year, month, day) ->
-      case mkYearMonthDay year month day of
-        Nothing -> pure ()
-        Just yearMonthDay ->
-          assertFailure $
-            "made invalid "
-              <> show yearMonthDay
-
-testMkMonthDayValid :: [(Month, Day)] -> TestTree
-testMkMonthDayValid cases =
-  testCase "valid" $
-    forM_ cases $ \(month, day) -> do
-      monthDay <-
-        case mkMonthDay month day of
-          Nothing ->
-            assertFailure $
-              "could not create MonthDay from "
-                <> show month
-                <> " and "
-                <> show day
-          Just x -> pure x
-      getMonth monthDay @?= month
-      getDay monthDay @?= day
-
-testMkMonthDayInvalid :: [(Month, Day)] -> TestTree
-testMkMonthDayInvalid cases =
-  testCase "invalid" $
-    forM_ cases $ \(month, day) ->
-      assertBool "made invalid MonthDay" (isNothing (mkMonthDay month day))
 
 ------------------------------------
 -- Functions with the `time` library
