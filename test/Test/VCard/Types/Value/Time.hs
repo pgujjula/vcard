@@ -22,6 +22,7 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Time
   ( Hour (..),
+    Minute (..),
   )
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -30,11 +31,12 @@ tests :: TestTree
 tests =
   testGroup
     "Time"
-    [ test_Hour
+    [ test_Hour,
+      test_Minute
     ]
 
 --
--- Year
+-- Hour
 --
 test_Hour :: TestTree
 test_Hour =
@@ -106,33 +108,122 @@ units_Hour_invalidSyntax =
       [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
     ]
 
+--
+-- Minute
+--
+test_Minute :: TestTree
+test_Minute =
+  testGroup
+    "Minute"
+    [ test_Minute_parse,
+      test_Minute_serialize,
+      test_Minute_bounds
+    ]
+
+test_Minute_parse :: TestTree
+test_Minute_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_Minute_valid,
+          testParseInvalidSemantics
+            (Proxy @Minute)
+            units_Minute_invalidSemantics,
+          testParseInvalidSyntax (Proxy @Minute) units_Minute_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_Minute_valid,
+          testParseInvalidSemantics (Proxy @Minute) exhaustive_Minute_invalid
+        ]
+    ]
+
+test_Minute_serialize :: TestTree
+test_Minute_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_Minute_valid,
+      testSerialize "exhaustive" exhaustive_Minute_valid
+    ]
+
+test_Minute_bounds :: TestTree
+test_Minute_bounds = testBounds (m 00, m 59)
+
+units_Minute_valid :: [(Text, Minute)]
+units_Minute_valid =
+  [ ("00", Minute 00),
+    ("08", Minute 08),
+    ("45", Minute 45),
+    ("59", Minute 59)
+  ]
+
+units_Minute_invalidSemantics :: [Text]
+units_Minute_invalidSemantics =
+  ["60", "61", "62", "63", "75", "99"]
+
+units_Minute_invalidSyntax :: [Text]
+units_Minute_invalidSyntax =
+  concat
+    [ -- incorrect number of digits
+      ["1", "001", "0001"],
+      ["7", "007", "0007"],
+      ["020", "0020"],
+      -- negative numbers
+      ["-1", "-01", "-001", "-0001"],
+      ["-21", "-021", "-0021", "-00021"],
+      -- too large numbers
+      ["060", "0060"],
+      ["075", "0075"],
+      -- invalid number formats
+      ["1e1", "20.0"],
+      -- invalid characters
+      ["a", "1a", "a1"],
+      -- leading or trailing whitespace
+      [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
+    ]
+
 -- =========
 -- UTILITIES
 -- =========
 
 -------------------
--- Hour enumeration
+-- Hour, Minute enumeration
 -------------------
 
 hours :: [Hour]
 hours = map Hour finites
 
--- All `Text`s in the syntactic format of an `Hour` (hh) but not necessarily
--- semantically valid.
+minutes :: [Minute]
+minutes = map Minute finites
+
+-- All `Text`s in the syntactic format of an `Hour` (hh) or `Minute` (mm), but
+-- not necessarily semantically valid.
 universe_Hour :: [Text]
 universe_Hour = map Text.pack (replicateM 2 ['0' .. '9'])
 
--- All `Text`s that represent semantically valid `Year`s, `Month`s, or `Day`s,
--- paired with their parsed value.
+universe_Minute :: [Text]
+universe_Minute = map Text.pack (replicateM 2 ['0' .. '9'])
+
+-- All `Text`s that represent semantically valid `Hour`s or `Month`s, paired
+-- with their parsed value.
 exhaustive_Hour_valid :: [(Text, Hour)]
 exhaustive_Hour_valid =
   let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 23]
    in zip texts hours
 
+exhaustive_Minute_valid :: [(Text, Minute)]
+exhaustive_Minute_valid =
+  let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 60]
+   in zip texts minutes
+
 -- `Text`s that fit the syntactic format of `Hour`, but are not semantically
 -- valid. Example: "30" is in exhaustive_Hour_invalid
 exhaustive_Hour_invalid :: [Text]
 exhaustive_Hour_invalid = universe_Hour `minus` map fst exhaustive_Hour_valid
+
+exhaustive_Minute_invalid :: [Text]
+exhaustive_Minute_invalid = universe_Minute `minus` map fst exhaustive_Minute_valid
 
 --------------------
 -- Testing functions
@@ -181,3 +272,6 @@ testBounds (expectedMinBound, expectedMaxBound) =
 --------------------------------
 h :: Integer -> Hour
 h hour = Hour (finite hour)
+
+m :: Integer -> Minute
+m minute = Minute (finite minute)
