@@ -55,6 +55,9 @@ module VCard.Types.Value
 
     -- ** 'Hour'
     Hour (..),
+
+    -- ** 'Minute'
+    Minute (..),
   )
 where
 
@@ -77,5 +80,6 @@ import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 import VCard.Types.Value.Time
   ( Hour (..),
+    Minute (..),
   )
 import VCard.Types.Value.URI (URI (..))

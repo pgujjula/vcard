@@ -6,6 +6,7 @@
 
 module VCard.Types.Value.Time
   ( Hour (..),
+    Minute (..),
   )
 where
 
@@ -33,11 +34,34 @@ instance HasParser Hour where
     case packFinite hourInt of
       Just hourFinite -> pure (Hour hourFinite)
       Nothing ->
-        fail $ show hourInt <> " was out of bounds for month (00 to 23)"
+        fail $ show hourInt <> " was out of bounds for hour (00 to 23)"
 
 instance HasSerializer Hour where
   serializer :: Serializer Hour
   serializer = Text.justifyRight 2 '0' . Text.pack . show . getFinite . unHour
+
+--
+-- Minute
+--
+
+-- | A minute of an hour, between 00 and 59.
+newtype Minute = Minute {unMinute :: Finite 60}
+  deriving (Eq, Show, Ord, Bounded)
+
+instance HasParser Minute where
+  parser :: Parser Minute
+  parser = do
+    d1 <- toDigit <$> digitChar
+    d2 <- toDigit <$> digitChar
+    let minuteInt = 10 * d1 + d2
+    case packFinite (toInteger minuteInt) of
+      Just minuteFinite -> pure (Minute minuteFinite)
+      Nothing ->
+        fail $ show minuteInt <> " was out of bounds for minute (00 to 59)"
+
+instance HasSerializer Minute where
+  serializer :: Serializer Minute
+  serializer = Text.justifyRight 2 '0' . Text.pack . show . getFinite . unMinute
 
 -- Utilities
 toDigit :: Char -> Int
