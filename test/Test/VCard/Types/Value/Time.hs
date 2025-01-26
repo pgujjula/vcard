@@ -23,6 +23,7 @@ import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Time
   ( Hour (..),
     Minute (..),
+    Second (..),
   )
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -32,7 +33,8 @@ tests =
   testGroup
     "Time"
     [ test_Hour,
-      test_Minute
+      test_Minute,
+      test_Second
     ]
 
 --
@@ -183,13 +185,89 @@ units_Minute_invalidSyntax =
       [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
     ]
 
+--
+-- Second
+--
+test_Second :: TestTree
+test_Second =
+  testGroup
+    "Second"
+    [ test_Second_parse,
+      test_Second_serialize,
+      test_Second_bounds
+    ]
+
+test_Second_parse :: TestTree
+test_Second_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_Second_valid,
+          testParseInvalidSemantics
+            (Proxy @Second)
+            units_Second_invalidSemantics,
+          testParseInvalidSyntax (Proxy @Second) units_Second_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_Second_valid,
+          testParseInvalidSemantics (Proxy @Second) exhaustive_Second_invalid
+        ]
+    ]
+
+test_Second_serialize :: TestTree
+test_Second_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_Second_valid,
+      testSerialize "exhaustive" exhaustive_Second_valid
+    ]
+
+test_Second_bounds :: TestTree
+test_Second_bounds = testBounds (s 00, s 60)
+
+units_Second_valid :: [(Text, Second)]
+units_Second_valid =
+  [ ("00", Second 00),
+    ("08", Second 08),
+    ("45", Second 45),
+    ("59", Second 59),
+    ("60", Second 60)
+  ]
+
+units_Second_invalidSemantics :: [Text]
+units_Second_invalidSemantics =
+  ["61", "62", "63", "75", "99"]
+
+units_Second_invalidSyntax :: [Text]
+units_Second_invalidSyntax =
+  concat
+    [ -- incorrect number of digits
+      ["1", "001", "0001"],
+      ["7", "007", "0007"],
+      ["020", "0020"],
+      -- negative numbers
+      ["-1", "-01", "-001", "-0001"],
+      ["-21", "-021", "-0021", "-00021"],
+      -- too large numbers
+      ["061", "0061"],
+      ["075", "0075"],
+      -- invalid number formats
+      ["1e1", "20.0"],
+      -- invalid characters
+      ["a", "1a", "a1"],
+      -- leading or trailing whitespace
+      [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
+    ]
+
 -- =========
 -- UTILITIES
 -- =========
 
--------------------
--- Hour, Minute enumeration
--------------------
+-----------------------------------
+-- Hour, Minute, Second enumeration
+-----------------------------------
 
 hours :: [Hour]
 hours = map Hour finites
@@ -197,16 +275,22 @@ hours = map Hour finites
 minutes :: [Minute]
 minutes = map Minute finites
 
--- All `Text`s in the syntactic format of an `Hour` (hh) or `Minute` (mm), but
--- not necessarily semantically valid.
+seconds :: [Second]
+seconds = map Second finites
+
+-- All `Text`s in the syntactic format of an `Hour` (hh), `Minute` (mm), or
+-- `Second` (ss), but not necessarily semantically valid.
 universe_Hour :: [Text]
 universe_Hour = map Text.pack (replicateM 2 ['0' .. '9'])
 
 universe_Minute :: [Text]
 universe_Minute = map Text.pack (replicateM 2 ['0' .. '9'])
 
--- All `Text`s that represent semantically valid `Hour`s or `Month`s, paired
--- with their parsed value.
+universe_Second :: [Text]
+universe_Second = map Text.pack (replicateM 2 ['0' .. '9'])
+
+-- All `Text`s that represent semantically valid `Hour`s, `Month`s, or `Second`s
+-- paired with their parsed value.
 exhaustive_Hour_valid :: [(Text, Hour)]
 exhaustive_Hour_valid =
   let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 23]
@@ -217,13 +301,21 @@ exhaustive_Minute_valid =
   let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 60]
    in zip texts minutes
 
--- `Text`s that fit the syntactic format of `Hour`, but are not semantically
--- valid. Example: "30" is in exhaustive_Hour_invalid
+exhaustive_Second_valid :: [(Text, Second)]
+exhaustive_Second_valid =
+  let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 61]
+   in zip texts seconds
+
+-- `Text`s that fit the syntactic format of `Hour`, `Minute`, or `Second` but
+-- are not semantically valid. Example: "30" is in exhaustive_Hour_invalid
 exhaustive_Hour_invalid :: [Text]
 exhaustive_Hour_invalid = universe_Hour `minus` map fst exhaustive_Hour_valid
 
 exhaustive_Minute_invalid :: [Text]
 exhaustive_Minute_invalid = universe_Minute `minus` map fst exhaustive_Minute_valid
+
+exhaustive_Second_invalid :: [Text]
+exhaustive_Second_invalid = universe_Second `minus` map fst exhaustive_Second_valid
 
 --------------------
 -- Testing functions
@@ -275,3 +367,6 @@ h hour = Hour (finite hour)
 
 m :: Integer -> Minute
 m minute = Minute (finite minute)
+
+s :: Integer -> Second
+s second = Second (finite second)
