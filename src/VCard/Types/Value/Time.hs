@@ -2,19 +2,23 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module VCard.Types.Value.Time
   ( Hour (..),
     Minute (..),
     Second (..),
+    Sign (..),
   )
 where
 
 import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
+import Data.Functor (($>))
 import Data.Text qualified as Text
-import Text.Megaparsec.Char (digitChar)
+import Text.Megaparsec (choice)
+import Text.Megaparsec.Char (char, digitChar)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 
@@ -86,6 +90,26 @@ instance HasParser Second where
 instance HasSerializer Second where
   serializer :: Serializer Second
   serializer = Text.justifyRight 2 '0' . Text.pack . show . getFinite . unSecond
+
+--
+-- Sign
+--
+data Sign = Minus | Plus
+  deriving (Eq, Show, Ord, Bounded)
+
+instance HasParser Sign where
+  parser :: Parser Sign
+  parser =
+    choice
+      [ char '+' $> Plus,
+        char '-' $> Minus
+      ]
+
+instance HasSerializer Sign where
+  serializer :: Serializer Sign
+  serializer = \case
+    Plus -> "+"
+    Minus -> "-"
 
 -- Utilities
 toDigit :: Char -> Int
