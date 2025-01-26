@@ -61,6 +61,9 @@ module VCard.Types.Value
 
     -- ** 'Second'
     Second (..),
+
+    -- ** 'Zone'
+    Zone (..),
   )
 where
 
@@ -85,5 +88,6 @@ import VCard.Types.Value.Time
   ( Hour (..),
     Minute (..),
     Second (..),
+    Zone (..),
   )
 import VCard.Types.Value.URI (URI (..))

@@ -4,20 +4,23 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeApplications #-}
 
 module VCard.Types.Value.Time
   ( Hour (..),
     Minute (..),
     Second (..),
     Sign (..),
+    Zone (..),
   )
 where
 
+import Control.Applicative (liftA3)
 import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
 import Data.Functor (($>))
 import Data.Text qualified as Text
-import Text.Megaparsec (choice)
+import Text.Megaparsec (choice, optional)
 import Text.Megaparsec.Char (char, digitChar)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
@@ -110,6 +113,33 @@ instance HasSerializer Sign where
   serializer = \case
     Plus -> "+"
     Minus -> "-"
+
+--
+-- Zone
+--
+data Zone
+  = UTCDesignator
+  | UTCOffset !Sign !Hour !(Maybe Minute)
+  deriving (Eq, Show, Ord)
+
+instance HasParser Zone where
+  parser :: Parser Zone
+  parser =
+    choice
+      [ char 'Z' $> UTCDesignator,
+        liftA3
+          UTCOffset
+          (parser @Sign)
+          (parser @Hour)
+          (optional (parser @Minute))
+      ]
+
+instance HasSerializer Zone where
+  serializer :: Serializer Zone
+  serializer = \case
+    UTCDesignator -> "Z"
+    UTCOffset sign hour maybeMinute ->
+      serializer sign <> serializer hour <> maybe "" serializer maybeMinute
 
 -- Utilities
 toDigit :: Char -> Int
