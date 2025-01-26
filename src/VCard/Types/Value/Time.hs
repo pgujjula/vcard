@@ -7,6 +7,7 @@
 module VCard.Types.Value.Time
   ( Hour (..),
     Minute (..),
+    Second (..),
   )
 where
 
@@ -62,6 +63,29 @@ instance HasParser Minute where
 instance HasSerializer Minute where
   serializer :: Serializer Minute
   serializer = Text.justifyRight 2 '0' . Text.pack . show . getFinite . unMinute
+
+--
+-- Second
+--
+
+-- | A second of an minute, usually between 00 and 59, and 60 for leap seconds.
+newtype Second = Second {unSecond :: Finite 61}
+  deriving (Eq, Show, Ord, Bounded)
+
+instance HasParser Second where
+  parser :: Parser Second
+  parser = do
+    d1 <- toDigit <$> digitChar
+    d2 <- toDigit <$> digitChar
+    let secondInt = 10 * d1 + d2
+    case packFinite (toInteger secondInt) of
+      Just secondFinite -> pure (Second secondFinite)
+      Nothing ->
+        fail $ show secondInt <> " was out of bounds for second (00 to 60)"
+
+instance HasSerializer Second where
+  serializer :: Serializer Second
+  serializer = Text.justifyRight 2 '0' . Text.pack . show . getFinite . unSecond
 
 -- Utilities
 toDigit :: Char -> Int
