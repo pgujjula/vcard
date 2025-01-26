@@ -24,6 +24,7 @@ import VCard.Types.Value.Time
   ( Hour (..),
     Minute (..),
     Second (..),
+    Sign (..),
   )
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -34,7 +35,8 @@ tests =
     "Time"
     [ test_Hour,
       test_Minute,
-      test_Second
+      test_Second,
+      test_Sign
     ]
 
 --
@@ -260,6 +262,51 @@ units_Second_invalidSyntax =
       -- leading or trailing whitespace
       [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
     ]
+
+--
+-- Sign
+--
+test_Sign :: TestTree
+test_Sign =
+  testGroup
+    "Sign"
+    [ test_Sign_parse,
+      test_Sign_serialize,
+      test_Sign_bounds
+    ]
+
+test_Sign_parse :: TestTree
+test_Sign_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_Sign_valid,
+      testParseInvalidSemantics (Proxy @Sign) units_Sign_invalidSemantics,
+      testParseInvalidSyntax (Proxy @Sign) units_Sign_invalidSyntax
+    ]
+
+test_Sign_serialize :: TestTree
+test_Sign_serialize =
+  testSerialize "unit" units_Sign_valid
+
+test_Sign_bounds :: TestTree
+test_Sign_bounds = testBounds (Minus, Plus)
+
+units_Sign_valid :: [(Text, Sign)]
+units_Sign_valid =
+  [ ("+", Plus),
+    ("-", Minus)
+  ]
+
+units_Sign_invalidSemantics :: [Text]
+units_Sign_invalidSemantics =
+  []
+
+units_Sign_invalidSyntax :: [Text]
+units_Sign_invalidSyntax =
+  -- weird constructions
+  ["++", "+-", "-+", "--"]
+    -- leading or trailing whitespace
+    ++ [" +", "\n+", "\r\n+", "+ ", "+\n", "+\r\n"]
 
 -- =========
 -- UTILITIES
