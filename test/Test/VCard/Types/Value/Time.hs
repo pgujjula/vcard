@@ -25,6 +25,7 @@ import VCard.Types.Value.Time
     HourMinute (..),
     HourMinuteSecond (..),
     Minute (..),
+    MinuteSecond (..),
     Second (..),
     Sign (..),
     Zone (..),
@@ -41,6 +42,7 @@ tests =
       test_Second,
       test_HourMinuteSecond,
       test_HourMinute,
+      test_MinuteSecond,
       test_Sign,
       test_Zone
     ]
@@ -296,6 +298,19 @@ test_HourMinute_bounds :: TestTree
 test_HourMinute_bounds = testBounds (hm 00 00, hm 23 59)
 
 --
+-- MinuteSecond
+--
+test_MinuteSecond :: TestTree
+test_MinuteSecond =
+  testGroup
+    "MinuteSecond"
+    [ test_MinuteSecond_bounds
+    ]
+
+test_MinuteSecond_bounds :: TestTree
+test_MinuteSecond_bounds = testBounds (ms 00 00, ms 59 60)
+
+--
 -- Sign
 --
 test_Sign :: TestTree
@@ -547,3 +562,6 @@ hms hour minute second = HourMinuteSecond (h hour) (m minute) (s second)
 
 hm :: Integer -> Integer -> HourMinute
 hm hour minute = HourMinute (h hour) (m minute)
+
+ms :: Integer -> Integer -> MinuteSecond
+ms minute second = MinuteSecond (m minute) (s second)
