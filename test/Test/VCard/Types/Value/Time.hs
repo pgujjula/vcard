@@ -686,7 +686,7 @@ test_Sign_parse =
 
 test_Sign_serialize :: TestTree
 test_Sign_serialize =
-  testSerialize "unit" units_Sign_valid
+  testSerialize "serialize" units_Sign_valid
 
 test_Sign_bounds :: TestTree
 test_Sign_bounds = testBounds (Minus, Plus)
@@ -730,7 +730,7 @@ test_Zone_parse =
 
 test_Zone_serialize :: TestTree
 test_Zone_serialize =
-  testSerialize "unit" units_Zone_valid
+  testSerialize "serialize" units_Zone_valid
 
 units_Zone_valid :: [(Text, Zone)]
 units_Zone_valid =
