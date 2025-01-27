@@ -6,10 +6,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Test.VCard.Types.Value.Time (tests) where
 
+#if !MIN_VERSION_base(4,18,0)
+import Control.Applicative (liftA2)
+#endif
 import Control.Monad (forM_, replicateM)
+import Data.Bifunctor (bimap, second)
 import Data.Finite (finite, finites)
 import Data.List.Ordered (minus)
 import Data.Proxy (Proxy (..))
@@ -24,12 +29,15 @@ import VCard.Types.Value.Time
   ( Hour (..),
     HourMinute (..),
     HourMinuteSecond (..),
+    LocalTime (..),
     Minute (..),
     MinuteSecond (..),
     Second (..),
     Sign (..),
     Zone (..),
   )
+import Vary ((:|))
+import Vary qualified
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
 
@@ -43,6 +51,7 @@ tests =
       test_HourMinuteSecond,
       test_HourMinute,
       test_MinuteSecond,
+      test_LocalTime,
       test_Sign,
       test_Zone
     ]
@@ -87,6 +96,7 @@ test_Hour_serialize =
 test_Hour_bounds :: TestTree
 test_Hour_bounds = testBounds (h 00, h 23)
 
+-- See also: units_LocalTime_valid_Hour
 units_Hour_valid :: [(Text, Hour)]
 units_Hour_valid =
   [ ("00", Hour 00),
@@ -95,10 +105,12 @@ units_Hour_valid =
     ("23", Hour 23)
   ]
 
+-- See also: units_LocalTime_invalidSemantics_Hour
 units_Hour_invalidSemantics :: [Text]
 units_Hour_invalidSemantics =
   ["24", "25", "26", "50", "99"]
 
+-- See also: units_LocalTime_invalidSyntax_Hour
 units_Hour_invalidSyntax :: [Text]
 units_Hour_invalidSyntax =
   concat
@@ -162,6 +174,7 @@ test_Minute_serialize =
 test_Minute_bounds :: TestTree
 test_Minute_bounds = testBounds (m 00, m 59)
 
+-- See also: units_LocalTime_valid_Minute
 units_Minute_valid :: [(Text, Minute)]
 units_Minute_valid =
   [ ("00", Minute 00),
@@ -170,10 +183,12 @@ units_Minute_valid =
     ("59", Minute 59)
   ]
 
+-- See also: units_LocalTime_invalidSemantics_Minute
 units_Minute_invalidSemantics :: [Text]
 units_Minute_invalidSemantics =
   ["60", "61", "62", "63", "75", "99"]
 
+-- See also: units_LocalTime_invalidSyntax_Minute
 units_Minute_invalidSyntax :: [Text]
 units_Minute_invalidSyntax =
   concat
@@ -237,6 +252,7 @@ test_Second_serialize =
 test_Second_bounds :: TestTree
 test_Second_bounds = testBounds (s 00, s 60)
 
+-- See also: units_LocalTime_valid_Second
 units_Second_valid :: [(Text, Second)]
 units_Second_valid =
   [ ("00", Second 00),
@@ -246,10 +262,12 @@ units_Second_valid =
     ("60", Second 60)
   ]
 
+-- See also: units_LocalTime_invalidSemantics_Second
 units_Second_invalidSemantics :: [Text]
 units_Second_invalidSemantics =
   ["61", "62", "63", "75", "99"]
 
+-- See also: units_LocalTime_invalidSyntax_Second
 units_Second_invalidSyntax :: [Text]
 units_Second_invalidSyntax =
   concat
@@ -309,6 +327,341 @@ test_MinuteSecond =
 
 test_MinuteSecond_bounds :: TestTree
 test_MinuteSecond_bounds = testBounds (ms 00 00, ms 59 60)
+
+--
+-- LocalTime
+--
+
+test_LocalTime :: TestTree
+test_LocalTime =
+  testGroup
+    "LocalTime"
+    [ test_LocalTime_parse,
+      test_LocalTime_serialize
+    ]
+
+test_LocalTime_parse :: TestTree
+test_LocalTime_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_LocalTime_valid,
+          testParseInvalidSemantics
+            (Proxy @LocalTime)
+            units_LocalTime_invalidSemantics,
+          testParseInvalidSyntax
+            (Proxy @LocalTime)
+            units_LocalTime_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_LocalTime_valid,
+          testParseInvalidSemantics
+            (Proxy @LocalTime)
+            exhaustive_LocalTime_invalid
+        ]
+    ]
+
+test_LocalTime_serialize :: TestTree
+test_LocalTime_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_LocalTime_valid,
+      testSerialize "exhaustive" exhaustive_LocalTime_valid
+    ]
+
+units_LocalTime_valid :: [(Text, LocalTime)]
+units_LocalTime_valid =
+  concat
+    [ units_LocalTime_valid_Hour,
+      units_LocalTime_valid_Minute,
+      units_LocalTime_valid_Second,
+      units_LocalTime_valid_HourMinuteSecond,
+      units_LocalTime_valid_HourMinute,
+      units_LocalTime_valid_MinuteSecond
+    ]
+
+-- See also: units_Hour_valid
+units_LocalTime_valid_Hour :: [(Text, LocalTime)]
+units_LocalTime_valid_Hour =
+  map
+    (second localTime)
+    [("00", h 00), ("02", h 02), ("15", h 15), ("23", h 23)]
+
+-- See also: units_Minute_valid
+units_LocalTime_valid_Minute :: [(Text, LocalTime)]
+units_LocalTime_valid_Minute =
+  map
+    (second localTime)
+    [("-00", m 00), ("-08", m 08), ("-45", m 45), ("-59", m 59)]
+
+-- See also: units_Second_valid
+units_LocalTime_valid_Second :: [(Text, LocalTime)]
+units_LocalTime_valid_Second =
+  map
+    (second localTime)
+    [ ("--00", s 00),
+      ("--08", s 08),
+      ("--45", s 45),
+      ("--59", s 59),
+      ("--60", s 60)
+    ]
+
+units_LocalTime_valid_HourMinuteSecond :: [(Text, LocalTime)]
+units_LocalTime_valid_HourMinuteSecond =
+  map
+    (second localTime)
+    [ -- bounds
+      ("000000", hms 00 00 00),
+      ("235960", hms 23 59 60),
+      -- vary hour
+      ("001739", hms 00 17 39),
+      ("081739", hms 08 17 39),
+      ("231739", hms 23 17 39),
+      -- vary minute
+      ("130054", hms 13 00 54),
+      ("132954", hms 13 29 54),
+      ("135954", hms 13 59 54),
+      -- vary second
+      ("013700", hms 01 37 00),
+      ("013726", hms 01 37 26),
+      ("013760", hms 01 37 60)
+    ]
+
+units_LocalTime_valid_HourMinute :: [(Text, LocalTime)]
+units_LocalTime_valid_HourMinute =
+  map
+    (second localTime)
+    [ -- bounds
+      ("0000", hm 00 00),
+      ("2359", hm 23 59),
+      -- vary hour
+      ("0017", hm 00 17),
+      ("0817", hm 08 17),
+      ("2317", hm 23 17),
+      -- vary minute
+      ("1300", hm 13 00),
+      ("1329", hm 13 29),
+      ("1359", hm 13 59)
+    ]
+
+units_LocalTime_valid_MinuteSecond :: [(Text, LocalTime)]
+units_LocalTime_valid_MinuteSecond =
+  map
+    (second localTime)
+    [ -- bounds
+      ("-0000", ms 00 00),
+      ("-5960", ms 59 60),
+      -- vary minute
+      ("-0054", ms 00 54),
+      ("-2954", ms 29 54),
+      ("-5954", ms 59 54),
+      -- vary second
+      ("-3700", ms 37 00),
+      ("-3726", ms 37 26),
+      ("-3760", ms 37 60)
+    ]
+
+units_LocalTime_invalidSemantics :: [Text]
+units_LocalTime_invalidSemantics =
+  concat
+    [ units_LocalTime_invalidSemantics_Hour,
+      units_LocalTime_invalidSemantics_Minute,
+      units_LocalTime_invalidSemantics_Second,
+      units_LocalTime_invalidSemantics_HourMinuteSecond,
+      units_LocalTime_invalidSemantics_HourMinute,
+      units_LocalTime_invalidSemantics_MinuteSecond
+    ]
+
+-- See also: units_Hour_invalidSemantics
+units_LocalTime_invalidSemantics_Hour :: [Text]
+units_LocalTime_invalidSemantics_Hour =
+  ["24", "25", "26", "50", "99"]
+
+-- See also: units_Minute_invalidSemantics
+units_LocalTime_invalidSemantics_Minute :: [Text]
+units_LocalTime_invalidSemantics_Minute =
+  ["-60", "-61", "-62", "-63", "-75", "-99"]
+
+-- See also: units_Second_invalidSemantics
+units_LocalTime_invalidSemantics_Second :: [Text]
+units_LocalTime_invalidSemantics_Second =
+  ["--61", "--62", "--63", "--75", "--99"]
+
+units_LocalTime_invalidSemantics_HourMinuteSecond :: [Text]
+units_LocalTime_invalidSemantics_HourMinuteSecond =
+  [ -- invalid hours
+    "240000",
+    "241739",
+    "251739",
+    "261739",
+    "501739",
+    "991739",
+    -- invalid minutes
+    "006000",
+    "136054",
+    "136154",
+    "136254",
+    "136354",
+    "137554",
+    "139954",
+    -- invalid seconds
+    "000061",
+    "013761",
+    "013762",
+    "013763",
+    "013775",
+    "013799"
+  ]
+
+units_LocalTime_invalidSemantics_HourMinute :: [Text]
+units_LocalTime_invalidSemantics_HourMinute =
+  [ -- invalid hours
+    "2400",
+    "2417",
+    "2517",
+    "2617",
+    "5017",
+    "9917",
+    -- invalid minutes
+    "0060",
+    "1360",
+    "1361",
+    "1362",
+    "1363",
+    "1375",
+    "1399"
+  ]
+
+units_LocalTime_invalidSemantics_MinuteSecond :: [Text]
+units_LocalTime_invalidSemantics_MinuteSecond =
+  [ -- invalid minutes
+    "-6000",
+    "-6054",
+    "-6154",
+    "-6254",
+    "-6354",
+    "-7554",
+    "-9954",
+    -- invalid seconds
+    "-0061",
+    "-3761",
+    "-3762",
+    "-3763",
+    "-3775",
+    "-3799"
+  ]
+
+units_LocalTime_invalidSyntax :: [Text]
+units_LocalTime_invalidSyntax =
+  concat
+    [ units_LocalTime_invalidSyntax_Hour,
+      units_LocalTime_invalidSyntax_Minute,
+      units_LocalTime_invalidSyntax_Second,
+      units_LocalTime_invalidSyntax_HourMinuteSecond,
+      units_LocalTime_invalidSyntax_HourMinute,
+      units_LocalTime_invalidSyntax_MinuteSecond
+    ]
+
+-- See also: units_Hour_invalidSyntax
+units_LocalTime_invalidSyntax_Hour :: [Text]
+units_LocalTime_invalidSyntax_Hour =
+  concat
+    [ -- incorrect number of digits
+      ["1", "001"],
+      ["7", "007"],
+      ["020"],
+      -- too large numbers
+      ["024"],
+      ["050"],
+      -- invalid number formats
+      ["1e1", "20.0"],
+      -- invalid characters
+      ["a", "1a", "a1"],
+      -- leading or trailing whitespace
+      [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
+    ]
+
+-- See also: units_Minute_invalidSyntax
+units_LocalTime_invalidSyntax_Minute :: [Text]
+units_LocalTime_invalidSyntax_Minute =
+  concat
+    [ -- incorrect number of digits
+      ["-1", "-001"],
+      ["-7", "-007"],
+      ["-020"],
+      -- too large numbers
+      ["-060"],
+      ["-075"],
+      -- invalid number formats
+      ["-1e1", "-20.0"],
+      -- invalid characters
+      ["-a", "-1a", "-a1"],
+      -- leading or trailing whitespace
+      [" -07", "\n-07", "\r\n-07", "-07 ", "-07\n", "-07\r\n"]
+    ]
+
+-- See also: units_Second_invalidSyntax
+units_LocalTime_invalidSyntax_Second :: [Text]
+units_LocalTime_invalidSyntax_Second =
+  concat
+    [ -- incorrect number of digits
+      ["--1", "--001", "--0001"],
+      ["--7", "--007", "--0007"],
+      ["--020", "--0020"],
+      -- too large numbers
+      ["--061", "--0061"],
+      ["--075", "--0075"],
+      -- invalid number formats
+      ["--1e1", "--20.0"],
+      -- invalid characters
+      ["--a", "--1a", "--a1"],
+      -- leading or trailing whitespace
+      [" --07", "\n--07", "\r\n--07", "--07 ", "--07\n", "--07\r\n"]
+    ]
+
+units_LocalTime_invalidSyntax_HourMinuteSecond :: [Text]
+units_LocalTime_invalidSyntax_HourMinuteSecond =
+  concat
+    [ -- extra dashes
+      [ "08-1739",
+        "0817-39",
+        "08-17-39"
+      ],
+      -- incorrect number of digits
+      ["0081739"],
+      -- leading or trailing whitespace
+      [ " 081739",
+        "\n081739",
+        "\r\n081739",
+        "081739 ",
+        "081739\n",
+        " 081739\r\n"
+      ]
+    ]
+
+units_LocalTime_invalidSyntax_HourMinute :: [Text]
+units_LocalTime_invalidSyntax_HourMinute =
+  concat
+    [ -- extra dash
+      ["08-17", "0817-"],
+      -- incorrect number of digits
+      ["00817"],
+      -- leading or trailing whitespace
+      [" 0817", "\n0817", "\r\n0817", "0817 ", "0817\n", "0817\r\n"]
+    ]
+
+units_LocalTime_invalidSyntax_MinuteSecond :: [Text]
+units_LocalTime_invalidSyntax_MinuteSecond =
+  concat
+    [ -- extra dash
+      ["-29-54", "--2954"],
+      -- incorrect number of digits
+      ["-02954"],
+      -- leading or trailing whitespace
+      [" -2954", "\n-2954", "\r\n-2954", "-2954 ", "-2954\n", "-2954\r\n"]
+    ]
 
 --
 -- Sign
@@ -503,6 +856,128 @@ exhaustive_Minute_invalid = universe_Minute `minus` map fst exhaustive_Minute_va
 exhaustive_Second_invalid :: [Text]
 exhaustive_Second_invalid = universe_Second `minus` map fst exhaustive_Second_valid
 
+------------------------
+-- LocalTime enumeration
+------------------------
+
+-- Potential LocalTimes
+universe_LocalTime_Hour :: [Text]
+universe_LocalTime_Hour = universe_Hour
+
+universe_LocalTime_Minute :: [Text]
+universe_LocalTime_Minute = map ("-" <>) universe_Minute
+
+universe_LocalTime_Second :: [Text]
+universe_LocalTime_Second = map ("--" <>) universe_Second
+
+universe_LocalTime_HourMinuteSecond :: [Text]
+universe_LocalTime_HourMinuteSecond = do
+  hour <- universe_Hour
+  minute <- universe_Minute
+  second' <- universe_Second
+
+  pure (hour <> minute <> second')
+
+universe_LocalTime_HourMinute :: [Text]
+universe_LocalTime_HourMinute = liftA2 (<>) universe_Hour universe_Minute
+
+universe_LocalTime_MinuteSecond :: [Text]
+universe_LocalTime_MinuteSecond = do
+  minute <- universe_Minute
+  second' <- universe_Second
+
+  pure ("-" <> minute <> second')
+
+-- Valid LocalTimes
+exhaustive_LocalTime_valid :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid =
+  concat
+    [ exhaustive_LocalTime_valid_Hour,
+      exhaustive_LocalTime_valid_Minute,
+      exhaustive_LocalTime_valid_Second,
+      exhaustive_LocalTime_valid_HourMinuteSecond,
+      exhaustive_LocalTime_valid_HourMinute,
+      exhaustive_LocalTime_valid_MinuteSecond
+    ]
+
+exhaustive_LocalTime_valid_Hour :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid_Hour = map (second localTime) exhaustive_Hour_valid
+
+exhaustive_LocalTime_valid_Minute :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid_Minute =
+  map (bimap ("-" <>) localTime) exhaustive_Minute_valid
+
+exhaustive_LocalTime_valid_Second :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid_Second =
+  map (bimap ("--" <>) localTime) exhaustive_Second_valid
+
+exhaustive_LocalTime_valid_HourMinuteSecond :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid_HourMinuteSecond = do
+  (hourText, hour) <- exhaustive_Hour_valid
+  (minuteText, minute) <- exhaustive_Minute_valid
+  (secondText, second') <- exhaustive_Second_valid
+
+  let text = hourText <> minuteText <> secondText
+  let hourMinuteSecond = HourMinuteSecond hour minute second'
+  pure (text, localTime hourMinuteSecond)
+
+exhaustive_LocalTime_valid_HourMinute :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid_HourMinute = do
+  (hourText, hour) <- exhaustive_Hour_valid
+  (minuteText, minute) <- exhaustive_Minute_valid
+
+  let text = hourText <> minuteText
+  let hourMinute = HourMinute hour minute
+  pure (text, localTime hourMinute)
+
+exhaustive_LocalTime_valid_MinuteSecond :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid_MinuteSecond = do
+  (minuteText, minute) <- exhaustive_Minute_valid
+  (secondText, second') <- exhaustive_Second_valid
+
+  let text = "-" <> minuteText <> secondText
+  let minuteSecond = MinuteSecond minute second'
+  pure (text, localTime minuteSecond)
+
+-- Invalid LocalTimes
+exhaustive_LocalTime_invalid :: [Text]
+exhaustive_LocalTime_invalid =
+  concat
+    [ exhaustive_LocalTime_invalid_Hour,
+      exhaustive_LocalTime_invalid_Minute,
+      exhaustive_LocalTime_invalid_Second,
+      exhaustive_LocalTime_invalid_HourMinuteSecond,
+      exhaustive_LocalTime_invalid_HourMinute,
+      exhaustive_LocalTime_invalid_MinuteSecond
+    ]
+
+exhaustive_LocalTime_invalid_Hour :: [Text]
+exhaustive_LocalTime_invalid_Hour =
+  universe_LocalTime_Hour `minus` map fst exhaustive_LocalTime_valid_Hour
+
+exhaustive_LocalTime_invalid_Minute :: [Text]
+exhaustive_LocalTime_invalid_Minute =
+  universe_LocalTime_Minute `minus` map fst exhaustive_LocalTime_valid_Minute
+
+exhaustive_LocalTime_invalid_Second :: [Text]
+exhaustive_LocalTime_invalid_Second =
+  universe_LocalTime_Second `minus` map fst exhaustive_LocalTime_valid_Second
+
+exhaustive_LocalTime_invalid_HourMinuteSecond :: [Text]
+exhaustive_LocalTime_invalid_HourMinuteSecond =
+  universe_LocalTime_HourMinuteSecond
+    `minus` map fst exhaustive_LocalTime_valid_HourMinuteSecond
+
+exhaustive_LocalTime_invalid_HourMinute :: [Text]
+exhaustive_LocalTime_invalid_HourMinute =
+  universe_LocalTime_HourMinute
+    `minus` map fst exhaustive_LocalTime_valid_HourMinute
+
+exhaustive_LocalTime_invalid_MinuteSecond :: [Text]
+exhaustive_LocalTime_invalid_MinuteSecond =
+  universe_LocalTime_MinuteSecond
+    `minus` map fst exhaustive_LocalTime_valid_MinuteSecond
+
 --------------------
 -- Testing functions
 --------------------
@@ -565,3 +1040,9 @@ hm hour minute = HourMinute (h hour) (m minute)
 
 ms :: Integer -> Integer -> MinuteSecond
 ms minute second' = MinuteSecond (m minute) (s second')
+
+localTime ::
+  (a :| '[Hour, Minute, Second, HourMinuteSecond, HourMinute, MinuteSecond]) =>
+  a ->
+  LocalTime
+localTime = LocalTime . Vary.from
