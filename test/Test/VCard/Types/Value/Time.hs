@@ -25,6 +25,7 @@ import VCard.Types.Value.Time
     Minute (..),
     Second (..),
     Sign (..),
+    Zone (..),
   )
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -36,7 +37,8 @@ tests =
     [ test_Hour,
       test_Minute,
       test_Second,
-      test_Sign
+      test_Sign,
+      test_Zone
     ]
 
 --
@@ -307,6 +309,98 @@ units_Sign_invalidSyntax =
   ["++", "+-", "-+", "--"]
     -- leading or trailing whitespace
     ++ [" +", "\n+", "\r\n+", "+ ", "+\n", "+\r\n"]
+
+--
+-- Zone
+--
+test_Zone :: TestTree
+test_Zone =
+  testGroup
+    "Zone"
+    [ test_Zone_parse,
+      test_Zone_serialize
+    ]
+
+test_Zone_parse :: TestTree
+test_Zone_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_Zone_valid,
+      testParseInvalidSemantics (Proxy @Zone) units_Zone_invalidSemantics,
+      testParseInvalidSyntax (Proxy @Zone) units_Zone_invalidSyntax
+    ]
+
+test_Zone_serialize :: TestTree
+test_Zone_serialize =
+  testSerialize "unit" units_Zone_valid
+
+units_Zone_valid :: [(Text, Zone)]
+units_Zone_valid =
+  [ -- UTCDesignator
+    ("Z", UTCDesignator),
+    -- UTCOffset
+    --   without minute
+    ("-00", UTCOffset Minus (h 00) Nothing),
+    ("-15", UTCOffset Minus (h 15) Nothing),
+    ("-23", UTCOffset Minus (h 23) Nothing),
+    ("+00", UTCOffset Plus (h 00) Nothing),
+    ("+15", UTCOffset Plus (h 15) Nothing),
+    ("+23", UTCOffset Plus (h 23) Nothing),
+    --   with minute
+    ("-0000", UTCOffset Minus (h 00) (Just (m 00))),
+    ("-0037", UTCOffset Minus (h 00) (Just (m 37))),
+    ("-0059", UTCOffset Minus (h 00) (Just (m 59))),
+    --
+    ("-1500", UTCOffset Minus (h 15) (Just (m 00))),
+    ("-1537", UTCOffset Minus (h 15) (Just (m 37))),
+    ("-1559", UTCOffset Minus (h 15) (Just (m 59))),
+    --
+    ("-2300", UTCOffset Minus (h 23) (Just (m 00))),
+    ("-2337", UTCOffset Minus (h 23) (Just (m 37))),
+    ("-2359", UTCOffset Minus (h 23) (Just (m 59))),
+    --
+    ("+0000", UTCOffset Plus (h 00) (Just (m 00))),
+    ("+0037", UTCOffset Plus (h 00) (Just (m 37))),
+    ("+0059", UTCOffset Plus (h 00) (Just (m 59))),
+    --
+    ("+1500", UTCOffset Plus (h 15) (Just (m 00))),
+    ("+1537", UTCOffset Plus (h 15) (Just (m 37))),
+    ("+1559", UTCOffset Plus (h 15) (Just (m 59))),
+    --
+    ("+2300", UTCOffset Plus (h 23) (Just (m 00))),
+    ("+2337", UTCOffset Plus (h 23) (Just (m 37))),
+    ("+2359", UTCOffset Plus (h 23) (Just (m 59)))
+  ]
+
+units_Zone_invalidSemantics :: [Text]
+units_Zone_invalidSemantics =
+  concat
+    [ -- without minute, invalid hours
+      ["-24", "-25", "-99", "+24", "+25", "+99"],
+      -- with minute, invalid hours
+      ["-2437", "-2537", "-2637", "-9937"],
+      ["+2437", "+2537", "+2637", "+9937"],
+      -- with minute, invalid minute
+      ["-1560", "-1561", "-1562", "-1599"],
+      ["+1560", "+1561", "+1562", "+1599"]
+    ]
+
+units_Zone_invalidSyntax :: [Text]
+units_Zone_invalidSyntax =
+  concat
+    [ -- UTCDesignator
+      ["z"],
+      -- UTCOffset
+      --   missing sign
+      ["00", "15", "23"],
+      --   incorrect number of digits
+      ["-0", "-000", "-00000"],
+      ["-1", "-121", "-12121"],
+      ["+0", "+000", "+00000"],
+      ["+1", "+121", "+12121"],
+      --   leading or trailing whitespace
+      [" +1537", "\n+1537", "\r\n+1537", "+1537 ", "+1537\n", "+1537\r\n"]
+    ]
 
 -- =========
 -- UTILITIES
