@@ -15,6 +15,7 @@ module VCard.Types.Value.Time
     HasSecond (..),
     HourMinuteSecond (..),
     HourMinute (..),
+    MinuteSecond (..),
     Sign (..),
     Zone (..),
   )
@@ -161,6 +162,14 @@ data HourMinuteSecond = HourMinuteSecond !Hour !Minute !Second
 
 -- | An `Hour` and `Minute` together.
 data HourMinute = HourMinute !Hour !Minute
+  deriving (Eq, Show, Ord, Bounded)
+
+--
+-- MinuteSecond
+--
+
+-- | A `Minute` and `Second` together.
+data MinuteSecond = MinuteSecond !Minute !Second
   deriving (Eq, Show, Ord, Bounded)
 
 --
