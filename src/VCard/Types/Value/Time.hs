@@ -12,6 +12,7 @@ module VCard.Types.Value.Time
     Minute (..),
     HasMinute (..),
     Second (..),
+    HasSecond (..),
     Sign (..),
     Zone (..),
   )
@@ -117,6 +118,17 @@ instance HasParser Second where
 instance HasSerializer Second where
   serializer :: Serializer Second
   serializer = Text.justifyRight 2 '0' . Text.pack . show . getFinite . unSecond
+
+--
+-- HasSecond
+--
+
+-- | Class for types that contain a `Second`.
+class HasSecond a where
+  getSecond :: a -> Second
+
+instance HasSecond Second where
+  getSecond = id
 
 --
 -- Sign
