@@ -53,6 +53,9 @@ module VCard.Types.Value
 
     -- * Section 4.3.2 @TIME@
 
+    -- ** 'Time'
+    LocalTime (..),
+
     -- ** 'Hour'
     Hour (..),
     HasHour (..),
@@ -103,6 +106,7 @@ import VCard.Types.Value.Time
     Hour (..),
     HourMinute (..),
     HourMinuteSecond (..),
+    LocalTime (..),
     Minute (..),
     MinuteSecond (..),
     Second (..),

@@ -1,5 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
@@ -16,20 +17,27 @@ module VCard.Types.Value.Time
     HourMinuteSecond (..),
     HourMinute (..),
     MinuteSecond (..),
+    LocalTime (..),
     Sign (..),
     Zone (..),
   )
 where
 
+#if !MIN_VERSION_base(4,18,0)
+import Control.Applicative (liftA2, liftA3)
+#else
 import Control.Applicative (liftA3)
+#endif
 import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
+import Data.Function ((&))
 import Data.Functor (($>))
 import Data.Text qualified as Text
-import Text.Megaparsec (choice, optional)
-import Text.Megaparsec.Char (char, digitChar)
+import Text.Megaparsec (choice, optional, try)
+import Text.Megaparsec.Char (char, digitChar, string)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
+import Vary (Vary, exhaustiveCase, from, on)
 
 --
 -- Hour
@@ -171,6 +179,106 @@ data HourMinute = HourMinute !Hour !Minute
 -- | A `Minute` and `Second` together.
 data MinuteSecond = MinuteSecond !Minute !Second
   deriving (Eq, Show, Ord, Bounded)
+
+--
+-- LocalTime
+--
+
+newtype LocalTime = LocalTime
+  { unLocalTime ::
+      Vary '[Hour, Minute, Second, HourMinuteSecond, HourMinute, MinuteSecond]
+  }
+  deriving (Eq, Show, Ord)
+
+instance HasParser LocalTime where
+  parser =
+    LocalTime
+      <$> (choice . map try)
+        -- The order of these parsers matters. For example, we can't have
+        -- hourTimeP before hourMinuteSecondTimeP, because if the string is
+        -- something like "081739", then hourTimeP will match the beginning
+        -- "08" and parsing will fail on the remainder "1739". So we have to
+        -- place hourTimeP after hourMinuteSecondTimeP.
+        [ from <$> hourMinuteSecondTimeP,
+          from <$> hourMinuteTimeP,
+          from <$> minuteSecondTimeP,
+          from <$> hourTimeP,
+          from <$> minuteTimeP,
+          from <$> secondTimeP
+        ]
+
+instance HasSerializer LocalTime where
+  serializer (LocalTime vary) =
+    vary
+      & ( on @Hour hourTimeS
+            . on @Minute minuteTimeS
+            . on @Second secondTimeS
+            . on @HourMinuteSecond hourMinuteSecondTimeS
+            . on @HourMinute hourMinuteTimeS
+            . on @MinuteSecond minuteSecondTimeS
+            $ exhaustiveCase
+        )
+
+--
+-- Parsers of various time formats
+--
+
+-- Parses "hh"
+hourTimeP :: Parser Hour
+hourTimeP = parser @Hour
+
+-- Parses "-mm"
+minuteTimeP :: Parser Minute
+minuteTimeP = char '-' *> parser @Minute
+
+-- Parses "--ss"
+secondTimeP :: Parser Second
+secondTimeP = string "--" *> parser @Second
+
+-- Parses "hhmmss"
+hourMinuteSecondTimeP :: Parser HourMinuteSecond
+hourMinuteSecondTimeP =
+  liftA3 HourMinuteSecond (parser @Hour) (parser @Minute) (parser @Second)
+
+-- Parses "hhmm"
+hourMinuteTimeP :: Parser HourMinute
+hourMinuteTimeP = liftA2 HourMinute (parser @Hour) (parser @Minute)
+
+-- Parses "-mmss"
+minuteSecondTimeP :: Parser MinuteSecond
+minuteSecondTimeP =
+  char '-' *> liftA2 MinuteSecond (parser @Minute) (parser @Second)
+
+--
+-- Serializers of various time formats
+--
+
+-- Serializes to "hh"
+hourTimeS :: Serializer Hour
+hourTimeS = serializer @Hour
+
+-- Serializes to "-mm"
+minuteTimeS :: Serializer Minute
+minuteTimeS = ("-" <>) . serializer @Minute
+
+-- Serializes to "--ss"
+secondTimeS :: Serializer Second
+secondTimeS = ("--" <>) . serializer @Second
+
+-- Serializes to "hhmmss"
+hourMinuteSecondTimeS :: Serializer HourMinuteSecond
+hourMinuteSecondTimeS (HourMinuteSecond hour minute second) =
+  serializer hour <> serializer minute <> serializer second
+
+-- Serializes to "hhmm"
+hourMinuteTimeS :: Serializer HourMinute
+hourMinuteTimeS (HourMinute hour minute) =
+  serializer hour <> serializer minute
+
+-- Serializes to "-mmss"
+minuteSecondTimeS :: Serializer MinuteSecond
+minuteSecondTimeS (MinuteSecond minute second) =
+  "-" <> serializer minute <> serializer second
 
 --
 -- Sign
