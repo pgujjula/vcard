@@ -55,6 +55,7 @@ module VCard.Types.Value
 
     -- ** 'Hour'
     Hour (..),
+    HasHour (..),
 
     -- ** 'Minute'
     Minute (..),
@@ -85,7 +86,8 @@ import VCard.Types.Value.Date
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 import VCard.Types.Value.Time
-  ( Hour (..),
+  ( HasHour (..),
+    Hour (..),
     Minute (..),
     Second (..),
     Zone (..),
