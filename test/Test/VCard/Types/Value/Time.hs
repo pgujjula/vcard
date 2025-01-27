@@ -22,6 +22,7 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Time
   ( Hour (..),
+    HourMinuteSecond (..),
     Minute (..),
     Second (..),
     Sign (..),
@@ -37,6 +38,7 @@ tests =
     [ test_Hour,
       test_Minute,
       test_Second,
+      test_HourMinuteSecond,
       test_Sign,
       test_Zone
     ]
@@ -264,6 +266,19 @@ units_Second_invalidSyntax =
       -- leading or trailing whitespace
       [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
     ]
+
+--
+-- HourMinuteSecond
+--
+test_HourMinuteSecond :: TestTree
+test_HourMinuteSecond =
+  testGroup
+    "HourMinuteSecond"
+    [ test_HourMinuteSecond_bounds
+    ]
+
+test_HourMinuteSecond_bounds :: TestTree
+test_HourMinuteSecond_bounds = testBounds (hms 00 00 00, hms 23 59 60)
 
 --
 -- Sign
@@ -500,9 +515,9 @@ testBounds (expectedMinBound, expectedMaxBound) =
     minBound @?= expectedMinBound
     maxBound @?= expectedMaxBound
 
---------------------------------
--- Hour construction
---------------------------------
+-------------------------------------
+-- Hour, Minute, Second  construction
+-------------------------------------
 h :: Integer -> Hour
 h hour = Hour (finite hour)
 
@@ -511,3 +526,6 @@ m minute = Minute (finite minute)
 
 s :: Integer -> Second
 s second = Second (finite second)
+
+hms :: Integer -> Integer -> Integer -> HourMinuteSecond
+hms hour minute second = HourMinuteSecond (h hour) (m minute) (s second)
