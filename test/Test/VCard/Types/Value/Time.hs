@@ -555,13 +555,13 @@ m :: Integer -> Minute
 m minute = Minute (finite minute)
 
 s :: Integer -> Second
-s second = Second (finite second)
+s second' = Second (finite second')
 
 hms :: Integer -> Integer -> Integer -> HourMinuteSecond
-hms hour minute second = HourMinuteSecond (h hour) (m minute) (s second)
+hms hour minute second' = HourMinuteSecond (h hour) (m minute) (s second')
 
 hm :: Integer -> Integer -> HourMinute
 hm hour minute = HourMinute (h hour) (m minute)
 
 ms :: Integer -> Integer -> MinuteSecond
-ms minute second = MinuteSecond (m minute) (s second)
+ms minute second' = MinuteSecond (m minute) (s second')
