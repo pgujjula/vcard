@@ -34,6 +34,7 @@ import VCard.Types.Value.Time
     MinuteSecond (..),
     Second (..),
     Sign (..),
+    Time (..),
     Zone (..),
   )
 import Vary ((:|))
@@ -52,6 +53,7 @@ tests =
       test_HourMinute,
       test_MinuteSecond,
       test_LocalTime,
+      test_Time,
       test_Sign,
       test_Zone
     ]
@@ -664,6 +666,111 @@ units_LocalTime_invalidSyntax_MinuteSecond =
     ]
 
 --
+-- Time
+--
+test_Time :: TestTree
+test_Time =
+  testGroup
+    "Time"
+    [ test_Time_parse,
+      test_Time_serialize
+    ]
+
+test_Time_parse :: TestTree
+test_Time_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_Time_valid,
+      testParseInvalidSemantics (Proxy @Time) units_Time_invalidSemantics,
+      testParseInvalidSyntax (Proxy @Time) units_Time_invalidSyntax
+    ]
+
+test_Time_serialize :: TestTree
+test_Time_serialize = testSerialize "serialize" units_Time_valid
+
+units_Time_valid :: [(Text, Time)]
+units_Time_valid = units_Time_valid1 ++ units_Time_valid2
+
+units_Time_valid1 :: [(Text, Time)]
+units_Time_valid1 =
+  [ --
+    ("15", time (h 15) Nothing),
+    ("15Z", time (h 15) (Just UTCDesignator)),
+    ("15+15", time (h 15) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("15-1537", time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37))))),
+    --
+    ("-45", time (m 45) Nothing),
+    ("-45Z", time (m 45) (Just UTCDesignator)),
+    ("-45+15", time (m 45) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("-45-1537", time (m 45) (Just (UTCOffset Minus (h 15) (Just (m 37))))),
+    --
+    ("--08", time (s 08) Nothing),
+    ("--08Z", time (s 08) (Just UTCDesignator)),
+    ("--08+15", time (s 08) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("--08-1537", time (s 08) (Just (UTCOffset Minus (h 15) (Just (m 37))))),
+    --
+    ("081739", time (hms 08 17 39) Nothing),
+    ("081739Z", time (hms 08 17 39) (Just UTCDesignator)),
+    ("081739+15", time (hms 08 17 39) (Just (UTCOffset Plus (h 15) Nothing))),
+    ( "081739-1537",
+      time (hms 08 17 39) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+    ),
+    --
+    ("1329", time (hm 13 29) Nothing),
+    ("1329Z", time (hm 13 29) (Just UTCDesignator)),
+    ("1329+15", time (hm 13 29) (Just (UTCOffset Plus (h 15) Nothing))),
+    ( "1329-1537",
+      time (hm 13 29) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+    ),
+    --
+    ("-3726", time (ms 37 26) Nothing),
+    ("-3726Z", time (ms 37 26) (Just UTCDesignator)),
+    ("-3726+15", time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing))),
+    ( "-3726-1537",
+      time (ms 37 26) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+    )
+  ]
+
+units_Time_valid2 :: [(Text, Time)]
+units_Time_valid2 = do
+  (localTimeText, localTime') <- units_LocalTime_valid
+  (zoneText, zone) <- ("", Nothing) : map (second Just) units_Zone_valid
+
+  let timeText = localTimeText <> zoneText
+      time' = Time localTime' zone
+
+  pure (timeText, time')
+
+units_Time_invalidSemantics :: [Text]
+units_Time_invalidSemantics =
+  concat
+    [ -- invalid hour
+      ["24", "240000+0000", "2429Z"],
+      -- invalid minute
+      ["-60", "-6000+00", "-6037Z"],
+      -- invalid second
+      ["--61", "--61+00", "--61Z"],
+      -- invalid zone hour
+      ["0000+2400", "-45+24"],
+      -- invalid zone minute
+      ["0000+0060", "-45+0460"]
+    ]
+
+units_Time_invalidSyntax :: [Text]
+units_Time_invalidSyntax =
+  [ -- strange constructions
+    "081739Z1537",
+    "0817391537",
+    -- extraneous whitespace
+    " 081739+1537",
+    "\n081739+1537",
+    "\r\n081739+1537",
+    "081739+1537 ",
+    "081739+1537\n",
+    "081739+1537\r\n"
+  ]
+
+--
 -- Sign
 --
 test_Sign :: TestTree
@@ -1046,3 +1153,10 @@ localTime ::
   a ->
   LocalTime
 localTime = LocalTime . Vary.from
+
+time ::
+  (a :| '[Hour, Minute, Second, HourMinuteSecond, HourMinute, MinuteSecond]) =>
+  a ->
+  Maybe Zone ->
+  Time
+time lt = Time (localTime lt)
