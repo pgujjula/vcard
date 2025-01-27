@@ -18,6 +18,8 @@ module VCard.Types.Value.Time
     HourMinute (..),
     MinuteSecond (..),
     LocalTime (..),
+    Time (..),
+    TimeList,
     Sign (..),
     Zone (..),
   )
@@ -37,6 +39,7 @@ import Text.Megaparsec (choice, optional, try)
 import Text.Megaparsec.Char (char, digitChar, string)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
+import VCard.Types.Value.List (List)
 import Vary (Vary, exhaustiveCase, from, on)
 
 --
@@ -279,6 +282,27 @@ hourMinuteTimeS (HourMinute hour minute) =
 minuteSecondTimeS :: Serializer MinuteSecond
 minuteSecondTimeS (MinuteSecond minute second) =
   "-" <> serializer minute <> serializer second
+
+--
+-- Time
+--
+
+data Time = Time
+  { timeLocalTime :: !LocalTime,
+    timeZone :: !(Maybe Zone)
+  }
+  deriving (Eq, Show, Ord)
+
+type TimeList = List Time
+
+instance HasParser Time where
+  parser :: Parser Time
+  parser = liftA2 Time (parser @LocalTime) (optional (parser @Zone))
+
+instance HasSerializer Time where
+  serializer :: Serializer Time
+  serializer (Time localTime zone) =
+    serializer localTime <> maybe "" serializer zone
 
 --
 -- Sign
