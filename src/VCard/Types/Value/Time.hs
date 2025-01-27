@@ -13,6 +13,7 @@ module VCard.Types.Value.Time
     HasMinute (..),
     Second (..),
     HasSecond (..),
+    HourMinuteSecond (..),
     Sign (..),
     Zone (..),
   )
@@ -62,6 +63,9 @@ class HasHour a where
 instance HasHour Hour where
   getHour = id
 
+instance HasHour HourMinuteSecond where
+  getHour (HourMinuteSecond h _ _) = h
+
 --
 -- Minute
 --
@@ -96,6 +100,9 @@ class HasMinute a where
 instance HasMinute Minute where
   getMinute = id
 
+instance HasMinute HourMinuteSecond where
+  getMinute (HourMinuteSecond _ m _) = m
+
 --
 -- Second
 --
@@ -103,6 +110,9 @@ instance HasMinute Minute where
 -- | A second of an minute, usually between 00 and 59, and 60 for leap seconds.
 newtype Second = Second {unSecond :: Finite 61}
   deriving (Eq, Show, Ord, Bounded)
+
+instance HasSecond HourMinuteSecond where
+  getSecond (HourMinuteSecond _ _ s) = s
 
 instance HasParser Second where
   parser :: Parser Second
@@ -129,6 +139,14 @@ class HasSecond a where
 
 instance HasSecond Second where
   getSecond = id
+
+--
+-- HourMinuteSecond
+--
+
+-- | An `Hour`, `Minute`, and `Second` together.
+data HourMinuteSecond = HourMinuteSecond !Hour !Minute !Second
+  deriving (Eq, Show, Ord, Bounded)
 
 --
 -- Sign

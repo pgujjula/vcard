@@ -65,6 +65,9 @@ module VCard.Types.Value
     Second (..),
     HasSecond (..),
 
+    -- ** 'HourMinuteSecond'
+    HourMinuteSecond (..),
+
     -- ** 'Zone'
     Zone (..),
   )
@@ -92,6 +95,7 @@ import VCard.Types.Value.Time
     HasMinute (..),
     HasSecond (..),
     Hour (..),
+    HourMinuteSecond (..),
     Minute (..),
     Second (..),
     Zone (..),
