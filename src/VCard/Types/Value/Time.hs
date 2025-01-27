@@ -14,6 +14,7 @@ module VCard.Types.Value.Time
     Second (..),
     HasSecond (..),
     HourMinuteSecond (..),
+    HourMinute (..),
     Sign (..),
     Zone (..),
   )
@@ -66,6 +67,9 @@ instance HasHour Hour where
 instance HasHour HourMinuteSecond where
   getHour (HourMinuteSecond h _ _) = h
 
+instance HasHour HourMinute where
+  getHour (HourMinute h _) = h
+
 --
 -- Minute
 --
@@ -102,6 +106,9 @@ instance HasMinute Minute where
 
 instance HasMinute HourMinuteSecond where
   getMinute (HourMinuteSecond _ m _) = m
+
+instance HasMinute HourMinute where
+  getMinute (HourMinute _ m) = m
 
 --
 -- Second
@@ -146,6 +153,14 @@ instance HasSecond Second where
 
 -- | An `Hour`, `Minute`, and `Second` together.
 data HourMinuteSecond = HourMinuteSecond !Hour !Minute !Second
+  deriving (Eq, Show, Ord, Bounded)
+
+--
+-- HourMinute
+--
+
+-- | An `Hour` and `Minute` together.
+data HourMinute = HourMinute !Hour !Minute
   deriving (Eq, Show, Ord, Bounded)
 
 --
