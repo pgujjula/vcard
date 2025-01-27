@@ -16,6 +16,8 @@ import Control.Applicative (liftA2)
 import Control.Monad (forM_, replicateM)
 import Data.Bifunctor (bimap, second)
 import Data.Finite (finite, finites)
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty qualified as NonEmpty
 import Data.List.Ordered (minus)
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
@@ -25,6 +27,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
+import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time
   ( Hour (..),
     HourMinute (..),
@@ -35,6 +38,7 @@ import VCard.Types.Value.Time
     Second (..),
     Sign (..),
     Time (..),
+    TimeList,
     Zone (..),
   )
 import Vary ((:|))
@@ -54,6 +58,7 @@ tests =
       test_MinuteSecond,
       test_LocalTime,
       test_Time,
+      test_TimeList,
       test_Sign,
       test_Zone
     ]
@@ -769,6 +774,147 @@ units_Time_invalidSyntax =
     "081739+1537\n",
     "081739+1537\r\n"
   ]
+
+--
+-- TimeList
+--
+test_TimeList :: TestTree
+test_TimeList =
+  testGroup
+    "TimeList"
+    [ test_TimeList_parse,
+      test_TimeList_serialize
+    ]
+
+test_TimeList_parse :: TestTree
+test_TimeList_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_TimeList_valid,
+      testParseInvalidSemantics
+        (Proxy @TimeList)
+        units_TimeList_invalidSemantics,
+      testParseInvalidSyntax (Proxy @TimeList) units_TimeList_invalidSyntax
+    ]
+
+test_TimeList_serialize :: TestTree
+test_TimeList_serialize = testSerialize "serialize" units_TimeList_valid
+
+units_TimeList_valid :: [(Text, TimeList)]
+units_TimeList_valid =
+  concat
+    [ -- singletons
+      map
+        (second (List . NonEmpty.singleton))
+        [ ("02", time (h 02) Nothing),
+          ("-45Z", time (m 45) (Just UTCDesignator)),
+          ("--15+11", time (s 15) (Just (UTCOffset Plus (h 11) Nothing))),
+          ( "081739+0942",
+            time (hms 08 17 39) (Just (UTCOffset Plus (h 09) (Just (m 42))))
+          ),
+          ("1329-11", time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))),
+          ( "-3726-0942",
+            time (ms 37 26) (Just (UTCOffset Minus (h 09) (Just (m 42))))
+          )
+        ],
+      -- pairs
+      map
+        (second List)
+        [ ( "02,081739+0942",
+            time (h 02) Nothing
+              :| [ time
+                     (hms 08 17 39)
+                     (Just (UTCOffset Plus (h 09) (Just (m 42))))
+                 ]
+          ),
+          ( "-45Z,1329-11",
+            time (m 45) (Just UTCDesignator)
+              :| [time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))]
+          ),
+          ( "--15+11,-3726-0942",
+            time (s 15) (Just (UTCOffset Plus (h 11) Nothing))
+              :| [time (ms 37 26) (Just (UTCOffset Minus (h 09) (Just (m 42))))]
+          )
+        ],
+      -- triples
+      map
+        (second List)
+        [ ( "02,--15+11,1329-11",
+            time (h 02) Nothing
+              :| [ time (s 15) (Just (UTCOffset Plus (h 11) Nothing)),
+                   time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))
+                 ]
+          ),
+          ( "-45Z,081739+0942,-3726-0942",
+            time (m 45) (Just UTCDesignator)
+              :| [ time
+                     (hms 08 17 39)
+                     (Just (UTCOffset Plus (h 09) (Just (m 42)))),
+                   time (ms 37 26) (Just (UTCOffset Minus (h 09) (Just (m 42))))
+                 ]
+          )
+        ],
+      -- duplicates
+      map
+        (second List)
+        [ ("02,02", time (h 02) Nothing :| [time (h 02) Nothing]),
+          ( "-45Z,--15+11,-45Z",
+            time (m 45) (Just UTCDesignator)
+              :| [ time (s 15) (Just (UTCOffset Plus (h 11) Nothing)),
+                   time (m 45) (Just UTCDesignator)
+                 ]
+          ),
+          ( "1329-11,1329-11,1329-11",
+            time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))
+              :| [ time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing)),
+                   time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))
+                 ]
+          )
+        ]
+    ]
+
+units_TimeList_invalidSemantics :: [Text]
+units_TimeList_invalidSemantics =
+  [ -- invalid times
+    "24",
+    "--15+11,-60Z",
+    "081739+0960,1329-11,-3726-0942"
+  ]
+
+units_TimeList_invalidSyntax :: [Text]
+units_TimeList_invalidSyntax =
+  concat
+    [ -- leading/trailing whitespace
+      [ " -45+15,--08Z",
+        "\n-45+15,--08Z",
+        "\r\n-45+15,--08Z",
+        "-45+15,--08Z ",
+        "-45+15,--08Z\n",
+        "-45+15,--08Z\r\n"
+      ],
+      -- whitespace between entries
+      [ "--08+15, 02,1329-11",
+        "--08+15,\n02,1329-11",
+        "--08+15,\r\n02,1329-11",
+        "--08+15,02, 1329-11",
+        "--08+15,02,\n1329-11",
+        "--08+15,02,\r\n1329-11"
+      ],
+      -- empty strings/extraneous leading or trailing commas
+      [ "",
+        ",",
+        ",,",
+        "--08+15,",
+        ",--08+15",
+        ",--08+15,1329-11",
+        "--08+15,1329-11,"
+      ],
+      -- invalid times
+      [ "--8+15",
+        "--8+15,1329-11",
+        "1329-11,--8+15"
+      ]
+    ]
 
 --
 -- Sign
