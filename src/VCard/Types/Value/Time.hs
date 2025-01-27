@@ -10,6 +10,7 @@ module VCard.Types.Value.Time
   ( Hour (..),
     HasHour (..),
     Minute (..),
+    HasMinute (..),
     Second (..),
     Sign (..),
     Zone (..),
@@ -82,6 +83,17 @@ instance HasParser Minute where
 instance HasSerializer Minute where
   serializer :: Serializer Minute
   serializer = Text.justifyRight 2 '0' . Text.pack . show . getFinite . unMinute
+
+--
+-- HasMinute
+--
+
+-- | Class for types that contain a `Minute`.
+class HasMinute a where
+  getMinute :: a -> Minute
+
+instance HasMinute Minute where
+  getMinute = id
 
 --
 -- Second
