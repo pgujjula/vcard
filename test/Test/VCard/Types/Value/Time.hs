@@ -22,6 +22,7 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Time
   ( Hour (..),
+    HourMinute (..),
     HourMinuteSecond (..),
     Minute (..),
     Second (..),
@@ -39,6 +40,7 @@ tests =
       test_Minute,
       test_Second,
       test_HourMinuteSecond,
+      test_HourMinute,
       test_Sign,
       test_Zone
     ]
@@ -279,6 +281,19 @@ test_HourMinuteSecond =
 
 test_HourMinuteSecond_bounds :: TestTree
 test_HourMinuteSecond_bounds = testBounds (hms 00 00 00, hms 23 59 60)
+
+--
+-- HourMinute
+--
+test_HourMinute :: TestTree
+test_HourMinute =
+  testGroup
+    "HourMinute"
+    [ test_HourMinute_bounds
+    ]
+
+test_HourMinute_bounds :: TestTree
+test_HourMinute_bounds = testBounds (hm 00 00, hm 23 59)
 
 --
 -- Sign
@@ -529,3 +544,6 @@ s second = Second (finite second)
 
 hms :: Integer -> Integer -> Integer -> HourMinuteSecond
 hms hour minute second = HourMinuteSecond (h hour) (m minute) (s second)
+
+hm :: Integer -> Integer -> HourMinute
+hm hour minute = HourMinute (h hour) (m minute)
