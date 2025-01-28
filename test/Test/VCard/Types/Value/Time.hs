@@ -381,94 +381,19 @@ test_LocalTime_serialize =
 units_LocalTime_valid :: [(Text, LocalTime)]
 units_LocalTime_valid =
   concat
-    [ units_LocalTime_valid_Hour,
-      units_LocalTime_valid_Minute,
-      units_LocalTime_valid_Second,
-      units_LocalTime_valid_HourMinuteSecond,
-      units_LocalTime_valid_HourMinute,
-      units_LocalTime_valid_MinuteSecond
+    [ pack units_LocalTimeLike_valid_Hour,
+      pack units_LocalTimeLike_valid_Minute,
+      pack units_LocalTimeLike_valid_Second,
+      pack units_LocalTimeLike_valid_HourMinuteSecond,
+      pack units_LocalTimeLike_valid_HourMinute,
+      pack units_LocalTimeLike_valid_MinuteSecond
     ]
-
--- See also: units_Hour_valid
-units_LocalTime_valid_Hour :: [(Text, LocalTime)]
-units_LocalTime_valid_Hour =
-  map
-    (second localTime)
-    [("00", h 00), ("02", h 02), ("15", h 15), ("23", h 23)]
-
--- See also: units_Minute_valid
-units_LocalTime_valid_Minute :: [(Text, LocalTime)]
-units_LocalTime_valid_Minute =
-  map
-    (second localTime)
-    [("-00", m 00), ("-08", m 08), ("-45", m 45), ("-59", m 59)]
-
--- See also: units_Second_valid
-units_LocalTime_valid_Second :: [(Text, LocalTime)]
-units_LocalTime_valid_Second =
-  map
-    (second localTime)
-    [ ("--00", s 00),
-      ("--08", s 08),
-      ("--45", s 45),
-      ("--59", s 59),
-      ("--60", s 60)
-    ]
-
-units_LocalTime_valid_HourMinuteSecond :: [(Text, LocalTime)]
-units_LocalTime_valid_HourMinuteSecond =
-  map
-    (second localTime)
-    [ -- bounds
-      ("000000", hms 00 00 00),
-      ("235960", hms 23 59 60),
-      -- vary hour
-      ("001739", hms 00 17 39),
-      ("081739", hms 08 17 39),
-      ("231739", hms 23 17 39),
-      -- vary minute
-      ("130054", hms 13 00 54),
-      ("132954", hms 13 29 54),
-      ("135954", hms 13 59 54),
-      -- vary second
-      ("013700", hms 01 37 00),
-      ("013726", hms 01 37 26),
-      ("013760", hms 01 37 60)
-    ]
-
-units_LocalTime_valid_HourMinute :: [(Text, LocalTime)]
-units_LocalTime_valid_HourMinute =
-  map
-    (second localTime)
-    [ -- bounds
-      ("0000", hm 00 00),
-      ("2359", hm 23 59),
-      -- vary hour
-      ("0017", hm 00 17),
-      ("0817", hm 08 17),
-      ("2317", hm 23 17),
-      -- vary minute
-      ("1300", hm 13 00),
-      ("1329", hm 13 29),
-      ("1359", hm 13 59)
-    ]
-
-units_LocalTime_valid_MinuteSecond :: [(Text, LocalTime)]
-units_LocalTime_valid_MinuteSecond =
-  map
-    (second localTime)
-    [ -- bounds
-      ("-0000", ms 00 00),
-      ("-5960", ms 59 60),
-      -- vary minute
-      ("-0054", ms 00 54),
-      ("-2954", ms 29 54),
-      ("-5954", ms 59 54),
-      -- vary second
-      ("-3700", ms 37 00),
-      ("-3726", ms 37 26),
-      ("-3760", ms 37 60)
-    ]
+  where
+    pack ::
+      (a :| '[Hour, Minute, Second, HourMinuteSecond, HourMinute, MinuteSecond]) =>
+      [(Text, a)] ->
+      [(Text, LocalTime)]
+    pack = map (second localTime)
 
 units_LocalTime_invalidSemantics :: [Text]
 units_LocalTime_invalidSemantics =
@@ -669,6 +594,79 @@ units_LocalTime_invalidSyntax_MinuteSecond =
       -- leading or trailing whitespace
       [" -2954", "\n-2954", "\r\n-2954", "-2954 ", "-2954\n", "-2954\r\n"]
     ]
+
+--
+-- LocalTimeLike
+--
+
+-- See also: units_Hour_valid
+units_LocalTimeLike_valid_Hour :: [(Text, Hour)]
+units_LocalTimeLike_valid_Hour =
+  [("00", h 00), ("02", h 02), ("15", h 15), ("23", h 23)]
+
+-- See also: units_Minute_valid
+units_LocalTimeLike_valid_Minute :: [(Text, Minute)]
+units_LocalTimeLike_valid_Minute =
+  [("-00", m 00), ("-08", m 08), ("-45", m 45), ("-59", m 59)]
+
+-- See also: units_Second_valid
+units_LocalTimeLike_valid_Second :: [(Text, Second)]
+units_LocalTimeLike_valid_Second =
+  [ ("--00", s 00),
+    ("--08", s 08),
+    ("--45", s 45),
+    ("--59", s 59),
+    ("--60", s 60)
+  ]
+
+units_LocalTimeLike_valid_HourMinuteSecond :: [(Text, HourMinuteSecond)]
+units_LocalTimeLike_valid_HourMinuteSecond =
+  [ -- bounds
+    ("000000", hms 00 00 00),
+    ("235960", hms 23 59 60),
+    -- vary hour
+    ("001739", hms 00 17 39),
+    ("081739", hms 08 17 39),
+    ("231739", hms 23 17 39),
+    -- vary minute
+    ("130054", hms 13 00 54),
+    ("132954", hms 13 29 54),
+    ("135954", hms 13 59 54),
+    -- vary second
+    ("013700", hms 01 37 00),
+    ("013726", hms 01 37 26),
+    ("013760", hms 01 37 60)
+  ]
+
+units_LocalTimeLike_valid_HourMinute :: [(Text, HourMinute)]
+units_LocalTimeLike_valid_HourMinute =
+  [ -- bounds
+    ("0000", hm 00 00),
+    ("2359", hm 23 59),
+    -- vary hour
+    ("0017", hm 00 17),
+    ("0817", hm 08 17),
+    ("2317", hm 23 17),
+    -- vary minute
+    ("1300", hm 13 00),
+    ("1329", hm 13 29),
+    ("1359", hm 13 59)
+  ]
+
+units_LocalTimeLike_valid_MinuteSecond :: [(Text, MinuteSecond)]
+units_LocalTimeLike_valid_MinuteSecond =
+  [ -- bounds
+    ("-0000", ms 00 00),
+    ("-5960", ms 59 60),
+    -- vary minute
+    ("-0054", ms 00 54),
+    ("-2954", ms 29 54),
+    ("-5954", ms 59 54),
+    -- vary second
+    ("-3700", ms 37 00),
+    ("-3726", ms 37 26),
+    ("-3760", ms 37 60)
+  ]
 
 --
 -- Time
