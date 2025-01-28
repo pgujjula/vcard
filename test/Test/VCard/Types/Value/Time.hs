@@ -398,92 +398,13 @@ units_LocalTime_valid =
 units_LocalTime_invalidSemantics :: [Text]
 units_LocalTime_invalidSemantics =
   concat
-    [ units_LocalTime_invalidSemantics_Hour,
-      units_LocalTime_invalidSemantics_Minute,
-      units_LocalTime_invalidSemantics_Second,
-      units_LocalTime_invalidSemantics_HourMinuteSecond,
-      units_LocalTime_invalidSemantics_HourMinute,
-      units_LocalTime_invalidSemantics_MinuteSecond
+    [ units_LocalTimeLike_invalidSemantics_Hour,
+      units_LocalTimeLike_invalidSemantics_Minute,
+      units_LocalTimeLike_invalidSemantics_Second,
+      units_LocalTimeLike_invalidSemantics_HourMinuteSecond,
+      units_LocalTimeLike_invalidSemantics_HourMinute,
+      units_LocalTimeLike_invalidSemantics_MinuteSecond
     ]
-
--- See also: units_Hour_invalidSemantics
-units_LocalTime_invalidSemantics_Hour :: [Text]
-units_LocalTime_invalidSemantics_Hour =
-  ["24", "25", "26", "50", "99"]
-
--- See also: units_Minute_invalidSemantics
-units_LocalTime_invalidSemantics_Minute :: [Text]
-units_LocalTime_invalidSemantics_Minute =
-  ["-60", "-61", "-62", "-63", "-75", "-99"]
-
--- See also: units_Second_invalidSemantics
-units_LocalTime_invalidSemantics_Second :: [Text]
-units_LocalTime_invalidSemantics_Second =
-  ["--61", "--62", "--63", "--75", "--99"]
-
-units_LocalTime_invalidSemantics_HourMinuteSecond :: [Text]
-units_LocalTime_invalidSemantics_HourMinuteSecond =
-  [ -- invalid hours
-    "240000",
-    "241739",
-    "251739",
-    "261739",
-    "501739",
-    "991739",
-    -- invalid minutes
-    "006000",
-    "136054",
-    "136154",
-    "136254",
-    "136354",
-    "137554",
-    "139954",
-    -- invalid seconds
-    "000061",
-    "013761",
-    "013762",
-    "013763",
-    "013775",
-    "013799"
-  ]
-
-units_LocalTime_invalidSemantics_HourMinute :: [Text]
-units_LocalTime_invalidSemantics_HourMinute =
-  [ -- invalid hours
-    "2400",
-    "2417",
-    "2517",
-    "2617",
-    "5017",
-    "9917",
-    -- invalid minutes
-    "0060",
-    "1360",
-    "1361",
-    "1362",
-    "1363",
-    "1375",
-    "1399"
-  ]
-
-units_LocalTime_invalidSemantics_MinuteSecond :: [Text]
-units_LocalTime_invalidSemantics_MinuteSecond =
-  [ -- invalid minutes
-    "-6000",
-    "-6054",
-    "-6154",
-    "-6254",
-    "-6354",
-    "-7554",
-    "-9954",
-    -- invalid seconds
-    "-0061",
-    "-3761",
-    "-3762",
-    "-3763",
-    "-3775",
-    "-3799"
-  ]
 
 units_LocalTime_invalidSyntax :: [Text]
 units_LocalTime_invalidSyntax =
@@ -666,6 +587,85 @@ units_LocalTimeLike_valid_MinuteSecond =
     ("-3700", ms 37 00),
     ("-3726", ms 37 26),
     ("-3760", ms 37 60)
+  ]
+
+-- See also: units_Hour_invalidSemantics
+units_LocalTimeLike_invalidSemantics_Hour :: [Text]
+units_LocalTimeLike_invalidSemantics_Hour =
+  ["24", "25", "26", "50", "99"]
+
+-- See also: units_Minute_invalidSemantics
+units_LocalTimeLike_invalidSemantics_Minute :: [Text]
+units_LocalTimeLike_invalidSemantics_Minute =
+  ["-60", "-61", "-62", "-63", "-75", "-99"]
+
+-- See also: units_Second_invalidSemantics
+units_LocalTimeLike_invalidSemantics_Second :: [Text]
+units_LocalTimeLike_invalidSemantics_Second =
+  ["--61", "--62", "--63", "--75", "--99"]
+
+units_LocalTimeLike_invalidSemantics_HourMinuteSecond :: [Text]
+units_LocalTimeLike_invalidSemantics_HourMinuteSecond =
+  [ -- invalid hours
+    "240000",
+    "241739",
+    "251739",
+    "261739",
+    "501739",
+    "991739",
+    -- invalid minutes
+    "006000",
+    "136054",
+    "136154",
+    "136254",
+    "136354",
+    "137554",
+    "139954",
+    -- invalid seconds
+    "000061",
+    "013761",
+    "013762",
+    "013763",
+    "013775",
+    "013799"
+  ]
+
+units_LocalTimeLike_invalidSemantics_HourMinute :: [Text]
+units_LocalTimeLike_invalidSemantics_HourMinute =
+  [ -- invalid hours
+    "2400",
+    "2417",
+    "2517",
+    "2617",
+    "5017",
+    "9917",
+    -- invalid minutes
+    "0060",
+    "1360",
+    "1361",
+    "1362",
+    "1363",
+    "1375",
+    "1399"
+  ]
+
+units_LocalTimeLike_invalidSemantics_MinuteSecond :: [Text]
+units_LocalTimeLike_invalidSemantics_MinuteSecond =
+  [ -- invalid minutes
+    "-6000",
+    "-6054",
+    "-6154",
+    "-6254",
+    "-6354",
+    "-7554",
+    "-9954",
+    -- invalid seconds
+    "-0061",
+    "-3761",
+    "-3762",
+    "-3763",
+    "-3775",
+    "-3799"
   ]
 
 --
