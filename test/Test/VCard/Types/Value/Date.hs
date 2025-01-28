@@ -643,6 +643,34 @@ units_Date_invalidSyntax =
       units_DateLike_invalidSyntax_MonthDay
     ]
 
+exhaustive_Date_valid :: [(Text, Date)]
+exhaustive_Date_valid =
+  concat
+    [ pack exhaustive_DateLike_valid_Year,
+      pack exhaustive_DateLike_valid_Month,
+      pack exhaustive_DateLike_valid_Day,
+      pack exhaustive_DateLike_valid_YearMonthDay,
+      pack exhaustive_DateLike_valid_YearMonth,
+      pack exhaustive_DateLike_valid_MonthDay
+    ]
+  where
+    pack ::
+      (a :| '[Year, Month, Day, YearMonthDay, YearMonth, MonthDay]) =>
+      [(Text, a)] ->
+      [(Text, Date)]
+    pack = map (second date)
+
+exhaustive_Date_invalid :: [Text]
+exhaustive_Date_invalid =
+  concat
+    [ exhaustive_DateLike_invalid_YearMonthDay,
+      exhaustive_DateLike_invalid_Year,
+      exhaustive_DateLike_invalid_Month,
+      exhaustive_DateLike_invalid_Day,
+      exhaustive_DateLike_invalid_YearMonth,
+      exhaustive_DateLike_invalid_MonthDay
+    ]
+
 --
 -- DateList
 --
@@ -1172,125 +1200,107 @@ exhaustive_Month_invalid = universe_Month `minus` map fst exhaustive_Month_valid
 exhaustive_Day_invalid :: [Text]
 exhaustive_Day_invalid = universe_Day `minus` map fst exhaustive_Day_valid
 
+------------------------
+-- DateLike enumerations
+------------------------
+
 -- Potential dates
-universe_Date_Year :: [Text]
-universe_Date_Year = universe_Year
+universe_DateLike_Year :: [Text]
+universe_DateLike_Year = universe_Year
 
-universe_Date_Month :: [Text]
-universe_Date_Month = map ("--" <>) universe_Month
+universe_DateLike_Month :: [Text]
+universe_DateLike_Month = map ("--" <>) universe_Month
 
-universe_Date_Day :: [Text]
-universe_Date_Day = map ("---" <>) universe_Day
+universe_DateLike_Day :: [Text]
+universe_DateLike_Day = map ("---" <>) universe_Day
 
-universe_Date_YearMonthDay :: [Text]
-universe_Date_YearMonthDay = do
+universe_DateLike_YearMonthDay :: [Text]
+universe_DateLike_YearMonthDay = do
   year <- universe_Year
   month <- universe_Month
   day <- universe_Day
 
   pure (year <> month <> day)
 
-universe_Date_YearMonth :: [Text]
-universe_Date_YearMonth = do
+universe_DateLike_YearMonth :: [Text]
+universe_DateLike_YearMonth = do
   year <- universe_Year
   month <- universe_Month
 
   pure (year <> "-" <> month)
 
-universe_Date_MonthDay :: [Text]
-universe_Date_MonthDay = do
+universe_DateLike_MonthDay :: [Text]
+universe_DateLike_MonthDay = do
   month <- universe_Month
   day <- universe_Day
 
   pure ("--" <> month <> day)
 
 -- Valid dates
-exhaustive_Date_valid_Year :: [(Text, Date)]
-exhaustive_Date_valid_Year = map (second date) exhaustive_Year_valid
+exhaustive_DateLike_valid_Year :: [(Text, Year)]
+exhaustive_DateLike_valid_Year = exhaustive_Year_valid
 
-exhaustive_Date_valid_Month :: [(Text, Date)]
-exhaustive_Date_valid_Month =
-  let mkDateMonth :: Text -> Month -> (Text, Date)
-      mkDateMonth text month = ("--" <> text, date month)
+exhaustive_DateLike_valid_Month :: [(Text, Month)]
+exhaustive_DateLike_valid_Month =
+  let mkDateMonth :: Text -> Month -> (Text, Month)
+      mkDateMonth text month = ("--" <> text, month)
    in map (uncurry mkDateMonth) exhaustive_Month_valid
 
-exhaustive_Date_valid_Day :: [(Text, Date)]
-exhaustive_Date_valid_Day =
-  let mkDateMonth :: Text -> Day -> (Text, Date)
-      mkDateMonth text day = ("---" <> text, date day)
+exhaustive_DateLike_valid_Day :: [(Text, Day)]
+exhaustive_DateLike_valid_Day =
+  let mkDateMonth :: Text -> Day -> (Text, Day)
+      mkDateMonth text day = ("---" <> text, day)
    in map (uncurry mkDateMonth) exhaustive_Day_valid
 
-exhaustive_Date_valid_YearMonthDay :: [(Text, Date)]
-exhaustive_Date_valid_YearMonthDay = do
+exhaustive_DateLike_valid_YearMonthDay :: [(Text, YearMonthDay)]
+exhaustive_DateLike_valid_YearMonthDay = do
   (yearText, year) <- exhaustive_Year_valid
   (monthText, month) <- exhaustive_Month_valid
   (dayText, day) <- exhaustive_Day_valid
   yearMonthDay <- maybeToList (timeMkYearMonthDay year month day)
   let text = yearText <> monthText <> dayText
-  pure (text, date yearMonthDay)
+  pure (text, yearMonthDay)
 
-exhaustive_Date_valid_YearMonth :: [(Text, Date)]
-exhaustive_Date_valid_YearMonth = do
+exhaustive_DateLike_valid_YearMonth :: [(Text, YearMonth)]
+exhaustive_DateLike_valid_YearMonth = do
   (yearText, year) <- exhaustive_Year_valid
   (monthText, month) <- exhaustive_Month_valid
   let yearMonth = YearMonth year month
   let text = yearText <> "-" <> monthText
-  pure (text, date yearMonth)
+  pure (text, yearMonth)
 
-exhaustive_Date_valid_MonthDay :: [(Text, Date)]
-exhaustive_Date_valid_MonthDay = do
+exhaustive_DateLike_valid_MonthDay :: [(Text, MonthDay)]
+exhaustive_DateLike_valid_MonthDay = do
   (monthText, month) <- exhaustive_Month_valid
   (dayText, day) <- exhaustive_Day_valid
   monthDay <- maybeToList (timeMkMonthDay month day)
   let text = "--" <> monthText <> dayText
-  pure (text, date monthDay)
-
-exhaustive_Date_valid :: [(Text, Date)]
-exhaustive_Date_valid =
-  concat
-    [ exhaustive_Date_valid_Year,
-      exhaustive_Date_valid_Month,
-      exhaustive_Date_valid_Day,
-      exhaustive_Date_valid_YearMonthDay,
-      exhaustive_Date_valid_YearMonth,
-      exhaustive_Date_valid_MonthDay
-    ]
+  pure (text, monthDay)
 
 -- Invalid dates
-exhaustive_Date_invalid_Year :: [Text]
-exhaustive_Date_invalid_Year =
-  universe_Date_Year `minus` map fst exhaustive_Date_valid_Year
+exhaustive_DateLike_invalid_Year :: [Text]
+exhaustive_DateLike_invalid_Year =
+  universe_DateLike_Year `minus` map fst exhaustive_DateLike_valid_Year
 
-exhaustive_Date_invalid_Month :: [Text]
-exhaustive_Date_invalid_Month =
-  universe_Date_Month `minus` map fst exhaustive_Date_valid_Month
+exhaustive_DateLike_invalid_Month :: [Text]
+exhaustive_DateLike_invalid_Month =
+  universe_DateLike_Month `minus` map fst exhaustive_DateLike_valid_Month
 
-exhaustive_Date_invalid_Day :: [Text]
-exhaustive_Date_invalid_Day =
-  universe_Date_Day `minus` map fst exhaustive_Date_valid_Day
+exhaustive_DateLike_invalid_Day :: [Text]
+exhaustive_DateLike_invalid_Day =
+  universe_DateLike_Day `minus` map fst exhaustive_DateLike_valid_Day
 
-exhaustive_Date_invalid_YearMonthDay :: [Text]
-exhaustive_Date_invalid_YearMonthDay =
-  universe_Date_YearMonthDay `minus` map fst exhaustive_Date_valid_YearMonthDay
+exhaustive_DateLike_invalid_YearMonthDay :: [Text]
+exhaustive_DateLike_invalid_YearMonthDay =
+  universe_DateLike_YearMonthDay `minus` map fst exhaustive_DateLike_valid_YearMonthDay
 
-exhaustive_Date_invalid_YearMonth :: [Text]
-exhaustive_Date_invalid_YearMonth =
-  universe_Date_YearMonth `minus` map fst exhaustive_Date_valid_YearMonth
+exhaustive_DateLike_invalid_YearMonth :: [Text]
+exhaustive_DateLike_invalid_YearMonth =
+  universe_DateLike_YearMonth `minus` map fst exhaustive_DateLike_valid_YearMonth
 
-exhaustive_Date_invalid_MonthDay :: [Text]
-exhaustive_Date_invalid_MonthDay =
-  universe_Date_MonthDay `minus` map fst exhaustive_Date_valid_MonthDay
-
-exhaustive_Date_invalid :: [Text]
-exhaustive_Date_invalid =
-  concat
-    [ exhaustive_Date_invalid_YearMonthDay,
-      exhaustive_Date_invalid_Year,
-      exhaustive_Date_invalid_Month,
-      exhaustive_Date_invalid_Day,
-      exhaustive_Date_invalid_YearMonth,
-      exhaustive_Date_invalid_MonthDay
-    ]
+exhaustive_DateLike_invalid_MonthDay :: [Text]
+exhaustive_DateLike_invalid_MonthDay =
+  universe_DateLike_MonthDay `minus` map fst exhaustive_DateLike_valid_MonthDay
 
 --------------------
 -- Testing functions
