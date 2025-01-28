@@ -20,6 +20,7 @@ module VCard.Types.Value.Date
     mkMonthDay,
     Date (..),
     DateList,
+    DateNoReduc (..),
   )
 where
 
@@ -283,6 +284,34 @@ dateS (Date vary) =
       )
 
 type DateList = List Date
+
+--
+-- DateNoReduc
+--
+
+newtype DateNoReduc = DateNoReduc
+  {unDateNoReduc :: Vary '[YearMonthDay, MonthDay, Day]}
+  deriving (Eq, Show, Ord)
+
+instance HasParser DateNoReduc where
+  parser =
+    choice $
+      map
+        (try . fmap DateNoReduc)
+        [ fmap from dayDateP,
+          fmap from monthDayDateP,
+          fmap from yearMonthDayDateP
+        ]
+
+instance HasSerializer DateNoReduc where
+  serializer :: Serializer DateNoReduc
+  serializer (DateNoReduc vary) =
+    vary
+      & ( on @YearMonthDay yearMonthDayDateS
+            . on @MonthDay monthDayDateS
+            . on @Day dayDateS
+            $ exhaustiveCase
+        )
 
 --
 -- Parsers of various date formats
