@@ -187,7 +187,7 @@ units_Month_valid :: [(Text, Month)]
 units_Month_valid =
   [("01", m 01), ("05", m 05), ("10", m 10), ("12", m 12)]
 
--- See also: units_Date_invalidSemantics_Month
+-- See also: units_DateLike_invalidSemantics_Month
 units_Month_invalidSemantics :: [Text]
 units_Month_invalidSemantics =
   ["00", "13", "14", "15", "20", "99"]
@@ -260,7 +260,7 @@ units_Day_valid :: [(Text, Day)]
 units_Day_valid =
   [("01", d 1), ("15", d 15), ("30", d 30), ("31", d 31)]
 
--- See also: units_Date_invalidSemantics_Day
+-- See also: units_DateLike_invalidSemantics_Day
 units_Day_invalidSemantics :: [Text]
 units_Day_invalidSemantics =
   ["00", "32", "33", "34", "50", "99"]
@@ -408,7 +408,7 @@ units_YearMonthDay_valid =
     (y 9600, m 02, d 29)
   ]
 
--- See also: units_Date_invalidSemantics_YearMonthDay
+-- See also: units_DateLike_invalidSemantics_YearMonthDay
 units_YearMonthDay_invalid :: [(Year, Month, Day)]
 units_YearMonthDay_invalid =
   [ -- beyond max day
@@ -556,7 +556,7 @@ units_MonthDay_valid =
     (m 12, d 31)
   ]
 
--- See also: units_Date_invalidSemantics_MonthDay
+-- See also: units_DateLike_invalidSemantics_MonthDay
 units_MonthDay_invalid :: [(Month, Day)]
 units_MonthDay_invalid =
   [ -- beyond max day
@@ -624,121 +624,13 @@ units_Date_valid =
 units_Date_invalidSemantics :: [Text]
 units_Date_invalidSemantics =
   concat
-    [ units_Date_invalidSemantics_Year,
-      units_Date_invalidSemantics_Month,
-      units_Date_invalidSemantics_Day,
-      units_Date_invalidSemantics_YearMonthDay,
-      units_Date_invalidSemantics_YearMonth,
-      units_Date_invalidSemantics_MonthDay
+    [ units_DateLike_invalidSemantics_Year,
+      units_DateLike_invalidSemantics_Month,
+      units_DateLike_invalidSemantics_Day,
+      units_DateLike_invalidSemantics_YearMonthDay,
+      units_DateLike_invalidSemantics_YearMonth,
+      units_DateLike_invalidSemantics_MonthDay
     ]
-
--- all syntactically valid years (yyyy) are also semantically valid
-units_Date_invalidSemantics_Year :: [Text]
-units_Date_invalidSemantics_Year = []
-
--- See also: units_Month_invalidSemantics
-units_Date_invalidSemantics_Month :: [Text]
-units_Date_invalidSemantics_Month =
-  ["--00", "--13", "--14", "--15", "--20", "--99"]
-
--- See also: units_Day_invalidSemantics
-units_Date_invalidSemantics_Day :: [Text]
-units_Date_invalidSemantics_Day =
-  ["---00", "---32", "---33", "---34", "---50", "---99"]
-
--- See also: units_YearMonthDay_invalid
-units_Date_invalidSemantics_YearMonthDay :: [Text]
-units_Date_invalidSemantics_YearMonthDay =
-  [ -- beyond max day
-    "53170229",
-    "53170230",
-    "53170231",
-    "53170431",
-    "53170631",
-    "53170931",
-    "53171131",
-    -- non leap years (not multiples of 4)
-    "00010229",
-    "00010230",
-    "00010231",
-    "49220229",
-    "49220230",
-    "49220231",
-    "99990229",
-    "99990230",
-    "99990231",
-    -- leap years (multiples of 4 but not of 100)
-    "00040230",
-    "00040231",
-    "67840230",
-    "67840231",
-    "99960230",
-    "99960231",
-    -- non leap years (multiples of 100 but not of 400)
-    "01000229",
-    "01000230",
-    "01000231",
-    "67000229",
-    "67000230",
-    "67000231",
-    "99000229",
-    "99000230",
-    "99000231",
-    -- leap years (multiples of 400)
-    "00000230",
-    "00000231",
-    "68000230",
-    "68000231",
-    "96000230",
-    "96000231",
-    -- invalid month numbers
-    "53171312",
-    "53171412",
-    "53171512",
-    "53172012",
-    "53179912",
-    -- invalid day numbers
-    "53170732",
-    "53170733",
-    "53170734",
-    "53170750",
-    "53170799"
-  ]
-
-units_Date_invalidSemantics_YearMonth :: [Text]
-units_Date_invalidSemantics_YearMonth =
-  [ -- invalid month numbers
-    "5317-00",
-    "5317-13",
-    "5317-14",
-    "5317-15",
-    "5317-20",
-    "5317-99"
-  ]
-
--- See also: units_MonthDay_invalid
-units_Date_invalidSemantics_MonthDay :: [Text]
-units_Date_invalidSemantics_MonthDay =
-  [ -- beyond max day
-    "--0230",
-    "--0231",
-    "--0431",
-    "--0631",
-    "--0931",
-    "--1131",
-    -- invalid month numbers
-    "--1312",
-    "--1412",
-    "--1512",
-    "--2012",
-    "--9912",
-    -- invalid day numbers
-    "--0532",
-    "--0533",
-    "--0534",
-    "--0550",
-    "--0599"
-  ]
 
 units_Date_invalidSyntax :: [Text]
 units_Date_invalidSyntax =
@@ -1113,6 +1005,114 @@ units_DateLike_valid_MonthDay =
     ("--1031", md 10 31),
     ("--1130", md 11 30),
     ("--1231", md 12 31)
+  ]
+
+-- all syntactically valid years (yyyy) are also semantically valid
+units_DateLike_invalidSemantics_Year :: [Text]
+units_DateLike_invalidSemantics_Year = []
+
+-- See also: units_Month_invalidSemantics
+units_DateLike_invalidSemantics_Month :: [Text]
+units_DateLike_invalidSemantics_Month =
+  ["--00", "--13", "--14", "--15", "--20", "--99"]
+
+-- See also: units_Day_invalidSemantics
+units_DateLike_invalidSemantics_Day :: [Text]
+units_DateLike_invalidSemantics_Day =
+  ["---00", "---32", "---33", "---34", "---50", "---99"]
+
+-- See also: units_YearMonthDay_invalid
+units_DateLike_invalidSemantics_YearMonthDay :: [Text]
+units_DateLike_invalidSemantics_YearMonthDay =
+  [ -- beyond max day
+    "53170229",
+    "53170230",
+    "53170231",
+    "53170431",
+    "53170631",
+    "53170931",
+    "53171131",
+    -- non leap years (not multiples of 4)
+    "00010229",
+    "00010230",
+    "00010231",
+    "49220229",
+    "49220230",
+    "49220231",
+    "99990229",
+    "99990230",
+    "99990231",
+    -- leap years (multiples of 4 but not of 100)
+    "00040230",
+    "00040231",
+    "67840230",
+    "67840231",
+    "99960230",
+    "99960231",
+    -- non leap years (multiples of 100 but not of 400)
+    "01000229",
+    "01000230",
+    "01000231",
+    "67000229",
+    "67000230",
+    "67000231",
+    "99000229",
+    "99000230",
+    "99000231",
+    -- leap years (multiples of 400)
+    "00000230",
+    "00000231",
+    "68000230",
+    "68000231",
+    "96000230",
+    "96000231",
+    -- invalid month numbers
+    "53171312",
+    "53171412",
+    "53171512",
+    "53172012",
+    "53179912",
+    -- invalid day numbers
+    "53170732",
+    "53170733",
+    "53170734",
+    "53170750",
+    "53170799"
+  ]
+
+units_DateLike_invalidSemantics_YearMonth :: [Text]
+units_DateLike_invalidSemantics_YearMonth =
+  [ -- invalid month numbers
+    "5317-00",
+    "5317-13",
+    "5317-14",
+    "5317-15",
+    "5317-20",
+    "5317-99"
+  ]
+
+-- See also: units_MonthDay_invalid
+units_DateLike_invalidSemantics_MonthDay :: [Text]
+units_DateLike_invalidSemantics_MonthDay =
+  [ -- beyond max day
+    "--0230",
+    "--0231",
+    "--0431",
+    "--0631",
+    "--0931",
+    "--1131",
+    -- invalid month numbers
+    "--1312",
+    "--1412",
+    "--1512",
+    "--2012",
+    "--9912",
+    -- invalid day numbers
+    "--0532",
+    "--0533",
+    "--0534",
+    "--0550",
+    "--0599"
   ]
 
 -- =========
