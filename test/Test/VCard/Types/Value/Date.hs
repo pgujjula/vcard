@@ -121,7 +121,7 @@ units_Year_valid =
 units_Year_invalidSemantics :: [Text]
 units_Year_invalidSemantics = []
 
--- See also: units_Date_invalidSyntax_Year
+-- See also: units_DateLike_invalidSyntax_Year
 units_Year_invalidSyntax :: [Text]
 units_Year_invalidSyntax =
   concat
@@ -192,7 +192,7 @@ units_Month_invalidSemantics :: [Text]
 units_Month_invalidSemantics =
   ["00", "13", "14", "15", "20", "99"]
 
--- See also: units_Date_invalidSyntax_Month
+-- See also: units_DateLike_invalidSyntax_Month
 units_Month_invalidSyntax :: [Text]
 units_Month_invalidSyntax =
   concat
@@ -265,7 +265,7 @@ units_Day_invalidSemantics :: [Text]
 units_Day_invalidSemantics =
   ["00", "32", "33", "34", "50", "99"]
 
--- See also: units_Date_invalidSyntax_Day
+-- See also: units_DateLike_invalidSyntax_Day
 units_Day_invalidSyntax :: [Text]
 units_Day_invalidSyntax =
   concat
@@ -635,119 +635,13 @@ units_Date_invalidSemantics =
 units_Date_invalidSyntax :: [Text]
 units_Date_invalidSyntax =
   concat
-    [ units_Date_invalidSyntax_Year,
-      units_Date_invalidSyntax_Month,
-      units_Date_invalidSyntax_Day,
-      units_Date_invalidSyntax_YearMonthDay,
-      units_Date_invalidSyntax_YearMonth,
-      units_Date_invalidSyntax_MonthDay
+    [ units_DateLike_invalidSyntax_Year,
+      units_DateLike_invalidSyntax_Month,
+      units_DateLike_invalidSyntax_Day,
+      units_DateLike_invalidSyntax_YearMonthDay,
+      units_DateLike_invalidSyntax_YearMonth,
+      units_DateLike_invalidSyntax_MonthDay
     ]
-
--- See also: units_Year_invalidSyntax
-units_Date_invalidSyntax_Year :: [Text]
-units_Date_invalidSyntax_Year =
-  concat
-    [ -- incorrect number of digits
-      ["1", "01", "001", "00001"],
-      ["25", "025", "00025"],
-      -- negative numbers
-      ["-1", "-01", "-001", "-0001", "-00001"],
-      ["-25", "-025", "-0025", "-00025"],
-      -- too large numbers
-      ["10000", "010000"],
-      ["92893", "092893"],
-      -- invalid number formats
-      ["2e3", "1000.0"],
-      -- invalid characters
-      ["15a1", "1b51"],
-      -- leading or trailing whitespace
-      [" 3275", "\n3275", "\r\n3275", "3275 ", "3275\n", "3275\r\n"]
-    ]
-
--- See also: units_Month_invalidSyntax
-units_Date_invalidSyntax_Month :: [Text]
-units_Date_invalidSyntax_Month =
-  concat
-    [ -- incorrect number of digits
-      ["--1", "--001"],
-      ["--7", "--007"],
-      ["--010"],
-      -- too small/large numbers
-      ["--0", "--000", "--013", "--020"],
-      -- invalid number formats
-      ["--1e1", "--10.0"],
-      -- invalid characters
-      ["--a", "--1a", "--a1"],
-      -- leading or trailing whitespace
-      [" --07", "\n--07", "\r\n--07", "--07 ", "--07\n", "--07\r\n"]
-    ]
-
--- See also: units_Day_invalidSyntax
-units_Date_invalidSyntax_Day :: [Text]
-units_Date_invalidSyntax_Day =
-  concat
-    [ -- incorrect number of digits
-      ["---1", "---001", "---0001"],
-      ["---7", "---007", "---0007"],
-      ["---030", "---0030"],
-      ["---031", "---0031"],
-      -- too small/large numbers
-      ["---0", "---000", "---0000"],
-      ["---032", "---0032"],
-      ["---099", "---0099"],
-      -- invalid number formats
-      ["---1e1", "---10.0"],
-      -- invalid characters
-      ["---a", "---1a", "---a1"],
-      -- leading or trailing whitespace
-      [" ---07", "\n---07", "\r\n---07", "---07 ", "---07\n", "---07\r\n"]
-    ]
-
-units_Date_invalidSyntax_YearMonthDay :: [Text]
-units_Date_invalidSyntax_YearMonthDay =
-  [ -- extra dashes
-    "5317-0412",
-    "531704-12",
-    "5317-04-12",
-    -- incorrect number of digits
-    "053170412",
-    -- leading or trailing whitespace
-    " 53170412",
-    "\n53170412",
-    "\r\n53170412",
-    "53170412 ",
-    "53170412\n",
-    "53170412\r\n"
-  ]
-
-units_Date_invalidSyntax_YearMonth :: [Text]
-units_Date_invalidSyntax_YearMonth =
-  [ -- missing dash
-    "481007",
-    -- incorrect number of digits
-    "04810-07",
-    "4810-007",
-    -- leading or trailing whitespace
-    " 4810-007",
-    "\n4810-007",
-    "\r\n4810-007",
-    "4810-007 ",
-    "4810-007\n",
-    "4810-007\r\n"
-  ]
-
-units_Date_invalidSyntax_MonthDay :: [Text]
-units_Date_invalidSyntax_MonthDay =
-  [ -- extra dash
-    "--07-12",
-    -- leading or trailing whitespace
-    " --0712",
-    "\n--0712",
-    "\r\n--0712",
-    "--0712 ",
-    "--0712\n",
-    "--0712\r\n"
-  ]
 
 --
 -- DateList
@@ -1113,6 +1007,112 @@ units_DateLike_invalidSemantics_MonthDay =
     "--0534",
     "--0550",
     "--0599"
+  ]
+
+-- See also: units_Year_invalidSyntax
+units_DateLike_invalidSyntax_Year :: [Text]
+units_DateLike_invalidSyntax_Year =
+  concat
+    [ -- incorrect number of digits
+      ["1", "01", "001", "00001"],
+      ["25", "025", "00025"],
+      -- negative numbers
+      ["-1", "-01", "-001", "-0001", "-00001"],
+      ["-25", "-025", "-0025", "-00025"],
+      -- too large numbers
+      ["10000", "010000"],
+      ["92893", "092893"],
+      -- invalid number formats
+      ["2e3", "1000.0"],
+      -- invalid characters
+      ["15a1", "1b51"],
+      -- leading or trailing whitespace
+      [" 3275", "\n3275", "\r\n3275", "3275 ", "3275\n", "3275\r\n"]
+    ]
+
+-- See also: units_Month_invalidSyntax
+units_DateLike_invalidSyntax_Month :: [Text]
+units_DateLike_invalidSyntax_Month =
+  concat
+    [ -- incorrect number of digits
+      ["--1", "--001"],
+      ["--7", "--007"],
+      ["--010"],
+      -- too small/large numbers
+      ["--0", "--000", "--013", "--020"],
+      -- invalid number formats
+      ["--1e1", "--10.0"],
+      -- invalid characters
+      ["--a", "--1a", "--a1"],
+      -- leading or trailing whitespace
+      [" --07", "\n--07", "\r\n--07", "--07 ", "--07\n", "--07\r\n"]
+    ]
+
+-- See also: units_Day_invalidSyntax
+units_DateLike_invalidSyntax_Day :: [Text]
+units_DateLike_invalidSyntax_Day =
+  concat
+    [ -- incorrect number of digits
+      ["---1", "---001", "---0001"],
+      ["---7", "---007", "---0007"],
+      ["---030", "---0030"],
+      ["---031", "---0031"],
+      -- too small/large numbers
+      ["---0", "---000", "---0000"],
+      ["---032", "---0032"],
+      ["---099", "---0099"],
+      -- invalid number formats
+      ["---1e1", "---10.0"],
+      -- invalid characters
+      ["---a", "---1a", "---a1"],
+      -- leading or trailing whitespace
+      [" ---07", "\n---07", "\r\n---07", "---07 ", "---07\n", "---07\r\n"]
+    ]
+
+units_DateLike_invalidSyntax_YearMonthDay :: [Text]
+units_DateLike_invalidSyntax_YearMonthDay =
+  [ -- extra dashes
+    "5317-0412",
+    "531704-12",
+    "5317-04-12",
+    -- incorrect number of digits
+    "053170412",
+    -- leading or trailing whitespace
+    " 53170412",
+    "\n53170412",
+    "\r\n53170412",
+    "53170412 ",
+    "53170412\n",
+    "53170412\r\n"
+  ]
+
+units_DateLike_invalidSyntax_YearMonth :: [Text]
+units_DateLike_invalidSyntax_YearMonth =
+  [ -- missing dash
+    "481007",
+    -- incorrect number of digits
+    "04810-07",
+    "4810-007",
+    -- leading or trailing whitespace
+    " 4810-007",
+    "\n4810-007",
+    "\r\n4810-007",
+    "4810-007 ",
+    "4810-007\n",
+    "4810-007\r\n"
+  ]
+
+units_DateLike_invalidSyntax_MonthDay :: [Text]
+units_DateLike_invalidSyntax_MonthDay =
+  [ -- extra dash
+    "--07-12",
+    -- leading or trailing whitespace
+    " --0712",
+    "\n--0712",
+    "\r\n--0712",
+    "--0712 ",
+    "--0712\n",
+    "--0712\r\n"
   ]
 
 -- =========
