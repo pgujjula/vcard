@@ -409,111 +409,12 @@ units_LocalTime_invalidSemantics =
 units_LocalTime_invalidSyntax :: [Text]
 units_LocalTime_invalidSyntax =
   concat
-    [ units_LocalTime_invalidSyntax_Hour,
-      units_LocalTime_invalidSyntax_Minute,
-      units_LocalTime_invalidSyntax_Second,
-      units_LocalTime_invalidSyntax_HourMinuteSecond,
-      units_LocalTime_invalidSyntax_HourMinute,
-      units_LocalTime_invalidSyntax_MinuteSecond
-    ]
-
--- See also: units_Hour_invalidSyntax
-units_LocalTime_invalidSyntax_Hour :: [Text]
-units_LocalTime_invalidSyntax_Hour =
-  concat
-    [ -- incorrect number of digits
-      ["1", "001"],
-      ["7", "007"],
-      ["020"],
-      -- too large numbers
-      ["024"],
-      ["050"],
-      -- invalid number formats
-      ["1e1", "20.0"],
-      -- invalid characters
-      ["a", "1a", "a1"],
-      -- leading or trailing whitespace
-      [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
-    ]
-
--- See also: units_Minute_invalidSyntax
-units_LocalTime_invalidSyntax_Minute :: [Text]
-units_LocalTime_invalidSyntax_Minute =
-  concat
-    [ -- incorrect number of digits
-      ["-1", "-001"],
-      ["-7", "-007"],
-      ["-020"],
-      -- too large numbers
-      ["-060"],
-      ["-075"],
-      -- invalid number formats
-      ["-1e1", "-20.0"],
-      -- invalid characters
-      ["-a", "-1a", "-a1"],
-      -- leading or trailing whitespace
-      [" -07", "\n-07", "\r\n-07", "-07 ", "-07\n", "-07\r\n"]
-    ]
-
--- See also: units_Second_invalidSyntax
-units_LocalTime_invalidSyntax_Second :: [Text]
-units_LocalTime_invalidSyntax_Second =
-  concat
-    [ -- incorrect number of digits
-      ["--1", "--001", "--0001"],
-      ["--7", "--007", "--0007"],
-      ["--020", "--0020"],
-      -- too large numbers
-      ["--061", "--0061"],
-      ["--075", "--0075"],
-      -- invalid number formats
-      ["--1e1", "--20.0"],
-      -- invalid characters
-      ["--a", "--1a", "--a1"],
-      -- leading or trailing whitespace
-      [" --07", "\n--07", "\r\n--07", "--07 ", "--07\n", "--07\r\n"]
-    ]
-
-units_LocalTime_invalidSyntax_HourMinuteSecond :: [Text]
-units_LocalTime_invalidSyntax_HourMinuteSecond =
-  concat
-    [ -- extra dashes
-      [ "08-1739",
-        "0817-39",
-        "08-17-39"
-      ],
-      -- incorrect number of digits
-      ["0081739"],
-      -- leading or trailing whitespace
-      [ " 081739",
-        "\n081739",
-        "\r\n081739",
-        "081739 ",
-        "081739\n",
-        " 081739\r\n"
-      ]
-    ]
-
-units_LocalTime_invalidSyntax_HourMinute :: [Text]
-units_LocalTime_invalidSyntax_HourMinute =
-  concat
-    [ -- extra dash
-      ["08-17", "0817-"],
-      -- incorrect number of digits
-      ["00817"],
-      -- leading or trailing whitespace
-      [" 0817", "\n0817", "\r\n0817", "0817 ", "0817\n", "0817\r\n"]
-    ]
-
-units_LocalTime_invalidSyntax_MinuteSecond :: [Text]
-units_LocalTime_invalidSyntax_MinuteSecond =
-  concat
-    [ -- extra dash
-      ["-29-54", "--2954"],
-      -- incorrect number of digits
-      ["-02954"],
-      -- leading or trailing whitespace
-      [" -2954", "\n-2954", "\r\n-2954", "-2954 ", "-2954\n", "-2954\r\n"]
+    [ units_LocalTimeLike_invalidSyntax_Hour,
+      units_LocalTimeLike_invalidSyntax_Minute,
+      units_LocalTimeLike_invalidSyntax_Second,
+      units_LocalTimeLike_invalidSyntax_HourMinuteSecond,
+      units_LocalTimeLike_invalidSyntax_HourMinute,
+      units_LocalTimeLike_invalidSyntax_MinuteSecond
     ]
 
 --
@@ -667,6 +568,105 @@ units_LocalTimeLike_invalidSemantics_MinuteSecond =
     "-3775",
     "-3799"
   ]
+
+-- See also: units_Hour_invalidSyntax
+units_LocalTimeLike_invalidSyntax_Hour :: [Text]
+units_LocalTimeLike_invalidSyntax_Hour =
+  concat
+    [ -- incorrect number of digits
+      ["1", "001"],
+      ["7", "007"],
+      ["020"],
+      -- too large numbers
+      ["024"],
+      ["050"],
+      -- invalid number formats
+      ["1e1", "20.0"],
+      -- invalid characters
+      ["a", "1a", "a1"],
+      -- leading or trailing whitespace
+      [" 07", "\n07", "\r\n07", "07 ", "07\n", "07\r\n"]
+    ]
+
+-- See also: units_Minute_invalidSyntax
+units_LocalTimeLike_invalidSyntax_Minute :: [Text]
+units_LocalTimeLike_invalidSyntax_Minute =
+  concat
+    [ -- incorrect number of digits
+      ["-1", "-001"],
+      ["-7", "-007"],
+      ["-020"],
+      -- too large numbers
+      ["-060"],
+      ["-075"],
+      -- invalid number formats
+      ["-1e1", "-20.0"],
+      -- invalid characters
+      ["-a", "-1a", "-a1"],
+      -- leading or trailing whitespace
+      [" -07", "\n-07", "\r\n-07", "-07 ", "-07\n", "-07\r\n"]
+    ]
+
+-- See also: units_Second_invalidSyntax
+units_LocalTimeLike_invalidSyntax_Second :: [Text]
+units_LocalTimeLike_invalidSyntax_Second =
+  concat
+    [ -- incorrect number of digits
+      ["--1", "--001", "--0001"],
+      ["--7", "--007", "--0007"],
+      ["--020", "--0020"],
+      -- too large numbers
+      ["--061", "--0061"],
+      ["--075", "--0075"],
+      -- invalid number formats
+      ["--1e1", "--20.0"],
+      -- invalid characters
+      ["--a", "--1a", "--a1"],
+      -- leading or trailing whitespace
+      [" --07", "\n--07", "\r\n--07", "--07 ", "--07\n", "--07\r\n"]
+    ]
+
+units_LocalTimeLike_invalidSyntax_HourMinuteSecond :: [Text]
+units_LocalTimeLike_invalidSyntax_HourMinuteSecond =
+  concat
+    [ -- extra dashes
+      [ "08-1739",
+        "0817-39",
+        "08-17-39"
+      ],
+      -- incorrect number of digits
+      ["0081739"],
+      -- leading or trailing whitespace
+      [ " 081739",
+        "\n081739",
+        "\r\n081739",
+        "081739 ",
+        "081739\n",
+        " 081739\r\n"
+      ]
+    ]
+
+units_LocalTimeLike_invalidSyntax_HourMinute :: [Text]
+units_LocalTimeLike_invalidSyntax_HourMinute =
+  concat
+    [ -- extra dash
+      ["08-17", "0817-"],
+      -- incorrect number of digits
+      ["00817"],
+      -- leading or trailing whitespace
+      [" 0817", "\n0817", "\r\n0817", "0817 ", "0817\n", "0817\r\n"]
+    ]
+
+units_LocalTimeLike_invalidSyntax_MinuteSecond :: [Text]
+units_LocalTimeLike_invalidSyntax_MinuteSecond =
+  concat
+    [ -- extra dash
+      ["-29-54", "--2954"],
+      -- incorrect number of digits
+      ["-02954"],
+      -- leading or trailing whitespace
+      [" -2954", "\n-2954", "\r\n-2954", "-2954 ", "-2954\n", "-2954\r\n"]
+    ]
 
 --
 -- Time
