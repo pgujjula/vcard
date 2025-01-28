@@ -36,6 +36,7 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Date
   ( Date (..),
+    DateComplete (..),
     DateList,
     DateNoReduc (..),
     Day (..),
@@ -68,7 +69,8 @@ tests =
       test_MonthDay,
       test_Date,
       test_DateList,
-      test_DateNoReduc
+      test_DateNoReduc,
+      test_DateComplete
     ]
 
 --
@@ -920,6 +922,96 @@ exhaustive_DateNoReduc_invalid =
       universe_DateLike_Year,
       universe_DateLike_Month,
       universe_DateLike_YearMonth
+    ]
+
+--
+-- DateComplete
+--
+
+test_DateComplete :: TestTree
+test_DateComplete =
+  testGroup
+    "DateComplete"
+    [ test_DateComplete_parse,
+      test_DateComplete_serialize
+    ]
+
+test_DateComplete_parse :: TestTree
+test_DateComplete_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_DateComplete_valid,
+          testParseInvalidSemantics
+            (Proxy @DateComplete)
+            units_DateComplete_invalidSemantics,
+          testParseInvalidSyntax
+            (Proxy @DateComplete)
+            units_DateComplete_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_DateComplete_valid,
+          testParseInvalidSemantics
+            (Proxy @DateComplete)
+            exhaustive_DateComplete_invalid
+        ]
+    ]
+
+test_DateComplete_serialize :: TestTree
+test_DateComplete_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_DateComplete_valid,
+      testSerialize "exhaustive" exhaustive_DateComplete_valid
+    ]
+
+units_DateComplete_valid :: [(Text, DateComplete)]
+units_DateComplete_valid =
+  map (second DateComplete) units_DateLike_valid_YearMonthDay
+
+units_DateComplete_invalidSemantics :: [Text]
+units_DateComplete_invalidSemantics =
+  units_DateLike_invalidSemantics_YearMonthDay
+
+units_DateComplete_invalidSyntax :: [Text]
+units_DateComplete_invalidSyntax =
+  concat
+    [ units_DateLike_invalidSyntax_Year,
+      units_DateLike_invalidSyntax_Month,
+      units_DateLike_invalidSyntax_Day,
+      units_DateLike_invalidSyntax_YearMonthDay,
+      units_DateLike_invalidSyntax_YearMonth,
+      units_DateLike_invalidSyntax_MonthDay,
+      --
+      units_DateLike_invalidSemantics_Year,
+      units_DateLike_invalidSemantics_Month,
+      units_DateLike_invalidSemantics_Day,
+      units_DateLike_invalidSemantics_YearMonth,
+      units_DateLike_invalidSemantics_MonthDay,
+      --
+      map fst units_DateLike_valid_Year,
+      map fst units_DateLike_valid_Month,
+      map fst units_DateLike_valid_Day,
+      map fst units_DateLike_valid_YearMonth,
+      map fst units_DateLike_valid_MonthDay
+    ]
+
+exhaustive_DateComplete_valid :: [(Text, DateComplete)]
+exhaustive_DateComplete_valid =
+  map (second DateComplete) exhaustive_DateLike_valid_YearMonthDay
+
+exhaustive_DateComplete_invalid :: [Text]
+exhaustive_DateComplete_invalid =
+  concat
+    [ exhaustive_DateLike_invalid_YearMonthDay,
+      --
+      universe_DateLike_Year,
+      universe_DateLike_Month,
+      universe_DateLike_Day,
+      universe_DateLike_YearMonth,
+      universe_DateLike_MonthDay
     ]
 
 --
