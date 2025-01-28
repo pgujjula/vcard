@@ -14,7 +14,7 @@ module Test.VCard.Types.Value.Time (tests) where
 import Control.Applicative (liftA2)
 #endif
 import Control.Monad (forM_, replicateM)
-import Data.Bifunctor (bimap, second)
+import Data.Bifunctor (first, second)
 import Data.Finite (finite, finites)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.List.NonEmpty qualified as NonEmpty
@@ -415,6 +415,34 @@ units_LocalTime_invalidSyntax =
       units_LocalTimeLike_invalidSyntax_HourMinuteSecond,
       units_LocalTimeLike_invalidSyntax_HourMinute,
       units_LocalTimeLike_invalidSyntax_MinuteSecond
+    ]
+
+exhaustive_LocalTime_valid :: [(Text, LocalTime)]
+exhaustive_LocalTime_valid =
+  concat
+    [ pack exhaustive_LocalTimeLike_valid_Hour,
+      pack exhaustive_LocalTimeLike_valid_Minute,
+      pack exhaustive_LocalTimeLike_valid_Second,
+      pack exhaustive_LocalTimeLike_valid_HourMinuteSecond,
+      pack exhaustive_LocalTimeLike_valid_HourMinute,
+      pack exhaustive_LocalTimeLike_valid_MinuteSecond
+    ]
+  where
+    pack ::
+      (a :| '[Hour, Minute, Second, HourMinuteSecond, HourMinute, MinuteSecond]) =>
+      [(Text, a)] ->
+      [(Text, LocalTime)]
+    pack = map (second localTime)
+
+exhaustive_LocalTime_invalid :: [Text]
+exhaustive_LocalTime_invalid =
+  concat
+    [ exhaustive_LocalTimeLike_invalid_Hour,
+      exhaustive_LocalTimeLike_invalid_Minute,
+      exhaustive_LocalTimeLike_invalid_Second,
+      exhaustive_LocalTimeLike_invalid_HourMinuteSecond,
+      exhaustive_LocalTimeLike_invalid_HourMinute,
+      exhaustive_LocalTimeLike_invalid_MinuteSecond
     ]
 
 --
@@ -1107,127 +1135,105 @@ exhaustive_Minute_invalid = universe_Minute `minus` map fst exhaustive_Minute_va
 exhaustive_Second_invalid :: [Text]
 exhaustive_Second_invalid = universe_Second `minus` map fst exhaustive_Second_valid
 
-------------------------
--- LocalTime enumeration
-------------------------
+----------------------------
+-- LocalTimeLike enumeration
+----------------------------
 
--- Potential LocalTimes
-universe_LocalTime_Hour :: [Text]
-universe_LocalTime_Hour = universe_Hour
+-- Potential LocalTimeLikeLike
+universe_LocalTimeLike_Hour :: [Text]
+universe_LocalTimeLike_Hour = universe_Hour
 
-universe_LocalTime_Minute :: [Text]
-universe_LocalTime_Minute = map ("-" <>) universe_Minute
+universe_LocalTimeLike_Minute :: [Text]
+universe_LocalTimeLike_Minute = map ("-" <>) universe_Minute
 
-universe_LocalTime_Second :: [Text]
-universe_LocalTime_Second = map ("--" <>) universe_Second
+universe_LocalTimeLike_Second :: [Text]
+universe_LocalTimeLike_Second = map ("--" <>) universe_Second
 
-universe_LocalTime_HourMinuteSecond :: [Text]
-universe_LocalTime_HourMinuteSecond = do
+universe_LocalTimeLike_HourMinuteSecond :: [Text]
+universe_LocalTimeLike_HourMinuteSecond = do
   hour <- universe_Hour
   minute <- universe_Minute
   second' <- universe_Second
 
   pure (hour <> minute <> second')
 
-universe_LocalTime_HourMinute :: [Text]
-universe_LocalTime_HourMinute = liftA2 (<>) universe_Hour universe_Minute
+universe_LocalTimeLike_HourMinute :: [Text]
+universe_LocalTimeLike_HourMinute = liftA2 (<>) universe_Hour universe_Minute
 
-universe_LocalTime_MinuteSecond :: [Text]
-universe_LocalTime_MinuteSecond = do
+universe_LocalTimeLike_MinuteSecond :: [Text]
+universe_LocalTimeLike_MinuteSecond = do
   minute <- universe_Minute
   second' <- universe_Second
 
   pure ("-" <> minute <> second')
 
--- Valid LocalTimes
-exhaustive_LocalTime_valid :: [(Text, LocalTime)]
-exhaustive_LocalTime_valid =
-  concat
-    [ exhaustive_LocalTime_valid_Hour,
-      exhaustive_LocalTime_valid_Minute,
-      exhaustive_LocalTime_valid_Second,
-      exhaustive_LocalTime_valid_HourMinuteSecond,
-      exhaustive_LocalTime_valid_HourMinute,
-      exhaustive_LocalTime_valid_MinuteSecond
-    ]
+-- Valid LocalTimeLike
+exhaustive_LocalTimeLike_valid_Hour :: [(Text, Hour)]
+exhaustive_LocalTimeLike_valid_Hour = exhaustive_Hour_valid
 
-exhaustive_LocalTime_valid_Hour :: [(Text, LocalTime)]
-exhaustive_LocalTime_valid_Hour = map (second localTime) exhaustive_Hour_valid
+exhaustive_LocalTimeLike_valid_Minute :: [(Text, Minute)]
+exhaustive_LocalTimeLike_valid_Minute =
+  map (first ("-" <>)) exhaustive_Minute_valid
 
-exhaustive_LocalTime_valid_Minute :: [(Text, LocalTime)]
-exhaustive_LocalTime_valid_Minute =
-  map (bimap ("-" <>) localTime) exhaustive_Minute_valid
+exhaustive_LocalTimeLike_valid_Second :: [(Text, Second)]
+exhaustive_LocalTimeLike_valid_Second =
+  map (first ("--" <>)) exhaustive_Second_valid
 
-exhaustive_LocalTime_valid_Second :: [(Text, LocalTime)]
-exhaustive_LocalTime_valid_Second =
-  map (bimap ("--" <>) localTime) exhaustive_Second_valid
-
-exhaustive_LocalTime_valid_HourMinuteSecond :: [(Text, LocalTime)]
-exhaustive_LocalTime_valid_HourMinuteSecond = do
+exhaustive_LocalTimeLike_valid_HourMinuteSecond :: [(Text, HourMinuteSecond)]
+exhaustive_LocalTimeLike_valid_HourMinuteSecond = do
   (hourText, hour) <- exhaustive_Hour_valid
   (minuteText, minute) <- exhaustive_Minute_valid
   (secondText, second') <- exhaustive_Second_valid
 
   let text = hourText <> minuteText <> secondText
   let hourMinuteSecond = HourMinuteSecond hour minute second'
-  pure (text, localTime hourMinuteSecond)
+  pure (text, hourMinuteSecond)
 
-exhaustive_LocalTime_valid_HourMinute :: [(Text, LocalTime)]
-exhaustive_LocalTime_valid_HourMinute = do
+exhaustive_LocalTimeLike_valid_HourMinute :: [(Text, HourMinute)]
+exhaustive_LocalTimeLike_valid_HourMinute = do
   (hourText, hour) <- exhaustive_Hour_valid
   (minuteText, minute) <- exhaustive_Minute_valid
 
   let text = hourText <> minuteText
   let hourMinute = HourMinute hour minute
-  pure (text, localTime hourMinute)
+  pure (text, hourMinute)
 
-exhaustive_LocalTime_valid_MinuteSecond :: [(Text, LocalTime)]
-exhaustive_LocalTime_valid_MinuteSecond = do
+exhaustive_LocalTimeLike_valid_MinuteSecond :: [(Text, MinuteSecond)]
+exhaustive_LocalTimeLike_valid_MinuteSecond = do
   (minuteText, minute) <- exhaustive_Minute_valid
   (secondText, second') <- exhaustive_Second_valid
 
   let text = "-" <> minuteText <> secondText
   let minuteSecond = MinuteSecond minute second'
-  pure (text, localTime minuteSecond)
+  pure (text, minuteSecond)
 
--- Invalid LocalTimes
-exhaustive_LocalTime_invalid :: [Text]
-exhaustive_LocalTime_invalid =
-  concat
-    [ exhaustive_LocalTime_invalid_Hour,
-      exhaustive_LocalTime_invalid_Minute,
-      exhaustive_LocalTime_invalid_Second,
-      exhaustive_LocalTime_invalid_HourMinuteSecond,
-      exhaustive_LocalTime_invalid_HourMinute,
-      exhaustive_LocalTime_invalid_MinuteSecond
-    ]
+-- Invalid LocalTimeLike
+exhaustive_LocalTimeLike_invalid_Hour :: [Text]
+exhaustive_LocalTimeLike_invalid_Hour =
+  universe_LocalTimeLike_Hour `minus` map fst exhaustive_LocalTimeLike_valid_Hour
 
-exhaustive_LocalTime_invalid_Hour :: [Text]
-exhaustive_LocalTime_invalid_Hour =
-  universe_LocalTime_Hour `minus` map fst exhaustive_LocalTime_valid_Hour
+exhaustive_LocalTimeLike_invalid_Minute :: [Text]
+exhaustive_LocalTimeLike_invalid_Minute =
+  universe_LocalTimeLike_Minute `minus` map fst exhaustive_LocalTimeLike_valid_Minute
 
-exhaustive_LocalTime_invalid_Minute :: [Text]
-exhaustive_LocalTime_invalid_Minute =
-  universe_LocalTime_Minute `minus` map fst exhaustive_LocalTime_valid_Minute
+exhaustive_LocalTimeLike_invalid_Second :: [Text]
+exhaustive_LocalTimeLike_invalid_Second =
+  universe_LocalTimeLike_Second `minus` map fst exhaustive_LocalTimeLike_valid_Second
 
-exhaustive_LocalTime_invalid_Second :: [Text]
-exhaustive_LocalTime_invalid_Second =
-  universe_LocalTime_Second `minus` map fst exhaustive_LocalTime_valid_Second
+exhaustive_LocalTimeLike_invalid_HourMinuteSecond :: [Text]
+exhaustive_LocalTimeLike_invalid_HourMinuteSecond =
+  universe_LocalTimeLike_HourMinuteSecond
+    `minus` map fst exhaustive_LocalTimeLike_valid_HourMinuteSecond
 
-exhaustive_LocalTime_invalid_HourMinuteSecond :: [Text]
-exhaustive_LocalTime_invalid_HourMinuteSecond =
-  universe_LocalTime_HourMinuteSecond
-    `minus` map fst exhaustive_LocalTime_valid_HourMinuteSecond
+exhaustive_LocalTimeLike_invalid_HourMinute :: [Text]
+exhaustive_LocalTimeLike_invalid_HourMinute =
+  universe_LocalTimeLike_HourMinute
+    `minus` map fst exhaustive_LocalTimeLike_valid_HourMinute
 
-exhaustive_LocalTime_invalid_HourMinute :: [Text]
-exhaustive_LocalTime_invalid_HourMinute =
-  universe_LocalTime_HourMinute
-    `minus` map fst exhaustive_LocalTime_valid_HourMinute
-
-exhaustive_LocalTime_invalid_MinuteSecond :: [Text]
-exhaustive_LocalTime_invalid_MinuteSecond =
-  universe_LocalTime_MinuteSecond
-    `minus` map fst exhaustive_LocalTime_valid_MinuteSecond
+exhaustive_LocalTimeLike_invalid_MinuteSecond :: [Text]
+exhaustive_LocalTimeLike_invalid_MinuteSecond =
+  universe_LocalTimeLike_MinuteSecond
+    `minus` map fst exhaustive_LocalTimeLike_valid_MinuteSecond
 
 --------------------
 -- Testing functions
