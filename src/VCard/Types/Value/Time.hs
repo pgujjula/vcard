@@ -18,6 +18,7 @@ module VCard.Types.Value.Time
     HourMinute (..),
     MinuteSecond (..),
     LocalTime (..),
+    LocalTimeNoTrunc (..),
     Time (..),
     TimeList,
     Sign (..),
@@ -219,6 +220,34 @@ instance HasSerializer LocalTime where
             . on @HourMinuteSecond hourMinuteSecondTimeS
             . on @HourMinute hourMinuteTimeS
             . on @MinuteSecond minuteSecondTimeS
+            $ exhaustiveCase
+        )
+
+--
+-- LocalTimeNoTrunc
+--
+
+newtype LocalTimeNoTrunc = LocalTimeNoTrunc
+  { unLocalTimeNoTrunc ::
+      Vary '[Hour, HourMinute, HourMinuteSecond]
+  }
+  deriving (Eq, Show, Ord)
+
+instance HasParser LocalTimeNoTrunc where
+  parser =
+    LocalTimeNoTrunc
+      <$> (choice . map try)
+        [ from <$> hourMinuteSecondTimeP,
+          from <$> hourMinuteTimeP,
+          from <$> hourTimeP
+        ]
+
+instance HasSerializer LocalTimeNoTrunc where
+  serializer (LocalTimeNoTrunc vary) =
+    vary
+      & ( on @Hour hourTimeS
+            . on @HourMinute hourMinuteTimeS
+            . on @HourMinuteSecond hourMinuteSecondTimeS
             $ exhaustiveCase
         )
 
