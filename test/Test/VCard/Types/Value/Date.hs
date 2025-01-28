@@ -37,6 +37,7 @@ import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Date
   ( Date (..),
     DateList,
+    DateNoReduc (..),
     Day (..),
     Month (..),
     MonthDay (..),
@@ -66,7 +67,8 @@ tests =
       test_YearMonth,
       test_MonthDay,
       test_Date,
-      test_DateList
+      test_DateList,
+      test_DateNoReduc
     ]
 
 --
@@ -808,6 +810,116 @@ units_DateList_invalidSyntax =
         "316,--06",
         "--06,316"
       ]
+    ]
+
+--
+-- DateNoReduc
+--
+
+test_DateNoReduc :: TestTree
+test_DateNoReduc =
+  testGroup
+    "DateNoReduc"
+    [ test_DateNoReduc_parse,
+      test_DateNoReduc_serialize
+    ]
+
+test_DateNoReduc_parse :: TestTree
+test_DateNoReduc_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_DateNoReduc_valid,
+          testParseInvalidSemantics
+            (Proxy @DateNoReduc)
+            units_DateNoReduc_invalidSemantics,
+          testParseInvalidSyntax
+            (Proxy @DateNoReduc)
+            units_DateNoReduc_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_DateNoReduc_valid,
+          testParseInvalidSemantics
+            (Proxy @DateNoReduc)
+            exhaustive_DateNoReduc_invalid
+        ]
+    ]
+
+test_DateNoReduc_serialize :: TestTree
+test_DateNoReduc_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_DateNoReduc_valid,
+      testSerialize "exhaustive" exhaustive_DateNoReduc_valid
+    ]
+
+units_DateNoReduc_valid :: [(Text, DateNoReduc)]
+units_DateNoReduc_valid =
+  concat
+    [ pack units_DateLike_valid_Day,
+      pack units_DateLike_valid_YearMonthDay,
+      pack units_DateLike_valid_MonthDay
+    ]
+  where
+    pack ::
+      (a :| '[YearMonthDay, MonthDay, Day]) =>
+      [(Text, a)] ->
+      [(Text, DateNoReduc)]
+    pack = map (second (DateNoReduc . Vary.from))
+
+units_DateNoReduc_invalidSemantics :: [Text]
+units_DateNoReduc_invalidSemantics =
+  concat
+    [ units_DateLike_invalidSemantics_YearMonthDay,
+      units_DateLike_invalidSemantics_MonthDay,
+      units_DateLike_invalidSemantics_Day
+    ]
+
+units_DateNoReduc_invalidSyntax :: [Text]
+units_DateNoReduc_invalidSyntax =
+  concat
+    [ units_DateLike_invalidSyntax_Year,
+      units_DateLike_invalidSyntax_Month,
+      units_DateLike_invalidSyntax_Day,
+      units_DateLike_invalidSyntax_YearMonthDay,
+      units_DateLike_invalidSyntax_YearMonth,
+      units_DateLike_invalidSyntax_MonthDay,
+      --
+      units_DateLike_invalidSemantics_Year,
+      units_DateLike_invalidSemantics_Month,
+      units_DateLike_invalidSemantics_YearMonth,
+      --
+      map fst units_DateLike_valid_Year,
+      map fst units_DateLike_valid_Month,
+      map fst units_DateLike_valid_YearMonth
+    ]
+
+exhaustive_DateNoReduc_valid :: [(Text, DateNoReduc)]
+exhaustive_DateNoReduc_valid =
+  concat
+    [ pack exhaustive_DateLike_valid_YearMonthDay,
+      pack exhaustive_DateLike_valid_MonthDay,
+      pack exhaustive_DateLike_valid_Day
+    ]
+  where
+    pack ::
+      (a :| '[YearMonthDay, MonthDay, Day]) =>
+      [(Text, a)] ->
+      [(Text, DateNoReduc)]
+    pack = map (second (DateNoReduc . Vary.from))
+
+exhaustive_DateNoReduc_invalid :: [Text]
+exhaustive_DateNoReduc_invalid =
+  concat
+    [ exhaustive_DateLike_invalid_YearMonthDay,
+      exhaustive_DateLike_invalid_MonthDay,
+      exhaustive_DateLike_invalid_Day,
+      --
+      universe_DateLike_Year,
+      universe_DateLike_Month,
+      universe_DateLike_YearMonth
     ]
 
 --
