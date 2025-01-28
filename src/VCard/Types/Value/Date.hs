@@ -21,6 +21,7 @@ module VCard.Types.Value.Date
     Date (..),
     DateList,
     DateNoReduc (..),
+    DateComplete (..),
   )
 where
 
@@ -312,6 +313,21 @@ instance HasSerializer DateNoReduc where
             . on @Day dayDateS
             $ exhaustiveCase
         )
+
+--
+-- DateComplete
+--
+
+newtype DateComplete = DateComplete
+  {unDateComplete :: YearMonthDay}
+  deriving (Eq, Show, Ord)
+
+instance HasParser DateComplete where
+  parser = DateComplete <$> yearMonthDayDateP
+
+instance HasSerializer DateComplete where
+  serializer :: Serializer DateComplete
+  serializer = yearMonthDayDateS . unDateComplete
 
 --
 -- Parsers of various date formats

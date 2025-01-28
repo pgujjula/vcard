@@ -31,6 +31,9 @@ module VCard.Types.Value
     -- ** 'DateNoReduc'
     DateNoReduc (..),
 
+    -- ** 'DateComplete
+    DateComplete (..),
+
     -- ** 'Year'
     Year (..),
     HasYear (..),
@@ -87,6 +90,7 @@ where
 
 import VCard.Types.Value.Date
   ( Date (..),
+    DateComplete (..),
     DateList,
     DateNoReduc (..),
     Day (..),
