@@ -109,7 +109,7 @@ test_Year_serialize =
 test_Year_bounds :: TestTree
 test_Year_bounds = testBounds (y 0000, y 9999)
 
--- See also: units_Date_valid_Year
+-- See also: units_DateLike_valid_Year
 units_Year_valid :: [(Text, Year)]
 units_Year_valid =
   [ ("0000", Year 0000),
@@ -182,7 +182,7 @@ test_Month_serialize =
 test_Month_bounds :: TestTree
 test_Month_bounds = testBounds (m 01, m 12)
 
--- See also: units_Date_valid_Month
+-- See also: units_DateLike_valid_Month
 units_Month_valid :: [(Text, Month)]
 units_Month_valid =
   [("01", m 01), ("05", m 05), ("10", m 10), ("12", m 12)]
@@ -255,7 +255,7 @@ test_Day_serialize =
 test_Day_bounds :: TestTree
 test_Day_bounds = testBounds (d 01, d 31)
 
--- See also: units_Date_valid_Day
+-- See also: units_DateLike_valid_Day
 units_Day_valid :: [(Text, Day)]
 units_Day_valid =
   [("01", d 1), ("15", d 15), ("30", d 30), ("31", d 31)]
@@ -353,7 +353,7 @@ test_YearMonthDay_mkYearMonthDay_exhaustive =
 test_YearMonthDay_bounds :: TestTree
 test_YearMonthDay_bounds = testBounds (ymd 0000 01 01, ymd 9999 12 31)
 
--- See also: units_Date_valid_YearMonthDay
+-- See also: units_DateLike_valid_YearMonthDay
 units_YearMonthDay_valid :: [(Year, Month, Day)]
 units_YearMonthDay_valid =
   [ -- bounds
@@ -526,7 +526,7 @@ test_MonthDay_mkMonthDay_exhaustive =
 test_MonthDay_bounds :: TestTree
 test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
 
--- See also: units_Date_valid_MonthDay
+-- See also: units_DateLike_valid_MonthDay
 units_MonthDay_valid :: [(Month, Day)]
 units_MonthDay_valid =
   [ -- bounds
@@ -607,140 +607,19 @@ test_Date_serialize =
 units_Date_valid :: [(Text, Date)]
 units_Date_valid =
   concat
-    [ units_Date_valid_Year,
-      units_Date_valid_Month,
-      units_Date_valid_Day,
-      units_Date_valid_YearMonthDay,
-      units_Date_valid_YearMonth,
-      units_Date_valid_MonthDay
+    [ pack units_DateLike_valid_Year,
+      pack units_DateLike_valid_Month,
+      pack units_DateLike_valid_Day,
+      pack units_DateLike_valid_YearMonthDay,
+      pack units_DateLike_valid_YearMonth,
+      pack units_DateLike_valid_MonthDay
     ]
-
--- See also: units_Year_valid
-units_Date_valid_Year :: [(Text, Date)]
-units_Date_valid_Year =
-  map
-    (second date)
-    [("0000", y 0000), ("6812", y 6812), ("9999", y 9999)]
-
--- See also: units_Month_valid
-units_Date_valid_Month :: [(Text, Date)]
-units_Date_valid_Month =
-  map
-    (second date)
-    [("--01", m 01), ("--05", m 05), ("--10", m 10), ("--12", m 12)]
-
--- See also: units_Day_valid
-units_Date_valid_Day :: [(Text, Date)]
-units_Date_valid_Day =
-  map
-    (second date)
-    [("---01", d 01), ("---15", d 15), ("---30", d 30), ("---31", d 31)]
-
--- See also: units_YearMonthDay_valid
-units_Date_valid_YearMonthDay :: [(Text, Date)]
-units_Date_valid_YearMonthDay =
-  map
-    (second date)
-    [ -- bounds
-      ("00000101", ymd 0000 01 01),
-      ("99991231", ymd 9999 12 31),
-      -- vary year
-      ("00000412", ymd 0000 04 12),
-      ("53170412", ymd 5317 04 12),
-      ("99990412", ymd 9999 04 12),
-      -- vary month
-      ("47710112", ymd 4771 01 12),
-      ("47710712", ymd 4771 07 12),
-      ("47711212", ymd 4771 12 12),
-      -- vary day
-      ("39090801", ymd 3909 08 01),
-      ("39090817", ymd 3909 08 17),
-      ("39090831", ymd 3909 08 31),
-      -- max day
-      ("53170131", ymd 5317 01 31),
-      ("53170228", ymd 5317 02 28),
-      ("53170331", ymd 5317 03 31),
-      ("53170430", ymd 5317 04 30),
-      ("53170531", ymd 5317 05 31),
-      ("53170630", ymd 5317 06 30),
-      ("53170731", ymd 5317 07 31),
-      ("53170831", ymd 5317 08 31),
-      ("53170930", ymd 5317 09 30),
-      ("53171031", ymd 5317 10 31),
-      ("53171130", ymd 5317 11 30),
-      ("53171231", ymd 5317 12 31),
-      -- non leap years (not multiples of 4)
-      ("00010228", ymd 0001 02 28),
-      ("49220228", ymd 4922 02 28),
-      ("99990228", ymd 9999 02 28),
-      -- leap years (multiples of 4 but not of 100)
-      ("00040228", ymd 0004 02 28),
-      ("00040229", ymd 0004 02 29),
-      ("67840228", ymd 6784 02 28),
-      ("67840229", ymd 6784 02 29),
-      ("99960228", ymd 9996 02 28),
-      ("99960229", ymd 9996 02 29),
-      -- non leap years (multiples of 100 but not of 400)
-      ("01000228", ymd 0100 02 28),
-      ("67000228", ymd 6700 02 28),
-      ("99000228", ymd 9900 02 28),
-      -- leap years (multiples of 400)
-      ("00000228", ymd 0000 02 28),
-      ("00000229", ymd 0000 02 29),
-      ("68000228", ymd 6800 02 28),
-      ("68000229", ymd 6800 02 29),
-      ("96000228", ymd 9600 02 28),
-      ("96000229", ymd 9600 02 29)
-    ]
-
-units_Date_valid_YearMonth :: [(Text, Date)]
-units_Date_valid_YearMonth =
-  map
-    (second date)
-    [ -- bounds
-      ("0000-01", ym 0000 01),
-      ("9999-12", ym 9999 12),
-      -- vary year
-      ("0000-07", ym 0000 07),
-      ("4810-07", ym 4810 07),
-      ("9999-07", ym 9999 07),
-      -- vary month
-      ("4810-01", ym 4810 01),
-      ("4810-07", ym 4810 07),
-      ("4810-12", ym 4810 12)
-    ]
-
--- See also: units_MonthDay_valid
-units_Date_valid_MonthDay :: [(Text, Date)]
-units_Date_valid_MonthDay =
-  map
-    (second date)
-    [ -- bounds
-      ("--0101", md 01 01),
-      ("--1231", md 12 31),
-      -- vary month
-      ("--0112", md 01 12),
-      ("--0712", md 07 12),
-      ("--1212", md 12 12),
-      -- vary day
-      ("--0701", md 07 01),
-      ("--0712", md 07 12),
-      ("--0731", md 07 31),
-      -- max day
-      ("--0131", md 01 31),
-      ("--0228", md 02 28),
-      ("--0229", md 02 29), -- February includes leap day
-      ("--0331", md 03 31),
-      ("--0430", md 04 30),
-      ("--0531", md 05 31),
-      ("--0630", md 06 30),
-      ("--0731", md 07 31),
-      ("--0831", md 08 31),
-      ("--0930", md 09 30),
-      ("--1031", md 10 31),
-      ("--1130", md 11 30),
-      ("--1231", md 12 31)
-    ]
+  where
+    pack ::
+      (a :| '[Year, Month, Day, YearMonthDay, YearMonth, MonthDay]) =>
+      [(Text, a)] ->
+      [(Text, Date)]
+    pack = map (second (Date . Vary.from))
 
 units_Date_invalidSemantics :: [Text]
 units_Date_invalidSemantics =
@@ -1116,6 +995,125 @@ units_DateList_invalidSyntax =
         "--06,316"
       ]
     ]
+
+--
+-- DateLike
+--
+
+-- See also: units_Year_valid
+units_DateLike_valid_Year :: [(Text, Year)]
+units_DateLike_valid_Year =
+  [("0000", y 0000), ("6812", y 6812), ("9999", y 9999)]
+
+-- See also: units_Month_valid
+units_DateLike_valid_Month :: [(Text, Month)]
+units_DateLike_valid_Month =
+  [("--01", m 01), ("--05", m 05), ("--10", m 10), ("--12", m 12)]
+
+-- See also: units_Day_valid
+units_DateLike_valid_Day :: [(Text, Day)]
+units_DateLike_valid_Day =
+  [("---01", d 01), ("---15", d 15), ("---30", d 30), ("---31", d 31)]
+
+-- See also: units_YearMonthDay_valid
+units_DateLike_valid_YearMonthDay :: [(Text, YearMonthDay)]
+units_DateLike_valid_YearMonthDay =
+  [ -- bounds
+    ("00000101", ymd 0000 01 01),
+    ("99991231", ymd 9999 12 31),
+    -- vary year
+    ("00000412", ymd 0000 04 12),
+    ("53170412", ymd 5317 04 12),
+    ("99990412", ymd 9999 04 12),
+    -- vary month
+    ("47710112", ymd 4771 01 12),
+    ("47710712", ymd 4771 07 12),
+    ("47711212", ymd 4771 12 12),
+    -- vary day
+    ("39090801", ymd 3909 08 01),
+    ("39090817", ymd 3909 08 17),
+    ("39090831", ymd 3909 08 31),
+    -- max day
+    ("53170131", ymd 5317 01 31),
+    ("53170228", ymd 5317 02 28),
+    ("53170331", ymd 5317 03 31),
+    ("53170430", ymd 5317 04 30),
+    ("53170531", ymd 5317 05 31),
+    ("53170630", ymd 5317 06 30),
+    ("53170731", ymd 5317 07 31),
+    ("53170831", ymd 5317 08 31),
+    ("53170930", ymd 5317 09 30),
+    ("53171031", ymd 5317 10 31),
+    ("53171130", ymd 5317 11 30),
+    ("53171231", ymd 5317 12 31),
+    -- non leap years (not multiples of 4)
+    ("00010228", ymd 0001 02 28),
+    ("49220228", ymd 4922 02 28),
+    ("99990228", ymd 9999 02 28),
+    -- leap years (multiples of 4 but not of 100)
+    ("00040228", ymd 0004 02 28),
+    ("00040229", ymd 0004 02 29),
+    ("67840228", ymd 6784 02 28),
+    ("67840229", ymd 6784 02 29),
+    ("99960228", ymd 9996 02 28),
+    ("99960229", ymd 9996 02 29),
+    -- non leap years (multiples of 100 but not of 400)
+    ("01000228", ymd 0100 02 28),
+    ("67000228", ymd 6700 02 28),
+    ("99000228", ymd 9900 02 28),
+    -- leap years (multiples of 400)
+    ("00000228", ymd 0000 02 28),
+    ("00000229", ymd 0000 02 29),
+    ("68000228", ymd 6800 02 28),
+    ("68000229", ymd 6800 02 29),
+    ("96000228", ymd 9600 02 28),
+    ("96000229", ymd 9600 02 29)
+  ]
+
+units_DateLike_valid_YearMonth :: [(Text, YearMonth)]
+units_DateLike_valid_YearMonth =
+  [ -- bounds
+    ("0000-01", ym 0000 01),
+    ("9999-12", ym 9999 12),
+    -- vary year
+    ("0000-07", ym 0000 07),
+    ("4810-07", ym 4810 07),
+    ("9999-07", ym 9999 07),
+    -- vary month
+    ("4810-01", ym 4810 01),
+    ("4810-07", ym 4810 07),
+    ("4810-12", ym 4810 12)
+  ]
+
+-- See also: units_MonthDay_valid
+units_DateLike_valid_MonthDay :: [(Text, MonthDay)]
+units_DateLike_valid_MonthDay =
+  [ -- bounds
+    ("--0101", md 01 01),
+    ("--1231", md 12 31),
+    -- vary month
+    ("--0112", md 01 12),
+    ("--0712", md 07 12),
+    ("--1212", md 12 12),
+    -- vary day
+    ("--0701", md 07 01),
+    ("--0712", md 07 12),
+    ("--0731", md 07 31),
+    -- max day
+    ("--0131", md 01 31),
+    ("--0228", md 02 28),
+    ("--0229", md 02 29), -- February includes leap day
+    ("--0331", md 03 31),
+    ("--0430", md 04 30),
+    ("--0531", md 05 31),
+    ("--0630", md 06 30),
+    ("--0731", md 07 31),
+    ("--0831", md 08 31),
+    ("--0930", md 09 30),
+    ("--1031", md 10 31),
+    ("--1130", md 11 30),
+    ("--1231", md 12 31)
+  ]
 
 -- =========
 -- UTILITIES
