@@ -41,6 +41,7 @@ import VCard.Types.Value.Time
     Sign (..),
     Time (..),
     TimeList,
+    TimeNoTrunc (..),
     Zone (..),
   )
 import Vary ((:|))
@@ -63,6 +64,7 @@ tests =
       test_LocalTimeComplete,
       test_Time,
       test_TimeList,
+      test_TimeNoTrunc,
       test_Sign,
       test_Zone
     ]
@@ -991,6 +993,7 @@ units_Time_invalidSemantics =
       ["0000+0060", "-45+0460"]
     ]
 
+-- See also: units_TimeNoTrunc_invalidSyntax
 units_Time_invalidSyntax :: [Text]
 units_Time_invalidSyntax =
   [ -- strange constructions
@@ -1145,6 +1148,108 @@ units_TimeList_invalidSyntax =
         "1329-11,--8+15"
       ]
     ]
+
+--
+-- TimeNoTrunc
+--
+
+test_TimeNoTrunc :: TestTree
+test_TimeNoTrunc =
+  testGroup
+    "TimeNoTrunc"
+    [ test_TimeNoTrunc_parse,
+      test_TimeNoTrunc_serialize
+    ]
+
+test_TimeNoTrunc_parse :: TestTree
+test_TimeNoTrunc_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_TimeNoTrunc_valid,
+      testParseInvalidSemantics
+        (Proxy @TimeNoTrunc)
+        units_TimeNoTrunc_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @TimeNoTrunc)
+        units_TimeNoTrunc_invalidSyntax
+    ]
+
+test_TimeNoTrunc_serialize :: TestTree
+test_TimeNoTrunc_serialize = testSerialize "serialize" units_TimeNoTrunc_valid
+
+units_TimeNoTrunc_valid :: [(Text, TimeNoTrunc)]
+units_TimeNoTrunc_valid = units_TimeNoTrunc_valid1 ++ units_TimeNoTrunc_valid2
+
+units_TimeNoTrunc_valid1 :: [(Text, TimeNoTrunc)]
+units_TimeNoTrunc_valid1 =
+  [ --
+    ("15", timeNoTrunc (h 15) Nothing),
+    ("15Z", timeNoTrunc (h 15) (Just UTCDesignator)),
+    ("15+15", timeNoTrunc (h 15) (Just (UTCOffset Plus (h 15) Nothing))),
+    ( "15-1537",
+      timeNoTrunc
+        (h 15)
+        (Just (UTCOffset Minus (h 15) (Just (m 37))))
+    ),
+    --
+    ("1329", timeNoTrunc (hm 13 29) Nothing),
+    ("1329Z", timeNoTrunc (hm 13 29) (Just UTCDesignator)),
+    ("1329+15", timeNoTrunc (hm 13 29) (Just (UTCOffset Plus (h 15) Nothing))),
+    ( "1329-1537",
+      timeNoTrunc (hm 13 29) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+    ),
+    --
+    ("081739", timeNoTrunc (hms 08 17 39) Nothing),
+    ("081739Z", timeNoTrunc (hms 08 17 39) (Just UTCDesignator)),
+    ( "081739+15",
+      timeNoTrunc
+        (hms 08 17 39)
+        (Just (UTCOffset Plus (h 15) Nothing))
+    ),
+    ( "081739-1537",
+      timeNoTrunc (hms 08 17 39) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+    )
+  ]
+
+units_TimeNoTrunc_valid2 :: [(Text, TimeNoTrunc)]
+units_TimeNoTrunc_valid2 = do
+  (localTimeNoTruncText, localTimeNoTrunc') <- units_LocalTimeNoTrunc_valid
+  (zoneText, zone) <- ("", Nothing) : map (second Just) units_Zone_valid
+
+  let timeNoTruncText = localTimeNoTruncText <> zoneText
+      timeNoTrunc' = TimeNoTrunc localTimeNoTrunc' zone
+
+  pure (timeNoTruncText, timeNoTrunc')
+
+units_TimeNoTrunc_invalidSemantics :: [Text]
+units_TimeNoTrunc_invalidSemantics =
+  concat
+    [ -- invalid hour
+      ["24", "240000+0000"],
+      -- invalid minute
+      ["0360Z", "086000+00"],
+      -- invalid second
+      ["032961", "032961+00", "032961Z"],
+      -- invalid zone hour
+      ["0000+2400", "1045+24"],
+      -- invalid zone minute
+      ["21+0060", "184522+0460"]
+    ]
+
+-- See also: units_Time_invalidSyntax
+units_TimeNoTrunc_invalidSyntax :: [Text]
+units_TimeNoTrunc_invalidSyntax =
+  [ -- strange constructions
+    "081739Z1537",
+    "0817391537",
+    -- extraneous whitespace
+    " 081739+1537",
+    "\n081739+1537",
+    "\r\n081739+1537",
+    "081739+1537 ",
+    "081739+1537\n",
+    "081739+1537\r\n"
+  ]
 
 --
 -- Sign
@@ -1514,3 +1619,11 @@ time ::
   Maybe Zone ->
   Time
 time lt = Time (localTime lt)
+
+localTimeNoTrunc ::
+  (a :| '[Hour, HourMinute, HourMinuteSecond]) => a -> LocalTimeNoTrunc
+localTimeNoTrunc = LocalTimeNoTrunc . Vary.from
+
+timeNoTrunc ::
+  (a :| '[Hour, HourMinute, HourMinuteSecond]) => a -> Maybe Zone -> TimeNoTrunc
+timeNoTrunc = TimeNoTrunc . localTimeNoTrunc
