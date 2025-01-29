@@ -24,6 +24,8 @@ module VCard.Types.Value.Time
     TimeList,
     TimeNoTrunc (..),
     TimeComplete (..),
+    DateTime (..),
+    DateTimeList,
     Sign (..),
     Zone (..),
   )
@@ -34,6 +36,7 @@ import Control.Applicative (liftA2, liftA3)
 #else
 import Control.Applicative (liftA3)
 #endif
+import Control.Monad (void)
 import Data.Char (ord)
 import Data.Finite (Finite, getFinite, packFinite)
 import Data.Function ((&))
@@ -43,6 +46,7 @@ import Text.Megaparsec (choice, optional, try)
 import Text.Megaparsec.Char (char, digitChar, string)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
+import VCard.Types.Value.Date (DateNoReduc)
 import VCard.Types.Value.List (List)
 import Vary (Vary, exhaustiveCase, from, on)
 
@@ -435,6 +439,37 @@ instance HasSerializer Zone where
     UTCDesignator -> "Z"
     UTCOffset sign hour maybeMinute ->
       serializer sign <> serializer hour <> maybe "" serializer maybeMinute
+
+--
+-- DateTime
+--
+
+data DateTime = DateTime
+  { dateTimeDateNoReduc :: DateNoReduc,
+    dateTimeTimeNoTrunc :: TimeNoTrunc
+  }
+  deriving (Eq, Show, Ord)
+
+instance HasParser DateTime where
+  parser :: Parser DateTime
+  parser = do
+    dateNoReduc <- parser @DateNoReduc
+    void (char 'T')
+    timeNoTrunc <- parser @TimeNoTrunc
+    pure $
+      DateTime
+        { dateTimeDateNoReduc = dateNoReduc,
+          dateTimeTimeNoTrunc = timeNoTrunc
+        }
+
+instance HasSerializer DateTime where
+  serializer :: Serializer DateTime
+  serializer dateTime =
+    serializer (dateTimeDateNoReduc dateTime)
+      <> "T"
+      <> serializer (dateTimeTimeNoTrunc dateTime)
+
+type DateTimeList = List DateTime
 
 -- Utilities
 toDigit :: Char -> Int

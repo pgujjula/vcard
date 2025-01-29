@@ -91,6 +91,10 @@ module VCard.Types.Value
 
     -- ** 'TimeComplete'
     TimeComplete (..),
+
+    -- ** 'DateTime'
+    DateTime (..),
+    DateTimeList,
   )
 where
 
@@ -114,7 +118,9 @@ import VCard.Types.Value.Date
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 import VCard.Types.Value.Time
-  ( HasHour (..),
+  ( DateTime (..),
+    DateTimeList,
+    HasHour (..),
     HasMinute (..),
     HasSecond (..),
     Hour (..),
