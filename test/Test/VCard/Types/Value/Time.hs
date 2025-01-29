@@ -33,6 +33,7 @@ import VCard.Types.Value.Time
     HourMinute (..),
     HourMinuteSecond (..),
     LocalTime (..),
+    LocalTimeNoTrunc (..),
     Minute (..),
     MinuteSecond (..),
     Second (..),
@@ -57,6 +58,7 @@ tests =
       test_HourMinute,
       test_MinuteSecond,
       test_LocalTime,
+      test_LocalTimeNoTrunc,
       test_Time,
       test_TimeList,
       test_Sign,
@@ -443,6 +445,116 @@ exhaustive_LocalTime_invalid =
       exhaustive_LocalTimeLike_invalid_HourMinuteSecond,
       exhaustive_LocalTimeLike_invalid_HourMinute,
       exhaustive_LocalTimeLike_invalid_MinuteSecond
+    ]
+
+--
+-- LocalTimeNoTrunc
+--
+
+test_LocalTimeNoTrunc :: TestTree
+test_LocalTimeNoTrunc =
+  testGroup
+    "LocalTimeNoTrunc"
+    [ test_LocalTimeNoTrunc_parse,
+      test_LocalTimeNoTrunc_serialize
+    ]
+
+test_LocalTimeNoTrunc_parse :: TestTree
+test_LocalTimeNoTrunc_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_LocalTimeNoTrunc_valid,
+          testParseInvalidSemantics
+            (Proxy @LocalTimeNoTrunc)
+            units_LocalTimeNoTrunc_invalidSemantics,
+          testParseInvalidSyntax
+            (Proxy @LocalTimeNoTrunc)
+            units_LocalTimeNoTrunc_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_LocalTimeNoTrunc_valid,
+          testParseInvalidSemantics
+            (Proxy @LocalTimeNoTrunc)
+            exhaustive_LocalTimeNoTrunc_invalid
+        ]
+    ]
+
+test_LocalTimeNoTrunc_serialize :: TestTree
+test_LocalTimeNoTrunc_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_LocalTimeNoTrunc_valid,
+      testSerialize "exhaustive" exhaustive_LocalTimeNoTrunc_valid
+    ]
+
+units_LocalTimeNoTrunc_valid :: [(Text, LocalTimeNoTrunc)]
+units_LocalTimeNoTrunc_valid =
+  concat
+    [ pack units_LocalTimeLike_valid_Hour,
+      pack units_LocalTimeLike_valid_HourMinute,
+      pack units_LocalTimeLike_valid_HourMinuteSecond
+    ]
+  where
+    pack ::
+      (a :| '[Hour, HourMinute, HourMinuteSecond]) =>
+      [(Text, a)] ->
+      [(Text, LocalTimeNoTrunc)]
+    pack = map (second (LocalTimeNoTrunc . Vary.from))
+
+units_LocalTimeNoTrunc_invalidSemantics :: [Text]
+units_LocalTimeNoTrunc_invalidSemantics =
+  concat
+    [ units_LocalTimeLike_invalidSemantics_Hour,
+      units_LocalTimeLike_invalidSemantics_HourMinute,
+      units_LocalTimeLike_invalidSemantics_HourMinuteSecond
+    ]
+
+units_LocalTimeNoTrunc_invalidSyntax :: [Text]
+units_LocalTimeNoTrunc_invalidSyntax =
+  concat
+    [ units_LocalTimeLike_invalidSyntax_Hour,
+      units_LocalTimeLike_invalidSyntax_Minute,
+      units_LocalTimeLike_invalidSyntax_Second,
+      units_LocalTimeLike_invalidSyntax_HourMinuteSecond,
+      units_LocalTimeLike_invalidSyntax_HourMinute,
+      units_LocalTimeLike_invalidSyntax_MinuteSecond,
+      --
+      units_LocalTimeLike_invalidSemantics_Minute,
+      units_LocalTimeLike_invalidSemantics_Second,
+      units_LocalTimeLike_invalidSemantics_MinuteSecond,
+      --
+      map fst units_LocalTimeLike_valid_Minute,
+      map fst units_LocalTimeLike_valid_Second,
+      map fst units_LocalTimeLike_valid_MinuteSecond
+    ]
+
+exhaustive_LocalTimeNoTrunc_valid :: [(Text, LocalTimeNoTrunc)]
+exhaustive_LocalTimeNoTrunc_valid =
+  concat
+    [ pack exhaustive_LocalTimeLike_valid_Hour,
+      pack exhaustive_LocalTimeLike_valid_HourMinute,
+      pack exhaustive_LocalTimeLike_valid_HourMinuteSecond
+    ]
+  where
+    pack ::
+      (a :| '[Hour, HourMinute, HourMinuteSecond]) =>
+      [(Text, a)] ->
+      [(Text, LocalTimeNoTrunc)]
+    pack = map (second (LocalTimeNoTrunc . Vary.from))
+
+exhaustive_LocalTimeNoTrunc_invalid :: [Text]
+exhaustive_LocalTimeNoTrunc_invalid =
+  concat
+    [ exhaustive_LocalTimeLike_invalid_Hour,
+      exhaustive_LocalTimeLike_invalid_HourMinute,
+      exhaustive_LocalTimeLike_invalid_HourMinuteSecond,
+      --
+      universe_LocalTimeLike_Minute,
+      universe_LocalTimeLike_Second,
+      universe_LocalTimeLike_MinuteSecond
     ]
 
 --
