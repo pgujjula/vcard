@@ -31,6 +31,7 @@ import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time
   ( DateTime (..),
+    DateTimeList,
     Hour (..),
     HourMinute (..),
     HourMinuteSecond (..),
@@ -71,7 +72,8 @@ tests =
       test_TimeComplete,
       test_Sign,
       test_Zone,
-      test_DateTime
+      test_DateTime,
+      test_DateTimeList
     ]
 
 --
@@ -1667,6 +1669,259 @@ units_DateTime_invalidSyntax =
     "89260525T064805 -1644",
     "89260525T064805- 1644"
   ]
+
+--
+-- DateTimeList
+--
+test_DateTimeList :: TestTree
+test_DateTimeList =
+  testGroup
+    "DateTimeList"
+    [ test_DateTimeList_parse,
+      test_DateTimeList_serialize
+    ]
+
+test_DateTimeList_parse :: TestTree
+test_DateTimeList_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_DateTimeList_valid,
+      testParseInvalidSemantics
+        (Proxy @DateTimeList)
+        units_DateTimeList_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @DateTimeList)
+        units_DateTimeList_invalidSyntax
+    ]
+
+test_DateTimeList_serialize :: TestTree
+test_DateTimeList_serialize = testSerialize "serialize" units_DateTimeList_valid
+
+units_DateTimeList_valid :: [(Text, DateTimeList)]
+units_DateTimeList_valid =
+  concat
+    [ -- singletons
+      map
+        (second (List . NonEmpty.singleton))
+        [ ( "89260525T02",
+            DateTime
+              (dateNoReduc (ymd 8926 05 25))
+              (timeNoTrunc (h 02) Nothing)
+          ),
+          ( "--0222T1329Z",
+            DateTime
+              (dateNoReduc (md 02 22))
+              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+          ),
+          ( "---09T120631-04",
+            DateTime
+              (dateNoReduc (d 09))
+              ( timeNoTrunc
+                  (hms 12 06 31)
+                  (Just (UTCOffset Minus (h 04) Nothing))
+              )
+          ),
+          ( "30310720T091024-1112",
+            DateTime
+              (dateNoReduc (ymd 3031 07 20))
+              ( timeNoTrunc
+                  (hms 09 10 24)
+                  (Just (UTCOffset Minus (h 11) (Just (m 12))))
+              )
+          ),
+          ( "--0731T0309+01",
+            DateTime
+              (dateNoReduc (md 07 31))
+              ( timeNoTrunc
+                  (hm 03 09)
+                  (Just (UTCOffset Plus (h 01) Nothing))
+              )
+          ),
+          ( "---17T06+1231",
+            DateTime
+              (dateNoReduc (d 17))
+              ( timeNoTrunc
+                  (h 06)
+                  (Just (UTCOffset Plus (h 12) (Just (m 31))))
+              )
+          )
+        ],
+      -- pairs
+      map
+        (second List)
+        [ ( "89260525T02,30310720T091024-1112",
+            DateTime
+              (dateNoReduc (ymd 8926 05 25))
+              (timeNoTrunc (h 02) Nothing)
+              :| [ DateTime
+                     (dateNoReduc (ymd 3031 07 20))
+                     ( timeNoTrunc
+                         (hms 09 10 24)
+                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                     )
+                 ]
+          ),
+          ( "--0222T1329Z,--0731T0309+01",
+            DateTime
+              (dateNoReduc (md 02 22))
+              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+              :| [ DateTime
+                     (dateNoReduc (md 07 31))
+                     ( timeNoTrunc
+                         (hm 03 09)
+                         (Just (UTCOffset Plus (h 01) Nothing))
+                     )
+                 ]
+          ),
+          ( "---09T120631-04,---17T06+1231",
+            DateTime
+              (dateNoReduc (d 09))
+              ( timeNoTrunc
+                  (hms 12 06 31)
+                  (Just (UTCOffset Minus (h 04) Nothing))
+              )
+              :| [ DateTime
+                     (dateNoReduc (d 17))
+                     ( timeNoTrunc
+                         (h 06)
+                         (Just (UTCOffset Plus (h 12) (Just (m 31))))
+                     )
+                 ]
+          )
+        ],
+      -- triples
+      map
+        (second List)
+        [ ( "89260525T02,---09T120631-04,--0731T0309+01",
+            DateTime
+              (dateNoReduc (ymd 8926 05 25))
+              (timeNoTrunc (h 02) Nothing)
+              :| [ DateTime
+                     (dateNoReduc (d 09))
+                     ( timeNoTrunc
+                         (hms 12 06 31)
+                         (Just (UTCOffset Minus (h 04) Nothing))
+                     ),
+                   DateTime
+                     (dateNoReduc (md 07 31))
+                     ( timeNoTrunc
+                         (hm 03 09)
+                         (Just (UTCOffset Plus (h 01) Nothing))
+                     )
+                 ]
+          ),
+          ( "--0222T1329Z,30310720T091024-1112,---17T06+1231",
+            DateTime
+              (dateNoReduc (md 02 22))
+              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+              :| [ DateTime
+                     (dateNoReduc (ymd 3031 07 20))
+                     ( timeNoTrunc
+                         (hms 09 10 24)
+                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                     ),
+                   DateTime
+                     (dateNoReduc (d 17))
+                     ( timeNoTrunc
+                         (h 06)
+                         (Just (UTCOffset Plus (h 12) (Just (m 31))))
+                     )
+                 ]
+          )
+        ],
+      -- duplicates
+      map
+        (second List)
+        [ ( "89260525T02,89260525T02",
+            DateTime
+              (dateNoReduc (ymd 8926 05 25))
+              (timeNoTrunc (h 02) Nothing)
+              :| [ DateTime
+                     (dateNoReduc (ymd 8926 05 25))
+                     (timeNoTrunc (h 02) Nothing)
+                 ]
+          ),
+          ( "--0222T1329Z,---09T120631-04,--0222T1329Z",
+            DateTime
+              (dateNoReduc (md 02 22))
+              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+              :| [ DateTime
+                     (dateNoReduc (d 09))
+                     ( timeNoTrunc
+                         (hms 12 06 31)
+                         (Just (UTCOffset Minus (h 04) Nothing))
+                     ),
+                   DateTime
+                     (dateNoReduc (md 02 22))
+                     (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+                 ]
+          ),
+          ( "30310720T091024-1112,30310720T091024-1112,30310720T091024-1112",
+            DateTime
+              (dateNoReduc (ymd 3031 07 20))
+              ( timeNoTrunc
+                  (hms 09 10 24)
+                  (Just (UTCOffset Minus (h 11) (Just (m 12))))
+              )
+              :| [ DateTime
+                     (dateNoReduc (ymd 3031 07 20))
+                     ( timeNoTrunc
+                         (hms 09 10 24)
+                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                     ),
+                   DateTime
+                     (dateNoReduc (ymd 3031 07 20))
+                     ( timeNoTrunc
+                         (hms 09 10 24)
+                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                     )
+                 ]
+          )
+        ]
+    ]
+
+units_DateTimeList_invalidSemantics :: [Text]
+units_DateTimeList_invalidSemantics =
+  [ -- invalid date times
+    "89260532T02",
+    "--0222T1329Z,---09T120631-24",
+    "30310720T091024-1112,--1331T0309+01,---17T06+1231"
+  ]
+
+units_DateTimeList_invalidSyntax :: [Text]
+units_DateTimeList_invalidSyntax =
+  concat
+    [ -- leading/trailing whitespace
+      [ " 89260525T02,30310720T091024-1112",
+        "\n89260525T02,30310720T091024-1112",
+        "\r\n89260525T02,30310720T091024-1112",
+        "89260525T02,30310720T091024-1112 ",
+        "89260525T02,30310720T091024-1112\n",
+        "89260525T02,30310720T091024-1112\r\n"
+      ],
+      -- whitespace between entries
+      [ "89260525T02 ,30310720T091024-1112",
+        "89260525T02\n,30310720T091024-1112",
+        "89260525T02\r\n,30310720T091024-1112",
+        "89260525T02, 30310720T091024-1112",
+        "89260525T02,\n30310720T091024-1112",
+        "89260525T02,\r\n30310720T091024-1112"
+      ],
+      -- empty strings/extraneous leading or trailing commas
+      [ "",
+        ",",
+        ",,",
+        "89260525T02,",
+        ",89260525T02",
+        ",89260525T02,30310720T091024-1112",
+        "89260525T02,30310720T091024-1112,"
+      ],
+      -- invalid times
+      [ "-0525T02",
+        "-0525T02,30310720T091024-1112",
+        "30310720T091024-1112,-0525T02"
+      ]
+    ]
 
 -- =========
 -- UTILITIES
