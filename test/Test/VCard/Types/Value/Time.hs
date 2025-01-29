@@ -33,6 +33,7 @@ import VCard.Types.Value.Time
     HourMinute (..),
     HourMinuteSecond (..),
     LocalTime (..),
+    LocalTimeComplete (..),
     LocalTimeNoTrunc (..),
     Minute (..),
     MinuteSecond (..),
@@ -59,6 +60,7 @@ tests =
       test_MinuteSecond,
       test_LocalTime,
       test_LocalTimeNoTrunc,
+      test_LocalTimeComplete,
       test_Time,
       test_TimeList,
       test_Sign,
@@ -554,6 +556,96 @@ exhaustive_LocalTimeNoTrunc_invalid =
       --
       universe_LocalTimeLike_Minute,
       universe_LocalTimeLike_Second,
+      universe_LocalTimeLike_MinuteSecond
+    ]
+
+--
+-- LocalTimeComplete
+--
+
+test_LocalTimeComplete :: TestTree
+test_LocalTimeComplete =
+  testGroup
+    "LocalTimeComplete"
+    [ test_LocalTimeComplete_parse,
+      test_LocalTimeComplete_serialize
+    ]
+
+test_LocalTimeComplete_parse :: TestTree
+test_LocalTimeComplete_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_LocalTimeComplete_valid,
+          testParseInvalidSemantics
+            (Proxy @LocalTimeComplete)
+            units_LocalTimeComplete_invalidSemantics,
+          testParseInvalidSyntax
+            (Proxy @LocalTimeComplete)
+            units_LocalTimeComplete_invalidSyntax
+        ],
+      testGroup
+        "exhaustive"
+        [ testParseValid exhaustive_LocalTimeComplete_valid,
+          testParseInvalidSemantics
+            (Proxy @LocalTimeComplete)
+            exhaustive_LocalTimeComplete_invalid
+        ]
+    ]
+
+test_LocalTimeComplete_serialize :: TestTree
+test_LocalTimeComplete_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_LocalTimeComplete_valid,
+      testSerialize "exhaustive" exhaustive_LocalTimeComplete_valid
+    ]
+
+units_LocalTimeComplete_valid :: [(Text, LocalTimeComplete)]
+units_LocalTimeComplete_valid =
+  map (second LocalTimeComplete) units_LocalTimeLike_valid_HourMinuteSecond
+
+units_LocalTimeComplete_invalidSemantics :: [Text]
+units_LocalTimeComplete_invalidSemantics =
+  units_LocalTimeLike_invalidSemantics_HourMinuteSecond
+
+units_LocalTimeComplete_invalidSyntax :: [Text]
+units_LocalTimeComplete_invalidSyntax =
+  concat
+    [ units_LocalTimeLike_invalidSyntax_Hour,
+      units_LocalTimeLike_invalidSyntax_Minute,
+      units_LocalTimeLike_invalidSyntax_Second,
+      units_LocalTimeLike_invalidSyntax_HourMinuteSecond,
+      units_LocalTimeLike_invalidSyntax_HourMinute,
+      units_LocalTimeLike_invalidSyntax_MinuteSecond,
+      --
+      units_LocalTimeLike_invalidSemantics_Hour,
+      units_LocalTimeLike_invalidSemantics_Minute,
+      units_LocalTimeLike_invalidSemantics_Second,
+      units_LocalTimeLike_invalidSemantics_HourMinute,
+      units_LocalTimeLike_invalidSemantics_MinuteSecond,
+      --
+      map fst units_LocalTimeLike_valid_Hour,
+      map fst units_LocalTimeLike_valid_Minute,
+      map fst units_LocalTimeLike_valid_Second,
+      map fst units_LocalTimeLike_valid_HourMinute,
+      map fst units_LocalTimeLike_valid_MinuteSecond
+    ]
+
+exhaustive_LocalTimeComplete_valid :: [(Text, LocalTimeComplete)]
+exhaustive_LocalTimeComplete_valid =
+  map (second LocalTimeComplete) exhaustive_LocalTimeLike_valid_HourMinuteSecond
+
+exhaustive_LocalTimeComplete_invalid :: [Text]
+exhaustive_LocalTimeComplete_invalid =
+  concat
+    [ exhaustive_LocalTimeLike_invalid_HourMinuteSecond,
+      --
+      universe_LocalTimeLike_Hour,
+      universe_LocalTimeLike_Minute,
+      universe_LocalTimeLike_Second,
+      universe_LocalTimeLike_HourMinute,
       universe_LocalTimeLike_MinuteSecond
     ]
 
