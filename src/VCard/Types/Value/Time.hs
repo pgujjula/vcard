@@ -22,6 +22,7 @@ module VCard.Types.Value.Time
     LocalTimeComplete (..),
     Time (..),
     TimeList,
+    TimeNoTrunc (..),
     Sign (..),
     Zone (..),
   )
@@ -348,6 +349,25 @@ instance HasSerializer Time where
   serializer :: Serializer Time
   serializer (Time localTime zone) =
     serializer localTime <> maybe "" serializer zone
+
+--
+-- TimeNoTrunc
+--
+
+data TimeNoTrunc = TimeNoTrunc
+  { timeNoTruncLocalTimeNoTrunc :: !LocalTimeNoTrunc,
+    timeNoTruncZone :: !(Maybe Zone)
+  }
+  deriving (Eq, Show, Ord)
+
+instance HasParser TimeNoTrunc where
+  parser :: Parser TimeNoTrunc
+  parser = liftA2 TimeNoTrunc (parser @LocalTimeNoTrunc) (optional (parser @Zone))
+
+instance HasSerializer TimeNoTrunc where
+  serializer :: Serializer TimeNoTrunc
+  serializer (TimeNoTrunc localTimeNoTrunc zone) =
+    serializer localTimeNoTrunc <> maybe "" serializer zone
 
 --
 -- Sign
