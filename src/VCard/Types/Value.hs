@@ -88,6 +88,9 @@ module VCard.Types.Value
 
     -- ** 'TimeNoTrunc'
     TimeNoTrunc (..),
+
+    -- ** 'TimeComplete'
+    TimeComplete (..),
   )
 where
 
@@ -121,6 +124,7 @@ import VCard.Types.Value.Time
     Minute (..),
     MinuteSecond (..),
     Second (..),
+    TimeComplete (..),
     TimeNoTrunc (..),
     Zone (..),
   )
