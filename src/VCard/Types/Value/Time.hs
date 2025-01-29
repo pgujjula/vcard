@@ -19,6 +19,7 @@ module VCard.Types.Value.Time
     MinuteSecond (..),
     LocalTime (..),
     LocalTimeNoTrunc (..),
+    LocalTimeComplete (..),
     Time (..),
     TimeList,
     Sign (..),
@@ -250,6 +251,21 @@ instance HasSerializer LocalTimeNoTrunc where
             . on @HourMinuteSecond hourMinuteSecondTimeS
             $ exhaustiveCase
         )
+
+--
+-- LocalTimeComplete
+--
+
+newtype LocalTimeComplete = LocalTimeComplete
+  { unLocalTimeComplete :: HourMinuteSecond
+  }
+  deriving (Eq, Show, Ord)
+
+instance HasParser LocalTimeComplete where
+  parser = LocalTimeComplete <$> hourMinuteSecondTimeP
+
+instance HasSerializer LocalTimeComplete where
+  serializer = hourMinuteSecondTimeS . unLocalTimeComplete
 
 --
 -- Parsers of various time formats
