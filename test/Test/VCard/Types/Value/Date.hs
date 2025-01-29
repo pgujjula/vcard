@@ -8,7 +8,15 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Test.VCard.Types.Value.Date (tests) where
+module Test.VCard.Types.Value.Date
+  ( tests,
+    units_DateNoReduc_valid,
+    dateNoReduc,
+    ymd,
+    md,
+    d,
+  )
+where
 
 #if !MIN_VERSION_base(4,18,0)
 import Control.Applicative (liftA2, liftA3)
@@ -1610,3 +1618,9 @@ date ::
   a ->
   Date
 date = Date . Vary.from
+
+dateNoReduc ::
+  (a :| '[YearMonthDay, MonthDay, Day]) =>
+  a ->
+  DateNoReduc
+dateNoReduc = DateNoReduc . Vary.from

@@ -24,12 +24,14 @@ import Data.Text (Text)
 import Data.Text qualified as Text
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
+import Test.VCard.Types.Value.Date (d, dateNoReduc, md, units_DateNoReduc_valid, ymd)
 import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time
-  ( Hour (..),
+  ( DateTime (..),
+    Hour (..),
     HourMinute (..),
     HourMinuteSecond (..),
     LocalTime (..),
@@ -68,7 +70,8 @@ tests =
       test_TimeNoTrunc,
       test_TimeComplete,
       test_Sign,
-      test_Zone
+      test_Zone,
+      test_DateTime
     ]
 
 --
@@ -1473,6 +1476,197 @@ units_Zone_invalidSyntax =
       --   leading or trailing whitespace
       [" +1537", "\n+1537", "\r\n+1537", "+1537 ", "+1537\n", "+1537\r\n"]
     ]
+
+--
+-- DateTime
+--
+test_DateTime :: TestTree
+test_DateTime =
+  testGroup
+    "DateTime"
+    [ test_DateTime_parse,
+      test_DateTime_serialize
+    ]
+
+test_DateTime_parse :: TestTree
+test_DateTime_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_DateTime_valid,
+      testParseInvalidSemantics
+        (Proxy @DateTime)
+        units_DateTime_invalidSemantics,
+      testParseInvalidSyntax (Proxy @DateTime) units_DateTime_invalidSyntax
+    ]
+
+test_DateTime_serialize :: TestTree
+test_DateTime_serialize =
+  testSerialize "serialize" units_DateTime_valid
+
+units_DateTime_valid :: [(Text, DateTime)]
+units_DateTime_valid = units_DateTime_valid1 ++ units_DateTime_valid2
+
+units_DateTime_valid1 :: [(Text, DateTime)]
+units_DateTime_valid1 =
+  [ -- bounds
+    ( "00000101T000000-2359",
+      DateTime
+        (dateNoReduc (ymd 0000 01 01))
+        ( timeNoTrunc
+            (hms 00 00 00)
+            (Just (UTCOffset Minus (h 23) (Just (m 59))))
+        )
+    ),
+    ( "99991231T235960+2359",
+      DateTime
+        (dateNoReduc (ymd 9999 12 31))
+        ( timeNoTrunc
+            (hms 23 59 60)
+            (Just (UTCOffset Plus (h 23) (Just (m 59))))
+        )
+    ),
+    -- different DateTime forms
+    --   base (yyyymmddThhmmss-hhmm)
+    ( "89260525T064805-1644",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+        )
+    ),
+    --   minus zone, no zone minute (yyyymmddThhmmss-hh)
+    ( "89260525T064805-16",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            (Just (UTCOffset Minus (h 16) Nothing))
+        )
+    ),
+    --   plus zone (yyyymmddThhmmss+hhmm)
+    ( "89260525T064805+1644",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            (Just (UTCOffset Plus (h 16) (Just (m 44))))
+        )
+    ),
+    --   plus zone, no zone minute (yyyymmddThhmmss+hh)
+    ( "89260525T064805+16",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            (Just (UTCOffset Plus (h 16) Nothing))
+        )
+    ),
+    --   UTC (yyyymmddThhmmssZ)
+    ( "89260525T064805Z",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            (Just UTCDesignator)
+        )
+    ),
+    --   no zone (yyyymmddThhmmss)
+    ( "89260525T064805",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            Nothing
+        )
+    ),
+    --   no second (yyyymmddThhmm-hhmm)
+    ( "89260525T0648-1644",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (hm 06 48)
+            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+        )
+    ),
+    --   no minute or second (yyyymmddThh-hhmm)
+    ( "89260525T06-1644",
+      DateTime
+        (dateNoReduc (ymd 8926 05 25))
+        ( timeNoTrunc
+            (h 06)
+            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+        )
+    ),
+    --   no year (mmddThhmmss-hhmm)
+    ( "--0525T064805-1644",
+      DateTime
+        (dateNoReduc (md 05 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+        )
+    ),
+    --   no year or month (ddThhmmss-hhmm)
+    ( "---25T064805-1644",
+      DateTime
+        (dateNoReduc (d 25))
+        ( timeNoTrunc
+            (hms 06 48 05)
+            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+        )
+    )
+  ]
+
+units_DateTime_valid2 :: [(Text, DateTime)]
+units_DateTime_valid2 = do
+  (dateNoReducText, dateNoReduc') <- units_DateNoReduc_valid
+  (timeNoTruncText, timeNoTrunc') <- units_TimeNoTrunc_valid
+
+  let dateTimeText = dateNoReducText <> "T" <> timeNoTruncText
+      dateTime' = DateTime dateNoReduc' timeNoTrunc'
+
+  pure (dateTimeText, dateTime')
+
+units_DateTime_invalidSemantics :: [Text]
+units_DateTime_invalidSemantics =
+  concat
+    [ -- invalid month
+      ["00001301T000000-0000", "89261325T064805-1644"],
+      -- invalid day
+      ["00000132T000000-0000", "89260532T064805-1644"],
+      -- invalid hour
+      ["00000101T240000-0000", "89260525T244805-1644"],
+      -- invalid minute
+      ["00000101T006000-0000", "89260525T066005-1644"],
+      -- invalid second
+      ["00000101T000061-0000", "89260525T064861-1644"],
+      -- invalid zone hour
+      ["00000101T000000-2400", "89260525T064805-2444"],
+      -- invalid zone minute
+      ["00000101T000000-0060", "89260525T064805-1660"]
+    ]
+
+units_DateTime_invalidSyntax :: [Text]
+units_DateTime_invalidSyntax =
+  [ -- strange contructions
+    "89260525T064805z",
+    "89260525T064805Z1644",
+    "89260525T0648051644",
+    "89260525t064805Z",
+    "89260525064805-1644",
+    -- extraneous whitespace
+    " 89260525T064805-1644",
+    "\n89260525T064805-1644",
+    "\r\n89260525T064805-1644",
+    "89260525T064805-1644 ",
+    "89260525T064805-1644\n",
+    "89260525T064805-1644\r\n",
+    "89260525 T064805-1644",
+    "89260525T 064805-1644",
+    "89260525T064805 -1644",
+    "89260525T064805- 1644"
+  ]
 
 -- =========
 -- UTILITIES
