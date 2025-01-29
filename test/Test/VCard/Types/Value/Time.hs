@@ -40,6 +40,7 @@ import VCard.Types.Value.Time
     Second (..),
     Sign (..),
     Time (..),
+    TimeComplete (..),
     TimeList,
     TimeNoTrunc (..),
     Zone (..),
@@ -65,6 +66,7 @@ tests =
       test_Time,
       test_TimeList,
       test_TimeNoTrunc,
+      test_TimeComplete,
       test_Sign,
       test_Zone
     ]
@@ -993,7 +995,7 @@ units_Time_invalidSemantics =
       ["0000+0060", "-45+0460"]
     ]
 
--- See also: units_TimeNoTrunc_invalidSyntax
+-- See also: units_TimeNoTrunc_invalidSyntax, units_TimeComplete_invalidSyntax
 units_Time_invalidSyntax :: [Text]
 units_Time_invalidSyntax =
   [ -- strange constructions
@@ -1236,9 +1238,93 @@ units_TimeNoTrunc_invalidSemantics =
       ["21+0060", "184522+0460"]
     ]
 
--- See also: units_Time_invalidSyntax
+-- See also: units_Time_invalidSyntax, units_TimeNoTrunc_invalidSyntax
 units_TimeNoTrunc_invalidSyntax :: [Text]
 units_TimeNoTrunc_invalidSyntax =
+  [ -- strange constructions
+    "081739Z1537",
+    "0817391537",
+    -- extraneous whitespace
+    " 081739+1537",
+    "\n081739+1537",
+    "\r\n081739+1537",
+    "081739+1537 ",
+    "081739+1537\n",
+    "081739+1537\r\n"
+  ]
+
+--
+-- TimeComplete
+--
+
+test_TimeComplete :: TestTree
+test_TimeComplete =
+  testGroup
+    "TimeComplete"
+    [ test_TimeComplete_parse,
+      test_TimeComplete_serialize
+    ]
+
+test_TimeComplete_parse :: TestTree
+test_TimeComplete_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_TimeComplete_valid,
+      testParseInvalidSemantics
+        (Proxy @TimeComplete)
+        units_TimeComplete_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @TimeComplete)
+        units_TimeComplete_invalidSyntax
+    ]
+
+test_TimeComplete_serialize :: TestTree
+test_TimeComplete_serialize = testSerialize "serialize" units_TimeComplete_valid
+
+units_TimeComplete_valid :: [(Text, TimeComplete)]
+units_TimeComplete_valid =
+  units_TimeComplete_valid1 ++ units_TimeComplete_valid2
+
+units_TimeComplete_valid1 :: [(Text, TimeComplete)]
+units_TimeComplete_valid1 =
+  [ ("081739", timeComplete (hms 08 17 39) Nothing),
+    ("081739Z", timeComplete (hms 08 17 39) (Just UTCDesignator)),
+    ( "081739+15",
+      timeComplete (hms 08 17 39) (Just (UTCOffset Plus (h 15) Nothing))
+    ),
+    ( "081739-1537",
+      timeComplete (hms 08 17 39) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+    )
+  ]
+
+units_TimeComplete_valid2 :: [(Text, TimeComplete)]
+units_TimeComplete_valid2 = do
+  (localTimeCompleteText, localTimeComplete') <- units_LocalTimeComplete_valid
+  (zoneText, zone) <- ("", Nothing) : map (second Just) units_Zone_valid
+
+  let timeCompleteText = localTimeCompleteText <> zoneText
+      timeComplete' = TimeComplete localTimeComplete' zone
+
+  pure (timeCompleteText, timeComplete')
+
+units_TimeComplete_invalidSemantics :: [Text]
+units_TimeComplete_invalidSemantics =
+  concat
+    [ -- invalid hour
+      ["240000+0000"],
+      -- invalid minute
+      ["086000+00"],
+      -- invalid second
+      ["032961", "032961+00", "032961Z"],
+      -- invalid zone hour
+      ["010000+2400", "141045+24"],
+      -- invalid zone minute
+      ["184522+0460"]
+    ]
+
+-- See also: units_Time_invalidSyntax, units_TimeNoTrunc_invalidSyntax
+units_TimeComplete_invalidSyntax :: [Text]
+units_TimeComplete_invalidSyntax =
   [ -- strange constructions
     "081739Z1537",
     "0817391537",
@@ -1627,3 +1713,9 @@ localTimeNoTrunc = LocalTimeNoTrunc . Vary.from
 timeNoTrunc ::
   (a :| '[Hour, HourMinute, HourMinuteSecond]) => a -> Maybe Zone -> TimeNoTrunc
 timeNoTrunc = TimeNoTrunc . localTimeNoTrunc
+
+localTimeComplete :: HourMinuteSecond -> LocalTimeComplete
+localTimeComplete = LocalTimeComplete
+
+timeComplete :: HourMinuteSecond -> Maybe Zone -> TimeComplete
+timeComplete = TimeComplete . localTimeComplete
