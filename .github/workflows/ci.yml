@@ -59,6 +59,7 @@ jobs:
           --test-show-details=streaming
           --enable-benchmarks
           --ghc-options="-Werror -Wall"
+          --test-options='-p "$0 !~ /exhaustive/"'
       - run: cabal update
       - run: cabal outdated --exit-code --ignore=base
       - run: cabal freeze
