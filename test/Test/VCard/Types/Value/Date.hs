@@ -192,12 +192,12 @@ test_Month_serialize =
     ]
 
 test_Month_bounds :: TestTree
-test_Month_bounds = testBounds (m 01, m 12)
+test_Month_bounds = testBounds (mo 01, mo 12)
 
 -- See also: units_DateLike_valid_Month
 units_Month_valid :: [(Text, Month)]
 units_Month_valid =
-  [("01", m 01), ("05", m 05), ("10", m 10), ("12", m 12)]
+  [("01", mo 01), ("05", mo 05), ("10", mo 10), ("12", mo 12)]
 
 -- See also: units_DateLike_invalidSemantics_Month
 units_Month_invalidSemantics :: [Text]
@@ -369,102 +369,102 @@ test_YearMonthDay_bounds = testBounds (ymd 0000 01 01, ymd 9999 12 31)
 units_YearMonthDay_valid :: [(Year, Month, Day)]
 units_YearMonthDay_valid =
   [ -- bounds
-    (y 0000, m 01, d 01),
-    (y 9999, m 12, d 31),
+    (y 0000, mo 01, d 01),
+    (y 9999, mo 12, d 31),
     -- vary year
-    (y 0000, m 04, d 12),
-    (y 5317, m 04, d 12),
-    (y 9999, m 04, d 12),
+    (y 0000, mo 04, d 12),
+    (y 5317, mo 04, d 12),
+    (y 9999, mo 04, d 12),
     -- vary month
-    (y 4771, m 01, d 12),
-    (y 4771, m 07, d 12),
-    (y 4771, m 12, d 12),
+    (y 4771, mo 01, d 12),
+    (y 4771, mo 07, d 12),
+    (y 4771, mo 12, d 12),
     -- vary day
-    (y 3909, m 08, d 01),
-    (y 3909, m 08, d 17),
-    (y 3909, m 08, d 31),
+    (y 3909, mo 08, d 01),
+    (y 3909, mo 08, d 17),
+    (y 3909, mo 08, d 31),
     -- max day
-    (y 5317, m 01, d 31),
-    (y 5317, m 02, d 28),
-    (y 5317, m 03, d 31),
-    (y 5317, m 04, d 30),
-    (y 5317, m 05, d 31),
-    (y 5317, m 06, d 30),
-    (y 5317, m 07, d 31),
-    (y 5317, m 08, d 31),
-    (y 5317, m 09, d 30),
-    (y 5317, m 10, d 31),
-    (y 5317, m 11, d 30),
-    (y 5317, m 12, d 31),
+    (y 5317, mo 01, d 31),
+    (y 5317, mo 02, d 28),
+    (y 5317, mo 03, d 31),
+    (y 5317, mo 04, d 30),
+    (y 5317, mo 05, d 31),
+    (y 5317, mo 06, d 30),
+    (y 5317, mo 07, d 31),
+    (y 5317, mo 08, d 31),
+    (y 5317, mo 09, d 30),
+    (y 5317, mo 10, d 31),
+    (y 5317, mo 11, d 30),
+    (y 5317, mo 12, d 31),
     -- non leap years (not multiples of 4)
-    (y 0001, m 02, d 28),
-    (y 4922, m 02, d 28),
-    (y 9999, m 02, d 28),
+    (y 0001, mo 02, d 28),
+    (y 4922, mo 02, d 28),
+    (y 9999, mo 02, d 28),
     -- leap years (multiples of 4 but not of 100)
-    (y 0004, m 02, d 28),
-    (y 0004, m 02, d 29),
-    (y 6784, m 02, d 28),
-    (y 6784, m 02, d 29),
-    (y 9996, m 02, d 28),
-    (y 9996, m 02, d 29),
+    (y 0004, mo 02, d 28),
+    (y 0004, mo 02, d 29),
+    (y 6784, mo 02, d 28),
+    (y 6784, mo 02, d 29),
+    (y 9996, mo 02, d 28),
+    (y 9996, mo 02, d 29),
     -- non leap years (multiples of 100 but not of 400)
-    (y 0100, m 02, d 28),
-    (y 6700, m 02, d 28),
-    (y 9900, m 02, d 28),
+    (y 0100, mo 02, d 28),
+    (y 6700, mo 02, d 28),
+    (y 9900, mo 02, d 28),
     -- leap years (multiples of 400)
-    (y 0000, m 02, d 28),
-    (y 0000, m 02, d 29),
-    (y 6800, m 02, d 28),
-    (y 6800, m 02, d 29),
-    (y 9600, m 02, d 28),
-    (y 9600, m 02, d 29)
+    (y 0000, mo 02, d 28),
+    (y 0000, mo 02, d 29),
+    (y 6800, mo 02, d 28),
+    (y 6800, mo 02, d 29),
+    (y 9600, mo 02, d 28),
+    (y 9600, mo 02, d 29)
   ]
 
 -- See also: units_DateLike_invalidSemantics_YearMonthDay
 units_YearMonthDay_invalid :: [(Year, Month, Day)]
 units_YearMonthDay_invalid =
   [ -- beyond max day
-    (y 5317, m 02, d 29),
-    (y 5317, m 02, d 30),
-    (y 5317, m 02, d 31),
-    (y 5317, m 04, d 31),
-    (y 5317, m 06, d 31),
-    (y 5317, m 09, d 31),
-    (y 5317, m 11, d 31),
+    (y 5317, mo 02, d 29),
+    (y 5317, mo 02, d 30),
+    (y 5317, mo 02, d 31),
+    (y 5317, mo 04, d 31),
+    (y 5317, mo 06, d 31),
+    (y 5317, mo 09, d 31),
+    (y 5317, mo 11, d 31),
     -- non leap years (not multiples of 4)
-    (y 0001, m 02, d 29),
-    (y 0001, m 02, d 30),
-    (y 0001, m 02, d 31),
-    (y 4922, m 02, d 29),
-    (y 4922, m 02, d 30),
-    (y 4922, m 02, d 31),
-    (y 9999, m 02, d 29),
-    (y 9999, m 02, d 30),
-    (y 9999, m 02, d 31),
+    (y 0001, mo 02, d 29),
+    (y 0001, mo 02, d 30),
+    (y 0001, mo 02, d 31),
+    (y 4922, mo 02, d 29),
+    (y 4922, mo 02, d 30),
+    (y 4922, mo 02, d 31),
+    (y 9999, mo 02, d 29),
+    (y 9999, mo 02, d 30),
+    (y 9999, mo 02, d 31),
     -- leap years (multiples of 4 but not of 100)
-    (y 0004, m 02, d 30),
-    (y 0004, m 02, d 31),
-    (y 6784, m 02, d 30),
-    (y 6784, m 02, d 31),
-    (y 9996, m 02, d 30),
-    (y 9996, m 02, d 31),
+    (y 0004, mo 02, d 30),
+    (y 0004, mo 02, d 31),
+    (y 6784, mo 02, d 30),
+    (y 6784, mo 02, d 31),
+    (y 9996, mo 02, d 30),
+    (y 9996, mo 02, d 31),
     -- non leap years (multiples of 100 but not of 400)
-    (y 0100, m 02, d 29),
-    (y 0100, m 02, d 30),
-    (y 0100, m 02, d 31),
-    (y 6700, m 02, d 29),
-    (y 6700, m 02, d 30),
-    (y 6700, m 02, d 31),
-    (y 9900, m 02, d 29),
-    (y 9900, m 02, d 30),
-    (y 9900, m 02, d 31),
+    (y 0100, mo 02, d 29),
+    (y 0100, mo 02, d 30),
+    (y 0100, mo 02, d 31),
+    (y 6700, mo 02, d 29),
+    (y 6700, mo 02, d 30),
+    (y 6700, mo 02, d 31),
+    (y 9900, mo 02, d 29),
+    (y 9900, mo 02, d 30),
+    (y 9900, mo 02, d 31),
     -- leap years (multiples of 400)
-    (y 0000, m 02, d 30),
-    (y 0000, m 02, d 31),
-    (y 6800, m 02, d 30),
-    (y 6800, m 02, d 31),
-    (y 9600, m 02, d 30),
-    (y 9600, m 02, d 31)
+    (y 0000, mo 02, d 30),
+    (y 0000, mo 02, d 31),
+    (y 6800, mo 02, d 30),
+    (y 6800, mo 02, d 31),
+    (y 9600, mo 02, d 30),
+    (y 9600, mo 02, d 31)
   ]
 
 --
@@ -542,42 +542,42 @@ test_MonthDay_bounds = testBounds (md 01 01, md 12 31)
 units_MonthDay_valid :: [(Month, Day)]
 units_MonthDay_valid =
   [ -- bounds
-    (m 01, d 01),
-    (m 12, d 31),
+    (mo 01, d 01),
+    (mo 12, d 31),
     -- vary month
-    (m 01, d 12),
-    (m 07, d 12),
-    (m 12, d 12),
+    (mo 01, d 12),
+    (mo 07, d 12),
+    (mo 12, d 12),
     -- vary day
-    (m 07, d 01),
-    (m 07, d 12),
-    (m 07, d 31),
+    (mo 07, d 01),
+    (mo 07, d 12),
+    (mo 07, d 31),
     -- max day
-    (m 01, d 31),
-    (m 02, d 28),
-    (m 02, d 29), -- February includes leap day
-    (m 03, d 31),
-    (m 04, d 30),
-    (m 05, d 31),
-    (m 06, d 30),
-    (m 07, d 31),
-    (m 08, d 31),
-    (m 09, d 30),
-    (m 10, d 31),
-    (m 11, d 30),
-    (m 12, d 31)
+    (mo 01, d 31),
+    (mo 02, d 28),
+    (mo 02, d 29), -- February includes leap day
+    (mo 03, d 31),
+    (mo 04, d 30),
+    (mo 05, d 31),
+    (mo 06, d 30),
+    (mo 07, d 31),
+    (mo 08, d 31),
+    (mo 09, d 30),
+    (mo 10, d 31),
+    (mo 11, d 30),
+    (mo 12, d 31)
   ]
 
 -- See also: units_DateLike_invalidSemantics_MonthDay
 units_MonthDay_invalid :: [(Month, Day)]
 units_MonthDay_invalid =
   [ -- beyond max day
-    (m 02, d 30),
-    (m 02, d 31),
-    (m 04, d 31),
-    (m 06, d 31),
-    (m 09, d 31),
-    (m 11, d 31)
+    (mo 02, d 30),
+    (mo 02, d 31),
+    (mo 04, d 31),
+    (mo 06, d 31),
+    (mo 09, d 31),
+    (mo 11, d 31)
   ]
 
 --
@@ -722,7 +722,7 @@ units_DateList_valid =
       map
         (second (List . NonEmpty.singleton))
         [ ("7316", date (y 7316)),
-          ("--06", date (m 06)),
+          ("--06", date (mo 06)),
           ("---19", date (d 19)),
           ("43100327", date (ymd 4310 03 27)),
           ("1482-02", date (ym 1482 02)),
@@ -735,7 +735,7 @@ units_DateList_valid =
             date (y 7316) :| [date (ymd 4310 03 27)]
           ),
           ( "--06,1482-02",
-            date (m 06) :| [date (ym 1482 02)]
+            date (mo 06) :| [date (ym 1482 02)]
           ),
           ( "---19,--1204",
             date (d 19) :| [date (md 12 04)]
@@ -748,14 +748,14 @@ units_DateList_valid =
             date (y 7316) :| [date (d 19), date (ym 1482 02)]
           ),
           ( "--06,43100327,--1204",
-            date (m 06) :| [date (ymd 4310 03 27), date (md 12 04)]
+            date (mo 06) :| [date (ymd 4310 03 27), date (md 12 04)]
           )
         ],
       -- combined
       [ ( "7316,--06,---19,43100327,1482-02,--1204",
           List
             ( date (y 7316)
-                :| [ date (m 06),
+                :| [ date (mo 06),
                      date (d 19),
                      date (ymd 4310 03 27),
                      date (ym 1482 02),
@@ -771,7 +771,7 @@ units_DateList_valid =
             date (y 7316) :| [date (y 7316)]
           ),
           ( "--06,1482-02,--06",
-            date (m 06) :| [date (ym 1482 02), date (m 06)]
+            date (mo 06) :| [date (ym 1482 02), date (mo 06)]
           ),
           ( "---19,---19,---19",
             date (d 19) :| [date (d 19), date (d 19)]
@@ -1034,7 +1034,7 @@ units_DateLike_valid_Year =
 -- See also: units_Month_valid
 units_DateLike_valid_Month :: [(Text, Month)]
 units_DateLike_valid_Month =
-  [("--01", m 01), ("--05", m 05), ("--10", m 10), ("--12", m 12)]
+  [("--01", mo 01), ("--05", mo 05), ("--10", mo 10), ("--12", mo 12)]
 
 -- See also: units_Day_valid
 units_DateLike_valid_Day :: [(Text, Day)]
@@ -1598,20 +1598,20 @@ toTimeDay = fromInteger . (+ 1) . getFinite . unDay
 y :: Integer -> Year
 y year = Year (finite year)
 
-m :: Integer -> Month
-m month = Month (finite (month - 1))
+mo :: Integer -> Month
+mo month = Month (finite (month - 1))
 
 d :: Integer -> Day
 d day = Day (finite (day - 1))
 
 ymd :: Integer -> Integer -> Integer -> YearMonthDay
-ymd year month day = YearMonthDay (y year) (m month) (d day)
+ymd year month day = YearMonthDay (y year) (mo month) (d day)
 
 ym :: Integer -> Integer -> YearMonth
-ym year month = YearMonth (y year) (m month)
+ym year month = YearMonth (y year) (mo month)
 
 md :: Integer -> Integer -> MonthDay
-md month day = MonthDay (m month) (d day)
+md month day = MonthDay (mo month) (d day)
 
 date ::
   (a :| '[Year, Month, Day, YearMonthDay, YearMonth, MonthDay]) =>
