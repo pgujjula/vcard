@@ -24,13 +24,25 @@ import Data.Text (Text)
 import Data.Text qualified as Text
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import Test.VCard.Types.Value.Date (d, dateNoReduc, md, units_DateNoReduc_valid, ymd)
+import Test.VCard.Types.Value.Date
+  ( d,
+    date,
+    dateNoReduc,
+    md,
+    mo,
+    units_DateNoReduc_valid,
+    y,
+    ym,
+    ymd,
+  )
 import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
+import VCard.Types.Value.Date (Date (..))
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time
-  ( DateTime (..),
+  ( DateAndOrTime (..),
+    DateTime (..),
     DateTimeList,
     Hour (..),
     HourMinute (..),
@@ -73,7 +85,8 @@ tests =
       test_Sign,
       test_Zone,
       test_DateTime,
-      test_DateTimeList
+      test_DateTimeList,
+      test_DateAndOrTime
     ]
 
 --
@@ -1923,6 +1936,109 @@ units_DateTimeList_invalidSyntax =
       ]
     ]
 
+--
+-- DateAndOrTime
+--
+test_DateAndOrTime :: TestTree
+test_DateAndOrTime =
+  testGroup
+    "DateAndOrTime"
+    [ test_DateAndOrTime_parse,
+      test_DateAndOrTime_serialize
+    ]
+
+test_DateAndOrTime_parse :: TestTree
+test_DateAndOrTime_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_DateAndOrTime_valid,
+      testParseInvalidSemantics
+        (Proxy @DateAndOrTime)
+        units_DateAndOrTime_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @DateAndOrTime)
+        units_DateAndOrTime_invalidSyntax
+    ]
+
+test_DateAndOrTime_serialize :: TestTree
+test_DateAndOrTime_serialize =
+  testSerialize "serialize" units_DateAndOrTime_valid
+
+units_DateAndOrTime_valid :: [(Text, DateAndOrTime)]
+units_DateAndOrTime_valid =
+  [ -- DateTime
+    ( "89260525T064805-1644",
+      dateAndOrTime $
+        DateTime
+          (dateNoReduc (ymd 8926 05 25))
+          ( timeNoTrunc
+              (hms 06 48 05)
+              (Just (UTCOffset Minus (h 16) (Just (m 44))))
+          )
+    ),
+    -- Date
+    ("6812", dateAndOrTime (date (y 6812))),
+    ("--05", dateAndOrTime (date (mo 05))),
+    ("---15", dateAndOrTime (date (d 15))),
+    ("53170412", dateAndOrTime (date (ymd 5317 04 12))),
+    ("4810-07", dateAndOrTime (date (ym 4810 07))),
+    ("--0712", dateAndOrTime (date (md 07 12))),
+    -- Time
+    ( "T15-1537",
+      dateAndOrTime (time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37)))))
+    ),
+    ( "T-45+15",
+      dateAndOrTime (time (m 45) (Just (UTCOffset Plus (h 15) Nothing)))
+    ),
+    ("T--08Z", dateAndOrTime (time (s 08) (Just UTCDesignator))),
+    ("T081739", dateAndOrTime (time (hms 08 17 39) Nothing)),
+    ( "T1329-1537",
+      dateAndOrTime
+        (time (hm 13 29) (Just (UTCOffset Minus (h 15) (Just (m 37)))))
+    ),
+    ( "T-3726+15",
+      dateAndOrTime (time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing)))
+    )
+  ]
+
+units_DateAndOrTime_invalidSemantics :: [Text]
+units_DateAndOrTime_invalidSemantics =
+  [ -- DateTime
+    "89261325T064805-1644",
+    "89260532T064805-1644",
+    "89260525T244805-1644",
+    "89260525T066005-1644",
+    "89260525T064861-1644",
+    "89260525T064805-2444",
+    "89260525T064805-1660",
+    -- Date
+    "--13",
+    "---32",
+    "53171312",
+    "4810-13",
+    "--1312",
+    "--0732",
+    -- Time
+    "T2429-1537",
+    "T1360-1537",
+    "T1329-2437",
+    "T1329-1560"
+  ]
+
+units_DateAndOrTime_invalidSyntax :: [Text]
+units_DateAndOrTime_invalidSyntax =
+  [ -- extraneous whitespace
+    " T1329-1537",
+    "\nT1329-1537",
+    "\r\nT1329-1537",
+    "T1329-1537 ",
+    "T1329-1537\n",
+    "T1329-1537\r\n",
+    "T 1329-1537",
+    "T\n1329-1537",
+    "T\r\n1329-1537"
+  ]
+
 -- =========
 -- UTILITIES
 -- =========
@@ -2168,3 +2284,9 @@ localTimeComplete = LocalTimeComplete
 
 timeComplete :: HourMinuteSecond -> Maybe Zone -> TimeComplete
 timeComplete = TimeComplete . localTimeComplete
+
+dateAndOrTime ::
+  (a :| '[DateTime, Date, Time]) =>
+  a ->
+  DateAndOrTime
+dateAndOrTime = DateAndOrTime . Vary.from

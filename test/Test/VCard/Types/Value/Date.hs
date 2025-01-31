@@ -10,11 +10,16 @@
 
 module Test.VCard.Types.Value.Date
   ( tests,
+    units_Date_valid,
     units_DateNoReduc_valid,
-    dateNoReduc,
-    ymd,
-    md,
+    y,
+    mo,
     d,
+    ymd,
+    ym,
+    md,
+    date,
+    dateNoReduc,
   )
 where
 
