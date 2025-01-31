@@ -42,6 +42,7 @@ import VCard.Types.Value.Date (Date (..))
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time
   ( DateAndOrTime (..),
+    DateAndOrTimeList,
     DateTime (..),
     DateTimeList,
     Hour (..),
@@ -86,7 +87,8 @@ tests =
       test_Zone,
       test_DateTime,
       test_DateTimeList,
-      test_DateAndOrTime
+      test_DateAndOrTime,
+      test_DateAndOrTimeList
     ]
 
 --
@@ -2038,6 +2040,182 @@ units_DateAndOrTime_invalidSyntax =
     "T\n1329-1537",
     "T\r\n1329-1537"
   ]
+
+--
+-- DateAndOrTimeList
+--
+test_DateAndOrTimeList :: TestTree
+test_DateAndOrTimeList =
+  testGroup
+    "DateAndOrTimeList"
+    [ test_DateAndOrTimeList_parse,
+      test_DateAndOrTimeList_serialize
+    ]
+
+test_DateAndOrTimeList_parse :: TestTree
+test_DateAndOrTimeList_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_DateAndOrTimeList_valid,
+      testParseInvalidSemantics
+        (Proxy @DateAndOrTimeList)
+        units_DateAndOrTimeList_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @DateAndOrTimeList)
+        units_DateAndOrTimeList_invalidSyntax
+    ]
+
+test_DateAndOrTimeList_serialize :: TestTree
+test_DateAndOrTimeList_serialize =
+  testSerialize "serialize" units_DateAndOrTimeList_valid
+
+units_DateAndOrTimeList_valid :: [(Text, DateAndOrTimeList)]
+units_DateAndOrTimeList_valid =
+  concat
+    [ -- singletons
+      map
+        (second (List . NonEmpty.singleton))
+        [ ( "89260525T064805-1644",
+            dateAndOrTime $
+              DateTime
+                (dateNoReduc (ymd 8926 05 25))
+                ( timeNoTrunc
+                    (hms 06 48 05)
+                    (Just (UTCOffset Minus (h 16) (Just (m 44))))
+                )
+          ),
+          ( "--05",
+            dateAndOrTime (date (mo 05))
+          ),
+          ("4810-07", dateAndOrTime (date (ym 4810 07))),
+          ( "T15-1537",
+            dateAndOrTime $
+              time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+          ),
+          ( "T--08Z",
+            dateAndOrTime (time (s 08) (Just UTCDesignator))
+          ),
+          ( "T-3726+15",
+            dateAndOrTime $
+              time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing))
+          )
+        ],
+      -- pairs
+      map
+        (second List)
+        [ ( "89260525T064805-1644,T15-1537",
+            dateAndOrTime
+              ( DateTime
+                  (dateNoReduc (ymd 8926 05 25))
+                  ( timeNoTrunc
+                      (hms 06 48 05)
+                      (Just (UTCOffset Minus (h 16) (Just (m 44))))
+                  )
+              )
+              :| [ dateAndOrTime $
+                     time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+                 ]
+          ),
+          ( "--05,T--08Z",
+            dateAndOrTime (date (mo 05))
+              :| [dateAndOrTime (time (s 08) (Just UTCDesignator))]
+          ),
+          ( "4810-07,T-3726+15",
+            dateAndOrTime (date (ym 4810 07))
+              :| [ dateAndOrTime
+                     (time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing)))
+                 ]
+          )
+        ],
+      -- triples
+      map
+        (second List)
+        [ ( "89260525T064805-1644,4810-07,T--08Z",
+            dateAndOrTime
+              ( DateTime
+                  (dateNoReduc (ymd 8926 05 25))
+                  ( timeNoTrunc
+                      (hms 06 48 05)
+                      (Just (UTCOffset Minus (h 16) (Just (m 44))))
+                  )
+              )
+              :| [ dateAndOrTime (date (ym 4810 07)),
+                   dateAndOrTime (time (s 08) (Just UTCDesignator))
+                 ]
+          ),
+          ( "--05,T15-1537,T-3726+15",
+            dateAndOrTime (date (mo 05))
+              :| [ dateAndOrTime $
+                     time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37)))),
+                   dateAndOrTime $
+                     time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing))
+                 ]
+          )
+        ],
+      -- duplicates
+      map
+        (second List)
+        [ ( "--05,--05",
+            dateAndOrTime (date (mo 05))
+              :| [dateAndOrTime (date (mo 05))]
+          ),
+          ( "4810-07,T15-1537,4810-07",
+            dateAndOrTime (date (ym 4810 07))
+              :| [ dateAndOrTime $
+                     time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37)))),
+                   dateAndOrTime (date (ym 4810 07))
+                 ]
+          ),
+          ( "T--08Z,T--08Z,T--08Z",
+            dateAndOrTime (time (s 08) (Just UTCDesignator))
+              :| [ dateAndOrTime (time (s 08) (Just UTCDesignator)),
+                   dateAndOrTime (time (s 08) (Just UTCDesignator))
+                 ]
+          )
+        ]
+    ]
+
+units_DateAndOrTimeList_invalidSemantics :: [Text]
+units_DateAndOrTimeList_invalidSemantics =
+  [ "89260525T066005-1644",
+    "T--61Z,4810-07",
+    "T15-1537,--05,T-6026+15"
+  ]
+
+units_DateAndOrTimeList_invalidSyntax :: [Text]
+units_DateAndOrTimeList_invalidSyntax =
+  concat
+    [ -- leading/trailing whitespace
+      [ " 4810-07,T15-1537",
+        "\n4810-07,T15-1537",
+        "\r\n4810-07,T15-1537",
+        "4810-07,T15-1537 ",
+        "4810-07,T15-1537\n",
+        "4810-07,T15-1537\r\n"
+      ],
+      -- whitespace between entries
+      [ "4810-07 ,T15-1537",
+        "4810-07\n,T15-1537",
+        "4810-07\r\n,T15-1537",
+        "4810-07, T15-1537",
+        "4810-07,\nT15-1537",
+        "4810-07,\r\nT15-1537"
+      ],
+      -- empty strings/extraneous leading or trailing commas
+      [ "",
+        ",",
+        ",,",
+        "T15-1537,",
+        ",T15-1537",
+        ",4810-07,T15-1537",
+        "4810-07,T15-1537,"
+      ],
+      -- invalid entries
+      [ "T---15-1537",
+        "T---15-1537,4810-07",
+        "4810-07,T---15-1537"
+      ]
+    ]
 
 -- =========
 -- UTILITIES
