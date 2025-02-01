@@ -8,6 +8,8 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
+{- HLINT off -}
+
 module Test.VCard.Types.Value.Time (tests) where
 
 #if !MIN_VERSION_base(4,18,0)
@@ -60,6 +62,7 @@ import VCard.Types.Value.Time
     TimeList,
     TimeNoTrunc (..),
     Timestamp (..),
+    TimestampList,
     Zone (..),
   )
 import Vary ((:|))
@@ -90,7 +93,8 @@ tests =
       test_DateTimeList,
       test_DateAndOrTime,
       test_DateAndOrTimeList,
-      test_Timestamp
+      test_Timestamp,
+      test_TimestampList
     ]
 
 --
@@ -2309,6 +2313,298 @@ units_Timestamp_invalidSyntax =
     "53170412T081739Z\n",
     "53170412T081739Z\r\n"
   ]
+
+--
+-- TimestampList
+--
+test_TimestampList :: TestTree
+test_TimestampList =
+  testGroup
+    "TimestampList"
+    [ test_TimestampList_parse,
+      test_TimestampList_serialize
+    ]
+
+test_TimestampList_parse :: TestTree
+test_TimestampList_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_TimestampList_valid,
+      testParseInvalidSemantics
+        (Proxy @TimestampList)
+        units_TimestampList_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @TimestampList)
+        units_TimestampList_invalidSyntax
+    ]
+
+test_TimestampList_serialize :: TestTree
+test_TimestampList_serialize =
+  testSerialize "serialize" units_TimestampList_valid
+
+units_TimestampList_valid :: [(Text, TimestampList)]
+units_TimestampList_valid =
+  concat
+    [ -- singletons
+      map
+        (second (List . NonEmpty.singleton))
+        [ ( "53170412T081739",
+            Timestamp
+              { timestampDateComplete = DateComplete (ymd 5317 04 12),
+                timestampTimeComplete = timeComplete (hms 08 17 39) Nothing
+              }
+          ),
+          ( "47710712T132954Z",
+            Timestamp
+              { timestampDateComplete = DateComplete (ymd 4771 07 12),
+                timestampTimeComplete =
+                  timeComplete (hms 13 29 54) (Just UTCDesignator)
+              }
+          ),
+          ( "39090817T013726+13",
+            Timestamp
+              { timestampDateComplete = DateComplete (ymd 3909 08 17),
+                timestampTimeComplete =
+                  timeComplete
+                    (hms 01 37 26)
+                    (Just (UTCOffset Plus (h 13) Nothing))
+              }
+          ),
+          ( "49220228T105537+1409",
+            Timestamp
+              { timestampDateComplete = DateComplete (ymd 4922 02 28),
+                timestampTimeComplete =
+                  timeComplete
+                    (hms 10 55 37)
+                    (Just (UTCOffset Plus (h 14) (Just (m 09))))
+              }
+          ),
+          ( "99000228T065753-16",
+            Timestamp
+              { timestampDateComplete = DateComplete (ymd 9900 02 28),
+                timestampTimeComplete =
+                  timeComplete
+                    (hms 06 57 53)
+                    (Just (UTCOffset Minus (h 16) Nothing))
+              }
+          ),
+          ( "68000229T054405-1746",
+            Timestamp
+              { timestampDateComplete = DateComplete (ymd 6800 02 29),
+                timestampTimeComplete =
+                  timeComplete
+                    (hms 05 44 05)
+                    (Just (UTCOffset Minus (h 17) (Just (m 46))))
+              }
+          )
+        ],
+      -- pairs
+      map
+        (second List)
+        [ ( "53170412T081739,49220228T105537+1409",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 5317 04 12),
+                  timestampTimeComplete = timeComplete (hms 08 17 39) Nothing
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 4922 02 28),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 10 55 37)
+                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                     }
+                 ]
+          ),
+          ( "47710712T132954Z,99000228T065753-16",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 4771 07 12),
+                  timestampTimeComplete =
+                    timeComplete (hms 13 29 54) (Just UTCDesignator)
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 9900 02 28),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 06 57 53)
+                           (Just (UTCOffset Minus (h 16) Nothing))
+                     }
+                 ]
+          ),
+          ( "39090817T013726+13,68000229T054405-1746",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 3909 08 17),
+                  timestampTimeComplete =
+                    timeComplete
+                      (hms 01 37 26)
+                      (Just (UTCOffset Plus (h 13) Nothing))
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 6800 02 29),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 05 44 05)
+                           (Just (UTCOffset Minus (h 17) (Just (m 46))))
+                     }
+                 ]
+          )
+        ],
+      -- triples
+      map
+        (second List)
+        [ ( "53170412T081739,39090817T013726+13,99000228T065753-16",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 5317 04 12),
+                  timestampTimeComplete = timeComplete (hms 08 17 39) Nothing
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 3909 08 17),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 01 37 26)
+                           (Just (UTCOffset Plus (h 13) Nothing))
+                     },
+                   Timestamp
+                     { timestampDateComplete = DateComplete (ymd 9900 02 28),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 06 57 53)
+                           (Just (UTCOffset Minus (h 16) Nothing))
+                     }
+                 ]
+          ),
+          ( "47710712T132954Z,49220228T105537+1409,68000229T054405-1746",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 4771 07 12),
+                  timestampTimeComplete =
+                    timeComplete (hms 13 29 54) (Just UTCDesignator)
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 4922 02 28),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 10 55 37)
+                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                     },
+                   Timestamp
+                     { timestampDateComplete = DateComplete (ymd 6800 02 29),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 05 44 05)
+                           (Just (UTCOffset Minus (h 17) (Just (m 46))))
+                     }
+                 ]
+          )
+        ],
+      -- duplicates
+      map
+        (second List)
+        [ ( "53170412T081739,53170412T081739",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 5317 04 12),
+                  timestampTimeComplete = timeComplete (hms 08 17 39) Nothing
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 5317 04 12),
+                       timestampTimeComplete = timeComplete (hms 08 17 39) Nothing
+                     }
+                 ]
+          ),
+          ( "47710712T132954Z,39090817T013726+13,47710712T132954Z",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 4771 07 12),
+                  timestampTimeComplete =
+                    timeComplete (hms 13 29 54) (Just UTCDesignator)
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 3909 08 17),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 01 37 26)
+                           (Just (UTCOffset Plus (h 13) Nothing))
+                     },
+                   Timestamp
+                     { timestampDateComplete = DateComplete (ymd 4771 07 12),
+                       timestampTimeComplete =
+                         timeComplete (hms 13 29 54) (Just UTCDesignator)
+                     }
+                 ]
+          ),
+          ( "49220228T105537+1409,49220228T105537+1409,49220228T105537+1409",
+            ( Timestamp
+                { timestampDateComplete = DateComplete (ymd 4922 02 28),
+                  timestampTimeComplete =
+                    timeComplete
+                      (hms 10 55 37)
+                      (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                }
+            )
+              :| [ Timestamp
+                     { timestampDateComplete = DateComplete (ymd 4922 02 28),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 10 55 37)
+                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                     },
+                   Timestamp
+                     { timestampDateComplete = DateComplete (ymd 4922 02 28),
+                       timestampTimeComplete =
+                         timeComplete
+                           (hms 10 55 37)
+                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                     }
+                 ]
+          )
+        ]
+    ]
+
+units_TimestampList_invalidSemantics :: [Text]
+units_TimestampList_invalidSemantics =
+  [ "53170412T241739",
+    "47710712T132954Z,39090832T013726+13",
+    "49220228T105537+1409,99000229T065753-16,68000229T054405-1746"
+  ]
+
+units_TimestampList_invalidSyntax :: [Text]
+units_TimestampList_invalidSyntax =
+  concat
+    [ -- leading/trailing whitespace
+      [ " 47710712T132954Z,39090817T013726+13",
+        "\n47710712T132954Z,39090817T013726+13",
+        "\r\n47710712T132954Z,39090817T013726+13",
+        "47710712T132954Z,39090817T013726+13 ",
+        "47710712T132954Z,39090817T013726+13\n",
+        "47710712T132954Z,39090817T013726+13\r\n"
+      ],
+      -- whitespace between entries
+      [ "47710712T132954Z ,39090817T013726+13",
+        "47710712T132954Z\n,39090817T013726+13",
+        "47710712T132954Z\r\n,39090817T013726+13",
+        "47710712T132954Z, 39090817T013726+13",
+        "47710712T132954Z,\n39090817T013726+13",
+        "47710712T132954Z,\r\n39090817T013726+13"
+      ],
+      -- empty strings/extraneous leading or trailing commas
+      [ "",
+        ",",
+        ",,",
+        "47710712T132954Z,",
+        ",47710712T132954Z",
+        "47710712T132954Z,39090817T013726+13,",
+        ",47710712T132954Z,39090817T013726+13"
+      ],
+      -- invalid entries
+      [ "--0712T132954Z",
+        "--0712T132954Z,39090817T013726+13",
+        "39090817T013726+13,--0712T132954Z"
+      ]
+    ]
 
 -- =========
 -- UTILITIES
