@@ -38,7 +38,7 @@ import Test.VCard.Types.Value.Date
 import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Types.Value.Date (Date (..))
+import VCard.Types.Value.Date (Date (..), DateComplete (..))
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time
   ( DateAndOrTime (..),
@@ -59,6 +59,7 @@ import VCard.Types.Value.Time
     TimeComplete (..),
     TimeList,
     TimeNoTrunc (..),
+    Timestamp (..),
     Zone (..),
   )
 import Vary ((:|))
@@ -88,7 +89,8 @@ tests =
       test_DateTime,
       test_DateTimeList,
       test_DateAndOrTime,
-      test_DateAndOrTimeList
+      test_DateAndOrTimeList,
+      test_Timestamp
     ]
 
 --
@@ -2216,6 +2218,97 @@ units_DateAndOrTimeList_invalidSyntax =
         "4810-07,T---15-1537"
       ]
     ]
+
+--
+-- Timestamp
+--
+test_Timestamp :: TestTree
+test_Timestamp =
+  testGroup
+    "Timestamp"
+    [ test_Timestamp_parse,
+      test_Timestamp_serialize
+    ]
+
+test_Timestamp_parse :: TestTree
+test_Timestamp_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_Timestamp_valid,
+      testParseInvalidSemantics
+        (Proxy @Timestamp)
+        units_Timestamp_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @Timestamp)
+        units_Timestamp_invalidSyntax
+    ]
+
+test_Timestamp_serialize :: TestTree
+test_Timestamp_serialize =
+  testSerialize "serialize" units_Timestamp_valid
+
+units_Timestamp_valid :: [(Text, Timestamp)]
+units_Timestamp_valid =
+  [ ( "53170412T081739",
+      Timestamp
+        { timestampDateComplete = DateComplete (ymd 5317 04 12),
+          timestampTimeComplete = timeComplete (hms 08 17 39) Nothing
+        }
+    ),
+    ( "53170412T081739Z",
+      Timestamp
+        { timestampDateComplete = DateComplete (ymd 5317 04 12),
+          timestampTimeComplete =
+            timeComplete (hms 08 17 39) (Just UTCDesignator)
+        }
+    ),
+    ( "53170412T081739+15",
+      Timestamp
+        { timestampDateComplete = DateComplete (ymd 5317 04 12),
+          timestampTimeComplete =
+            timeComplete
+              (hms 08 17 39)
+              (Just (UTCOffset Plus (h 15) Nothing))
+        }
+    ),
+    ( "53170412T081739-1537",
+      Timestamp
+        { timestampDateComplete = DateComplete (ymd 5317 04 12),
+          timestampTimeComplete =
+            timeComplete
+              (hms 08 17 39)
+              (Just (UTCOffset Minus (h 15) (Just (m 37))))
+        }
+    )
+  ]
+
+units_Timestamp_invalidSemantics :: [Text]
+units_Timestamp_invalidSemantics =
+  [ -- fields out of bounds
+    "53171312T081739-1537",
+    "53170432T081739-1537",
+    "53170412T241739-1537",
+    "53170412T086039-1537",
+    "53170412T081761-1537",
+    "53170412T081739-2437",
+    "53170412T081739-1560"
+  ]
+
+units_Timestamp_invalidSyntax :: [Text]
+units_Timestamp_invalidSyntax =
+  [ -- missing entries
+    "--0412T081739Z",
+    "---12T081739Z",
+    "53170412T0817Z",
+    "53170412T08Z",
+    -- extraneous whitespace
+    " 53170412T081739Z",
+    "\n53170412T081739Z",
+    "\r\n53170412T081739Z",
+    "53170412T081739Z ",
+    "53170412T081739Z\n",
+    "53170412T081739Z\r\n"
+  ]
 
 -- =========
 -- UTILITIES
