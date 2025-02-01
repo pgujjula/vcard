@@ -28,6 +28,8 @@ module VCard.Types.Value.Time
     DateTimeList,
     DateAndOrTime (..),
     DateAndOrTimeList,
+    Timestamp (..),
+    TimestampList,
     Sign (..),
     Zone (..),
   )
@@ -48,7 +50,7 @@ import Text.Megaparsec (choice, optional, try)
 import Text.Megaparsec.Char (char, digitChar, string)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Value.Date (Date, DateNoReduc)
+import VCard.Types.Value.Date (Date, DateComplete, DateNoReduc)
 import VCard.Types.Value.List (List)
 import Vary (Vary, exhaustiveCase, from, on)
 
@@ -504,6 +506,37 @@ instance HasSerializer DateAndOrTime where
         )
 
 type DateAndOrTimeList = List DateAndOrTime
+
+--
+-- Timestamp
+--
+
+data Timestamp = Timestamp
+  { timestampDateComplete :: DateComplete,
+    timestampTimeComplete :: TimeComplete
+  }
+  deriving (Eq, Show, Ord)
+
+instance HasParser Timestamp where
+  parser :: Parser Timestamp
+  parser = do
+    dateComplete <- parser @DateComplete
+    void (char 'T')
+    timeComplete <- parser @TimeComplete
+    pure $
+      Timestamp
+        { timestampDateComplete = dateComplete,
+          timestampTimeComplete = timeComplete
+        }
+
+instance HasSerializer Timestamp where
+  serializer :: Serializer Timestamp
+  serializer timestamp =
+    serializer (timestampDateComplete timestamp)
+      <> "T"
+      <> serializer (timestampTimeComplete timestamp)
+
+type TimestampList = List Timestamp
 
 -- Utilities
 toDigit :: Char -> Int

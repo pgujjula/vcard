@@ -95,6 +95,10 @@ module VCard.Types.Value
     -- ** 'DateTime'
     DateTime (..),
     DateTimeList,
+
+    -- ** 'Timestamp'
+    Timestamp (..),
+    TimestampList,
   )
 where
 
@@ -132,6 +136,8 @@ import VCard.Types.Value.Time
     Second (..),
     TimeComplete (..),
     TimeNoTrunc (..),
+    Timestamp (..),
+    TimestampList,
     Zone (..),
   )
 import VCard.Types.Value.URI (URI (..))
