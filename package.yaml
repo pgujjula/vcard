@@ -54,6 +54,7 @@ library:
   - VCard.Parse
   - VCard.Serialize
   - VCard.Types.Property.Version
+  - VCard.Types.Value.Boolean
   - VCard.Types.Value.Date
   - VCard.Types.Value.List
   - VCard.Types.Value.Text

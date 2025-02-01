@@ -99,9 +99,13 @@ module VCard.Types.Value
     -- ** 'Timestamp'
     Timestamp (..),
     TimestampList,
+
+    -- * Section 4.4 @BOOLEAN@
+    Boolean (..),
   )
 where
 
+import VCard.Types.Value.Boolean (Boolean (..))
 import VCard.Types.Value.Date
   ( Date (..),
     DateComplete (..),
