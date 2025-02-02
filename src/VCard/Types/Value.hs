@@ -102,6 +102,10 @@ module VCard.Types.Value
 
     -- * Section 4.4 @BOOLEAN@
     Boolean (..),
+
+    -- * Section 4.5 @INTEGER@
+    Integer (..),
+    IntegerList,
   )
 where
 
@@ -123,6 +127,7 @@ import VCard.Types.Value.Date
     mkMonthDay,
     mkYearMonthDay,
   )
+import VCard.Types.Value.Integer (Integer (..), IntegerList)
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 import VCard.Types.Value.Time
@@ -145,3 +150,4 @@ import VCard.Types.Value.Time
     Zone (..),
   )
 import VCard.Types.Value.URI (URI (..))
+import Prelude hiding (Integer)
