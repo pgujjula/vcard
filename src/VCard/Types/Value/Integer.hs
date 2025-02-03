@@ -83,7 +83,7 @@ signedNegativeP = do
 
 finiteP :: forall n. (KnownNat n) => Parser (Word, Finite n)
 finiteP = do
-  (numLeadingZeros, value) <- parseLeadingZeros
+  (numLeadingZeros, value) <- naturalP
   let integer = toInteger value
   case packFinite integer of
     Nothing ->
@@ -96,8 +96,8 @@ finiteP = do
        in fail errorMessage
     Just x -> pure (numLeadingZeros, x)
 
-parseLeadingZeros :: Parser (Word, Natural)
-parseLeadingZeros = do
+naturalP :: Parser (Word, Natural)
+naturalP = do
   digits <- takeWhile1P (Just "digits") isDigit
   let numLeadingZeros =
         if Text.all (== '0') digits
