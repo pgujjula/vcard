@@ -95,6 +95,7 @@ test-suite vcard-tests
       Test.VCard.Types.Value
       Test.VCard.Types.Value.Boolean
       Test.VCard.Types.Value.Date
+      Test.VCard.Types.Value.Float
       Test.VCard.Types.Value.Integer
       Test.VCard.Types.Value.Text
       Test.VCard.Types.Value.Time
