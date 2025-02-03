@@ -11,12 +11,15 @@ module VCard.Types.Value.Integer
   ( Integer (..),
     IntegerList,
     IntegerValue (..),
+    fromInt64,
+    toInt64,
   )
 where
 
 import Control.Monad (void)
 import Data.Char (isDigit)
-import Data.Finite (Finite, getFinite, packFinite)
+import Data.Finite (Finite, finite, getFinite, packFinite)
+import Data.Int (Int64)
 import Data.Proxy (Proxy (..))
 import Data.Text qualified as Text
 import Data.Text.Read qualified as Text (decimal)
@@ -31,7 +34,7 @@ import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Types.Value.List (List (..))
-import Prelude hiding (Integer, fromInteger)
+import Prelude hiding (Integer)
 
 data Integer = Integer
   { integerNumLeadingZeros :: !Word,
@@ -119,6 +122,26 @@ instance HasSerializer Integer where
         Negative x -> getFinite x
 
 type IntegerList = List Integer
+
+-- | Convert an 'Integer' to an 'Int64'.
+toInt64 :: Integer -> Int64
+toInt64 integer =
+  case integerIntegerValue integer of
+    Unsigned x -> fromInteger (getFinite x)
+    Positive x -> fromInteger (getFinite x)
+    Negative x -> fromInteger (-getFinite x)
+
+-- | Convert an `Int64` to an `Integer`. Assumes no sign if positive, and no
+-- leading zeros.
+fromInt64 :: Int64 -> Integer
+fromInt64 x =
+  Integer
+    { integerNumLeadingZeros = 0,
+      integerIntegerValue =
+        if x >= 0
+          then Unsigned (finite (toInteger x))
+          else Negative (finite (abs (toInteger x)))
+    }
 
 -- Utilities
 int2Word :: Int -> Word
