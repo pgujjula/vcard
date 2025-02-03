@@ -9,8 +9,11 @@
 module Test.VCard.Types.Value.Integer (tests) where
 
 import Control.Monad (forM_)
+import Data.Bifunctor (second)
 import Data.Finite (finite)
 import Data.Int (Int64)
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty qualified as NonEmpty
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Test.Tasty (TestName, TestTree, testGroup)
@@ -18,7 +21,8 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Types.Value.Integer (Integer (..), IntegerValue (..))
+import VCard.Types.Value.Integer (Integer (..), IntegerList, IntegerValue (..))
+import VCard.Types.Value.List (List (..))
 import Prelude hiding (Integer)
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -27,8 +31,16 @@ tests :: TestTree
 tests =
   testGroup
     "Integer"
-    [ test_Integer_parse,
-      test_Integer_serialize
+    [ testGroup
+        "Integer"
+        [ test_Integer_parse,
+          test_Integer_serialize
+        ],
+      testGroup
+        "IntegerList"
+        [ test_IntegerList_parse,
+          test_IntegerList_serialize
+        ]
     ]
 
 test_Integer_parse :: TestTree
@@ -129,6 +141,79 @@ units_Integer_invalid =
     "5\n",
     "\r\n5",
     "5\r\n"
+  ]
+
+test_IntegerList_parse :: TestTree
+test_IntegerList_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_IntegerList_valid,
+          testParseInvalid (Proxy @IntegerList) units_IntegerList_invalid
+        ]
+    ]
+
+test_IntegerList_serialize :: TestTree
+test_IntegerList_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_IntegerList_valid
+    ]
+
+units_IntegerList_valid :: [(Text, IntegerList)]
+units_IntegerList_valid =
+  map
+    (second List)
+    [ -- singletons
+      ("+0", NonEmpty.singleton (Integer 0 (Positive 0))),
+      ("-01", NonEmpty.singleton (Integer 1 (Negative 1))),
+      ( "009223372036854775807",
+        NonEmpty.singleton (Integer 2 (Unsigned 9223372036854775807))
+      ),
+      -- multiple
+      ( "+0,-01,009223372036854775807",
+        Integer 0 (Positive 0)
+          :| [ Integer 1 (Negative 1),
+               Integer 2 (Unsigned 9223372036854775807)
+             ]
+      )
+    ]
+
+units_IntegerList_invalid :: [Text]
+units_IntegerList_invalid =
+  [ -- out of bounds
+    "+0,-01,9223372036854775808",
+    -- leading trailing whitespace
+    " +0,-01",
+    "\n+0,-01",
+    "\r\n+0,-01",
+    "+0,-01 ",
+    "+0,-01\n",
+    "+0,-01\r\n",
+    -- whitespace between entries
+    "+0 ,-01",
+    "+0\n,-01",
+    "+0\r\n,-01",
+    "+0, -01",
+    "+0,\n-01",
+    "+0,\r\n-01",
+    -- empty strings/extraneous leading or trailing commas
+    "",
+    ",",
+    ",,",
+    "+0,",
+    ",+0",
+    "+0,-01,",
+    ",+0,-01",
+    -- strange constructions
+    "++5",
+    "+-5",
+    "-+5",
+    "1e3",
+    "1+1",
+    "0x3",
+    "2.0"
   ]
 
 --------------------
