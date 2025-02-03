@@ -40,6 +40,7 @@ library
       VCard.Types.Property.Version
       VCard.Types.Value.Boolean
       VCard.Types.Value.Date
+      VCard.Types.Value.Float
       VCard.Types.Value.Integer
       VCard.Types.Value.List
       VCard.Types.Value.Text
@@ -77,6 +78,7 @@ test-suite vcard-tests
       VCard.Types.Value
       VCard.Types.Value.Boolean
       VCard.Types.Value.Date
+      VCard.Types.Value.Float
       VCard.Types.Value.Integer
       VCard.Types.Value.List
       VCard.Types.Value.Text

@@ -13,6 +13,7 @@ module VCard.Types.Value.Integer
     IntegerValue (..),
     fromInt64,
     toInt64,
+    naturalP,
   )
 where
 
