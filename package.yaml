@@ -58,6 +58,7 @@ library:
   - VCard.Types.Value.Date
   - VCard.Types.Value.Float
   - VCard.Types.Value.Integer
+  - VCard.Types.Value.LanguageTag
   - VCard.Types.Value.List
   - VCard.Types.Value.Text
   - VCard.Types.Value.Time
@@ -65,6 +66,7 @@ library:
   - VCard.Types.VCard.Internal
   - VCard.Util
   dependencies:
+  - bcp47 ^>= {0.2}
   - containers ^>= {0.6, 0.7}
   - finite-typelits ^>= {0.1, 0.2}
   - megaparsec >= 9.0 && < 10
@@ -91,6 +93,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - bcp47 ^>= {0.2}
     - containers ^>= {0.6, 0.7}
     - data-ordlist ^>= {0.4}
     - finite-typelits ^>= {0.1, 0.2}

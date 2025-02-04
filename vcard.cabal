@@ -42,6 +42,7 @@ library
       VCard.Types.Value.Date
       VCard.Types.Value.Float
       VCard.Types.Value.Integer
+      VCard.Types.Value.LanguageTag
       VCard.Types.Value.List
       VCard.Types.Value.Text
       VCard.Types.Value.Time
@@ -55,6 +56,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages
   build-depends:
       base >=4.17 && <4.18 || >=4.18 && <4.19
+    , bcp47 ==0.2.*
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , finite-typelits >=0.1 && <0.2 || >=0.2 && <0.3
     , megaparsec >=9.0 && <10
@@ -81,6 +83,7 @@ test-suite vcard-tests
       VCard.Types.Value.Date
       VCard.Types.Value.Float
       VCard.Types.Value.Integer
+      VCard.Types.Value.LanguageTag
       VCard.Types.Value.List
       VCard.Types.Value.Text
       VCard.Types.Value.Time
@@ -109,6 +112,7 @@ test-suite vcard-tests
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.17 && <4.18 || >=4.18 && <4.19
+    , bcp47 ==0.2.*
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , data-ordlist ==0.4.*
     , finite-typelits >=0.1 && <0.2 || >=0.2 && <0.3
