@@ -106,6 +106,9 @@ module VCard.Types.Value
     -- * Section 4.5 @INTEGER@
     Integer (..),
     IntegerList,
+
+    -- * Section 4.7 @UTC-OFFSET@
+    UTCOffset (..),
   )
 where
 
@@ -147,6 +150,7 @@ import VCard.Types.Value.Time
     TimeNoTrunc (..),
     Timestamp (..),
     TimestampList,
+    UTCOffset (..),
     Zone (..),
   )
 import VCard.Types.Value.URI (URI (..))
