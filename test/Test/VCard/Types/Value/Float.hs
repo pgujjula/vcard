@@ -9,6 +9,9 @@
 module Test.VCard.Types.Value.Float (tests) where
 
 import Control.Monad (forM_)
+import Data.Bifunctor (second)
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty qualified as NonEmpty
 import Data.Proxy (Proxy (..))
 import Data.Scientific (Scientific, scientific)
 import Data.Text (Text)
@@ -19,10 +22,12 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Float
   ( Float (..),
+    FloatList,
     NaturalLeadingZeros (..),
     fromScientific,
     toScientific,
   )
+import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time (Sign (..))
 import Prelude hiding (Float, Integer)
 
@@ -32,13 +37,18 @@ tests :: TestTree
 tests =
   testGroup
     "Float"
-    [ testGroup
-        "Float"
-        [ test_Float_parse,
-          test_Float_serialize,
-          test_Float_toScientific,
-          test_Float_fromScientific
-        ]
+    [ test_Float,
+      test_FloatList
+    ]
+
+test_Float :: TestTree
+test_Float =
+  testGroup
+    "Float"
+    [ test_Float_parse,
+      test_Float_serialize,
+      test_Float_toScientific,
+      test_Float_fromScientific
     ]
 
 test_Float_parse :: TestTree
@@ -352,6 +362,90 @@ units_Float_fromScientific =
 
 nlz :: Word -> Natural -> NaturalLeadingZeros
 nlz = NaturalLeadingZeros
+
+test_FloatList :: TestTree
+test_FloatList =
+  testGroup
+    "FloatList"
+    [ test_FloatList_parse,
+      test_FloatList_serialize
+    ]
+
+test_FloatList_parse :: TestTree
+test_FloatList_parse =
+  testGroup
+    "parse"
+    [ testGroup
+        "unit"
+        [ testParseValid units_FloatList_valid,
+          testParseInvalid (Proxy @FloatList) units_FloatList_invalid
+        ]
+    ]
+
+test_FloatList_serialize :: TestTree
+test_FloatList_serialize =
+  testGroup
+    "serialize"
+    [ testSerialize "unit" units_FloatList_valid
+    ]
+
+units_FloatList_valid :: [(Text, FloatList)]
+units_FloatList_valid =
+  map
+    (second List)
+    [ -- singletons
+      ("0", NonEmpty.singleton $ Float Nothing (nlz 0 0) Nothing),
+      ("+021", NonEmpty.singleton $ Float (Just Plus) (nlz 1 21) Nothing),
+      ( "-000103.0406",
+        NonEmpty.singleton $ Float (Just Minus) (nlz 3 103) (Just (nlz 1 406))
+      ),
+      -- multiple
+      ( "0,+021,-000103.0406",
+        Float Nothing (nlz 0 0) Nothing
+          :| [ Float (Just Plus) (nlz 1 21) Nothing,
+               Float (Just Minus) (nlz 3 103) (Just (nlz 1 406))
+             ]
+      )
+    ]
+
+units_FloatList_invalid :: [Text]
+units_FloatList_invalid =
+  [ -- leading/trailing whitespace
+    " +021,-000103.0406",
+    "\n+021,-000103.0406",
+    "\r\n+021,-000103.0406",
+    "+021,-000103.0406 ",
+    "+021,-000103.0406\n",
+    "+021,-000103.0406\r\n",
+    -- whitespace between entries
+    "+021 ,-000103.0406",
+    "+021\n,-000103.0406",
+    "+021\r\n,-000103.0406",
+    "+021, -000103.0406",
+    "+021,\n-000103.0406",
+    "+021,\r\n-000103.0406",
+    -- empty strings/extraneous leading or trailing commas
+    "",
+    ",",
+    ",,",
+    "+021,",
+    ",+021",
+    "+021,-000103.0406,",
+    ",+021,-000103.0406",
+    -- strange constructions
+    ".",
+    "+.",
+    "-.",
+    "123.",
+    "+123.",
+    "-123.",
+    ".123",
+    "+.123",
+    "-.123",
+    "++1",
+    "1+1",
+    "1e3"
+  ]
 
 --------------------
 -- Testing functions
