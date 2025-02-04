@@ -31,6 +31,8 @@ module VCard.Types.Value.Time
     Timestamp (..),
     TimestampList,
     Sign (..),
+    UTCDesignator (..),
+    UTCOffset (..),
     Zone (..),
   )
 where
@@ -418,31 +420,64 @@ instance HasSerializer Sign where
     Minus -> "-"
 
 --
+-- UTCDesignator
+--
+data UTCDesignator = UTCDesignator
+  deriving (Eq, Show, Ord)
+
+instance HasParser UTCDesignator where
+  parser :: Parser UTCDesignator
+  parser = char 'Z' $> UTCDesignator
+
+instance HasSerializer UTCDesignator where
+  serializer :: Serializer UTCDesignator
+  serializer = const "Z"
+
+--
+-- UTCOffset
+--
+data UTCOffset = UTCOffset !Sign !Hour !(Maybe Minute)
+  deriving (Eq, Show, Ord)
+
+instance HasParser UTCOffset where
+  parser :: Parser UTCOffset
+  parser =
+    liftA3
+      UTCOffset
+      (parser @Sign)
+      (parser @Hour)
+      (optional (parser @Minute))
+
+instance HasSerializer UTCOffset where
+  serializer :: Serializer UTCOffset
+  serializer (UTCOffset sign hour maybeMinute) =
+    serializer sign
+      <> serializer hour
+      <> maybe "" serializer maybeMinute
+
+--
 -- Zone
 --
-data Zone
-  = UTCDesignator
-  | UTCOffset !Sign !Hour !(Maybe Minute)
+newtype Zone = Zone {unZone :: Vary '[UTCDesignator, UTCOffset]}
   deriving (Eq, Show, Ord)
 
 instance HasParser Zone where
   parser :: Parser Zone
   parser =
-    choice
-      [ char 'Z' $> UTCDesignator,
-        liftA3
-          UTCOffset
-          (parser @Sign)
-          (parser @Hour)
-          (optional (parser @Minute))
-      ]
+    Zone
+      <$> choice
+        [ Vary.from <$> parser @UTCDesignator,
+          Vary.from <$> parser @UTCOffset
+        ]
 
 instance HasSerializer Zone where
   serializer :: Serializer Zone
-  serializer = \case
-    UTCDesignator -> "Z"
-    UTCOffset sign hour maybeMinute ->
-      serializer sign <> serializer hour <> maybe "" serializer maybeMinute
+  serializer =
+    ( on @UTCDesignator serializer
+        . on @UTCOffset serializer
+        $ exhaustiveCase
+    )
+      . unZone
 
 --
 -- DateTime

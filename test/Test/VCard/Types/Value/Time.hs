@@ -63,6 +63,8 @@ import VCard.Types.Value.Time
     TimeNoTrunc (..),
     Timestamp (..),
     TimestampList,
+    UTCDesignator (..),
+    UTCOffset (..),
     Zone (..),
   )
 import Vary ((:|))
@@ -960,49 +962,49 @@ units_Time_valid1 :: [(Text, Time)]
 units_Time_valid1 =
   [ --
     ("15", time (h 15) Nothing),
-    ("15Z", time (h 15) (Just UTCDesignator)),
-    ("15+15", time (h 15) (Just (UTCOffset Plus (h 15) Nothing))),
-    ("15-1537", time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37))))),
+    ("15Z", time (h 15) (Just (zone UTCDesignator))),
+    ("15+15", time (h 15) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
+    ("15-1537", time (h 15) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))),
     --
     ("-45", time (m 45) Nothing),
-    ("-45Z", time (m 45) (Just UTCDesignator)),
-    ("-45+15", time (m 45) (Just (UTCOffset Plus (h 15) Nothing))),
-    ("-45-1537", time (m 45) (Just (UTCOffset Minus (h 15) (Just (m 37))))),
+    ("-45Z", time (m 45) (Just (zone UTCDesignator))),
+    ("-45+15", time (m 45) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
+    ("-45-1537", time (m 45) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))),
     --
     ("--08", time (s 08) Nothing),
-    ("--08Z", time (s 08) (Just UTCDesignator)),
-    ("--08+15", time (s 08) (Just (UTCOffset Plus (h 15) Nothing))),
-    ("--08-1537", time (s 08) (Just (UTCOffset Minus (h 15) (Just (m 37))))),
+    ("--08Z", time (s 08) (Just (zone UTCDesignator))),
+    ("--08+15", time (s 08) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
+    ("--08-1537", time (s 08) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))),
     --
     ("081739", time (hms 08 17 39) Nothing),
-    ("081739Z", time (hms 08 17 39) (Just UTCDesignator)),
-    ("081739+15", time (hms 08 17 39) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("081739Z", time (hms 08 17 39) (Just (zone UTCDesignator))),
+    ("081739+15", time (hms 08 17 39) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
     ( "081739-1537",
-      time (hms 08 17 39) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+      time (hms 08 17 39) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
     ),
     --
     ("1329", time (hm 13 29) Nothing),
-    ("1329Z", time (hm 13 29) (Just UTCDesignator)),
-    ("1329+15", time (hm 13 29) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("1329Z", time (hm 13 29) (Just (zone UTCDesignator))),
+    ("1329+15", time (hm 13 29) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
     ( "1329-1537",
-      time (hm 13 29) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+      time (hm 13 29) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
     ),
     --
     ("-3726", time (ms 37 26) Nothing),
-    ("-3726Z", time (ms 37 26) (Just UTCDesignator)),
-    ("-3726+15", time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("-3726Z", time (ms 37 26) (Just (zone UTCDesignator))),
+    ("-3726+15", time (ms 37 26) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
     ( "-3726-1537",
-      time (ms 37 26) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+      time (ms 37 26) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
     )
   ]
 
 units_Time_valid2 :: [(Text, Time)]
 units_Time_valid2 = do
   (localTimeText, localTime') <- units_LocalTime_valid
-  (zoneText, zone) <- ("", Nothing) : map (second Just) units_Zone_valid
+  (zoneText, zone') <- ("", Nothing) : map (second Just) units_Zone_valid
 
   let timeText = localTimeText <> zoneText
-      time' = Time localTime' zone
+      time' = Time localTime' zone'
 
   pure (timeText, time')
 
@@ -1068,14 +1070,14 @@ units_TimeList_valid =
       map
         (second (List . NonEmpty.singleton))
         [ ("02", time (h 02) Nothing),
-          ("-45Z", time (m 45) (Just UTCDesignator)),
-          ("--15+11", time (s 15) (Just (UTCOffset Plus (h 11) Nothing))),
+          ("-45Z", time (m 45) (Just (zone UTCDesignator))),
+          ("--15+11", time (s 15) (Just (zone (UTCOffset Plus (h 11) Nothing)))),
           ( "081739+0942",
-            time (hms 08 17 39) (Just (UTCOffset Plus (h 09) (Just (m 42))))
+            time (hms 08 17 39) (Just (zone (UTCOffset Plus (h 09) (Just (m 42)))))
           ),
-          ("1329-11", time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))),
+          ("1329-11", time (hm 13 29) (Just (zone (UTCOffset Minus (h 11) Nothing)))),
           ( "-3726-0942",
-            time (ms 37 26) (Just (UTCOffset Minus (h 09) (Just (m 42))))
+            time (ms 37 26) (Just (zone (UTCOffset Minus (h 09) (Just (m 42)))))
           )
         ],
       -- pairs
@@ -1085,16 +1087,16 @@ units_TimeList_valid =
             time (h 02) Nothing
               :| [ time
                      (hms 08 17 39)
-                     (Just (UTCOffset Plus (h 09) (Just (m 42))))
+                     (Just (zone (UTCOffset Plus (h 09) (Just (m 42)))))
                  ]
           ),
           ( "-45Z,1329-11",
-            time (m 45) (Just UTCDesignator)
-              :| [time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))]
+            time (m 45) (Just (zone UTCDesignator))
+              :| [time (hm 13 29) (Just (zone (UTCOffset Minus (h 11) Nothing)))]
           ),
           ( "--15+11,-3726-0942",
-            time (s 15) (Just (UTCOffset Plus (h 11) Nothing))
-              :| [time (ms 37 26) (Just (UTCOffset Minus (h 09) (Just (m 42))))]
+            time (s 15) (Just (zone (UTCOffset Plus (h 11) Nothing)))
+              :| [time (ms 37 26) (Just (zone (UTCOffset Minus (h 09) (Just (m 42)))))]
           )
         ],
       -- triples
@@ -1102,16 +1104,16 @@ units_TimeList_valid =
         (second List)
         [ ( "02,--15+11,1329-11",
             time (h 02) Nothing
-              :| [ time (s 15) (Just (UTCOffset Plus (h 11) Nothing)),
-                   time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))
+              :| [ time (s 15) (Just (zone (UTCOffset Plus (h 11) Nothing))),
+                   time (hm 13 29) (Just (zone (UTCOffset Minus (h 11) Nothing)))
                  ]
           ),
           ( "-45Z,081739+0942,-3726-0942",
-            time (m 45) (Just UTCDesignator)
+            time (m 45) (Just (zone UTCDesignator))
               :| [ time
                      (hms 08 17 39)
-                     (Just (UTCOffset Plus (h 09) (Just (m 42)))),
-                   time (ms 37 26) (Just (UTCOffset Minus (h 09) (Just (m 42))))
+                     (Just (zone (UTCOffset Plus (h 09) (Just (m 42))))),
+                   time (ms 37 26) (Just (zone (UTCOffset Minus (h 09) (Just (m 42)))))
                  ]
           )
         ],
@@ -1120,15 +1122,15 @@ units_TimeList_valid =
         (second List)
         [ ("02,02", time (h 02) Nothing :| [time (h 02) Nothing]),
           ( "-45Z,--15+11,-45Z",
-            time (m 45) (Just UTCDesignator)
-              :| [ time (s 15) (Just (UTCOffset Plus (h 11) Nothing)),
-                   time (m 45) (Just UTCDesignator)
+            time (m 45) (Just (zone UTCDesignator))
+              :| [ time (s 15) (Just (zone (UTCOffset Plus (h 11) Nothing))),
+                   time (m 45) (Just (zone UTCDesignator))
                  ]
           ),
           ( "1329-11,1329-11,1329-11",
-            time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))
-              :| [ time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing)),
-                   time (hm 13 29) (Just (UTCOffset Minus (h 11) Nothing))
+            time (hm 13 29) (Just (zone (UTCOffset Minus (h 11) Nothing)))
+              :| [ time (hm 13 29) (Just (zone (UTCOffset Minus (h 11) Nothing))),
+                   time (hm 13 29) (Just (zone (UTCOffset Minus (h 11) Nothing)))
                  ]
           )
         ]
@@ -1212,40 +1214,40 @@ units_TimeNoTrunc_valid1 :: [(Text, TimeNoTrunc)]
 units_TimeNoTrunc_valid1 =
   [ --
     ("15", timeNoTrunc (h 15) Nothing),
-    ("15Z", timeNoTrunc (h 15) (Just UTCDesignator)),
-    ("15+15", timeNoTrunc (h 15) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("15Z", timeNoTrunc (h 15) (Just (zone UTCDesignator))),
+    ("15+15", timeNoTrunc (h 15) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
     ( "15-1537",
       timeNoTrunc
         (h 15)
-        (Just (UTCOffset Minus (h 15) (Just (m 37))))
+        (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
     ),
     --
     ("1329", timeNoTrunc (hm 13 29) Nothing),
-    ("1329Z", timeNoTrunc (hm 13 29) (Just UTCDesignator)),
-    ("1329+15", timeNoTrunc (hm 13 29) (Just (UTCOffset Plus (h 15) Nothing))),
+    ("1329Z", timeNoTrunc (hm 13 29) (Just (zone UTCDesignator))),
+    ("1329+15", timeNoTrunc (hm 13 29) (Just (zone (UTCOffset Plus (h 15) Nothing)))),
     ( "1329-1537",
-      timeNoTrunc (hm 13 29) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+      timeNoTrunc (hm 13 29) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
     ),
     --
     ("081739", timeNoTrunc (hms 08 17 39) Nothing),
-    ("081739Z", timeNoTrunc (hms 08 17 39) (Just UTCDesignator)),
+    ("081739Z", timeNoTrunc (hms 08 17 39) (Just (zone UTCDesignator))),
     ( "081739+15",
       timeNoTrunc
         (hms 08 17 39)
-        (Just (UTCOffset Plus (h 15) Nothing))
+        (Just (zone (UTCOffset Plus (h 15) Nothing)))
     ),
     ( "081739-1537",
-      timeNoTrunc (hms 08 17 39) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+      timeNoTrunc (hms 08 17 39) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
     )
   ]
 
 units_TimeNoTrunc_valid2 :: [(Text, TimeNoTrunc)]
 units_TimeNoTrunc_valid2 = do
   (localTimeNoTruncText, localTimeNoTrunc') <- units_LocalTimeNoTrunc_valid
-  (zoneText, zone) <- ("", Nothing) : map (second Just) units_Zone_valid
+  (zoneText, zone') <- ("", Nothing) : map (second Just) units_Zone_valid
 
   let timeNoTruncText = localTimeNoTruncText <> zoneText
-      timeNoTrunc' = TimeNoTrunc localTimeNoTrunc' zone
+      timeNoTrunc' = TimeNoTrunc localTimeNoTrunc' zone'
 
   pure (timeNoTruncText, timeNoTrunc')
 
@@ -1314,22 +1316,22 @@ units_TimeComplete_valid =
 units_TimeComplete_valid1 :: [(Text, TimeComplete)]
 units_TimeComplete_valid1 =
   [ ("081739", timeComplete (hms 08 17 39) Nothing),
-    ("081739Z", timeComplete (hms 08 17 39) (Just UTCDesignator)),
+    ("081739Z", timeComplete (hms 08 17 39) (Just (zone UTCDesignator))),
     ( "081739+15",
-      timeComplete (hms 08 17 39) (Just (UTCOffset Plus (h 15) Nothing))
+      timeComplete (hms 08 17 39) (Just (zone (UTCOffset Plus (h 15) Nothing)))
     ),
     ( "081739-1537",
-      timeComplete (hms 08 17 39) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+      timeComplete (hms 08 17 39) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
     )
   ]
 
 units_TimeComplete_valid2 :: [(Text, TimeComplete)]
 units_TimeComplete_valid2 = do
   (localTimeCompleteText, localTimeComplete') <- units_LocalTimeComplete_valid
-  (zoneText, zone) <- ("", Nothing) : map (second Just) units_Zone_valid
+  (zoneText, zone') <- ("", Nothing) : map (second Just) units_Zone_valid
 
   let timeCompleteText = localTimeCompleteText <> zoneText
-      timeComplete' = TimeComplete localTimeComplete' zone
+      timeComplete' = TimeComplete localTimeComplete' zone'
 
   pure (timeCompleteText, timeComplete')
 
@@ -1435,39 +1437,39 @@ test_Zone_serialize =
 units_Zone_valid :: [(Text, Zone)]
 units_Zone_valid =
   [ -- UTCDesignator
-    ("Z", UTCDesignator),
+    ("Z", zone UTCDesignator),
     -- UTCOffset
     --   without minute
-    ("-00", UTCOffset Minus (h 00) Nothing),
-    ("-15", UTCOffset Minus (h 15) Nothing),
-    ("-23", UTCOffset Minus (h 23) Nothing),
-    ("+00", UTCOffset Plus (h 00) Nothing),
-    ("+15", UTCOffset Plus (h 15) Nothing),
-    ("+23", UTCOffset Plus (h 23) Nothing),
+    ("-00", zone (UTCOffset Minus (h 00) Nothing)),
+    ("-15", zone (UTCOffset Minus (h 15) Nothing)),
+    ("-23", zone (UTCOffset Minus (h 23) Nothing)),
+    ("+00", zone (UTCOffset Plus (h 00) Nothing)),
+    ("+15", zone (UTCOffset Plus (h 15) Nothing)),
+    ("+23", zone (UTCOffset Plus (h 23) Nothing)),
     --   with minute
-    ("-0000", UTCOffset Minus (h 00) (Just (m 00))),
-    ("-0037", UTCOffset Minus (h 00) (Just (m 37))),
-    ("-0059", UTCOffset Minus (h 00) (Just (m 59))),
+    ("-0000", zone (UTCOffset Minus (h 00) (Just (m 00)))),
+    ("-0037", zone (UTCOffset Minus (h 00) (Just (m 37)))),
+    ("-0059", zone (UTCOffset Minus (h 00) (Just (m 59)))),
     --
-    ("-1500", UTCOffset Minus (h 15) (Just (m 00))),
-    ("-1537", UTCOffset Minus (h 15) (Just (m 37))),
-    ("-1559", UTCOffset Minus (h 15) (Just (m 59))),
+    ("-1500", zone (UTCOffset Minus (h 15) (Just (m 00)))),
+    ("-1537", zone (UTCOffset Minus (h 15) (Just (m 37)))),
+    ("-1559", zone (UTCOffset Minus (h 15) (Just (m 59)))),
     --
-    ("-2300", UTCOffset Minus (h 23) (Just (m 00))),
-    ("-2337", UTCOffset Minus (h 23) (Just (m 37))),
-    ("-2359", UTCOffset Minus (h 23) (Just (m 59))),
+    ("-2300", zone (UTCOffset Minus (h 23) (Just (m 00)))),
+    ("-2337", zone (UTCOffset Minus (h 23) (Just (m 37)))),
+    ("-2359", zone (UTCOffset Minus (h 23) (Just (m 59)))),
     --
-    ("+0000", UTCOffset Plus (h 00) (Just (m 00))),
-    ("+0037", UTCOffset Plus (h 00) (Just (m 37))),
-    ("+0059", UTCOffset Plus (h 00) (Just (m 59))),
+    ("+0000", zone (UTCOffset Plus (h 00) (Just (m 00)))),
+    ("+0037", zone (UTCOffset Plus (h 00) (Just (m 37)))),
+    ("+0059", zone (UTCOffset Plus (h 00) (Just (m 59)))),
     --
-    ("+1500", UTCOffset Plus (h 15) (Just (m 00))),
-    ("+1537", UTCOffset Plus (h 15) (Just (m 37))),
-    ("+1559", UTCOffset Plus (h 15) (Just (m 59))),
+    ("+1500", zone (UTCOffset Plus (h 15) (Just (m 00)))),
+    ("+1537", zone (UTCOffset Plus (h 15) (Just (m 37)))),
+    ("+1559", zone (UTCOffset Plus (h 15) (Just (m 59)))),
     --
-    ("+2300", UTCOffset Plus (h 23) (Just (m 00))),
-    ("+2337", UTCOffset Plus (h 23) (Just (m 37))),
-    ("+2359", UTCOffset Plus (h 23) (Just (m 59)))
+    ("+2300", zone (UTCOffset Plus (h 23) (Just (m 00)))),
+    ("+2337", zone (UTCOffset Plus (h 23) (Just (m 37)))),
+    ("+2359", zone (UTCOffset Plus (h 23) (Just (m 59))))
   ]
 
 units_Zone_invalidSemantics :: [Text]
@@ -1537,7 +1539,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 0000 01 01))
         ( timeNoTrunc
             (hms 00 00 00)
-            (Just (UTCOffset Minus (h 23) (Just (m 59))))
+            (Just (zone (UTCOffset Minus (h 23) (Just (m 59)))))
         )
     ),
     ( "99991231T235960+2359",
@@ -1545,7 +1547,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 9999 12 31))
         ( timeNoTrunc
             (hms 23 59 60)
-            (Just (UTCOffset Plus (h 23) (Just (m 59))))
+            (Just (zone (UTCOffset Plus (h 23) (Just (m 59)))))
         )
     ),
     -- different DateTime forms
@@ -1555,7 +1557,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 8926 05 25))
         ( timeNoTrunc
             (hms 06 48 05)
-            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+            (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
         )
     ),
     --   minus zone, no zone minute (yyyymmddThhmmss-hh)
@@ -1564,7 +1566,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 8926 05 25))
         ( timeNoTrunc
             (hms 06 48 05)
-            (Just (UTCOffset Minus (h 16) Nothing))
+            (Just (zone (UTCOffset Minus (h 16) Nothing)))
         )
     ),
     --   plus zone (yyyymmddThhmmss+hhmm)
@@ -1573,7 +1575,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 8926 05 25))
         ( timeNoTrunc
             (hms 06 48 05)
-            (Just (UTCOffset Plus (h 16) (Just (m 44))))
+            (Just (zone (UTCOffset Plus (h 16) (Just (m 44)))))
         )
     ),
     --   plus zone, no zone minute (yyyymmddThhmmss+hh)
@@ -1582,7 +1584,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 8926 05 25))
         ( timeNoTrunc
             (hms 06 48 05)
-            (Just (UTCOffset Plus (h 16) Nothing))
+            (Just (zone (UTCOffset Plus (h 16) Nothing)))
         )
     ),
     --   UTC (yyyymmddThhmmssZ)
@@ -1591,7 +1593,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 8926 05 25))
         ( timeNoTrunc
             (hms 06 48 05)
-            (Just UTCDesignator)
+            (Just (zone UTCDesignator))
         )
     ),
     --   no zone (yyyymmddThhmmss)
@@ -1609,7 +1611,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 8926 05 25))
         ( timeNoTrunc
             (hm 06 48)
-            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+            (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
         )
     ),
     --   no minute or second (yyyymmddThh-hhmm)
@@ -1618,7 +1620,7 @@ units_DateTime_valid1 =
         (dateNoReduc (ymd 8926 05 25))
         ( timeNoTrunc
             (h 06)
-            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+            (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
         )
     ),
     --   no year (mmddThhmmss-hhmm)
@@ -1627,7 +1629,7 @@ units_DateTime_valid1 =
         (dateNoReduc (md 05 25))
         ( timeNoTrunc
             (hms 06 48 05)
-            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+            (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
         )
     ),
     --   no year or month (ddThhmmss-hhmm)
@@ -1636,7 +1638,7 @@ units_DateTime_valid1 =
         (dateNoReduc (d 25))
         ( timeNoTrunc
             (hms 06 48 05)
-            (Just (UTCOffset Minus (h 16) (Just (m 44))))
+            (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
         )
     )
   ]
@@ -1732,14 +1734,14 @@ units_DateTimeList_valid =
           ( "--0222T1329Z",
             DateTime
               (dateNoReduc (md 02 22))
-              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+              (timeNoTrunc (hm 13 29) (Just (zone UTCDesignator)))
           ),
           ( "---09T120631-04",
             DateTime
               (dateNoReduc (d 09))
               ( timeNoTrunc
                   (hms 12 06 31)
-                  (Just (UTCOffset Minus (h 04) Nothing))
+                  (Just (zone (UTCOffset Minus (h 04) Nothing)))
               )
           ),
           ( "30310720T091024-1112",
@@ -1747,7 +1749,7 @@ units_DateTimeList_valid =
               (dateNoReduc (ymd 3031 07 20))
               ( timeNoTrunc
                   (hms 09 10 24)
-                  (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                  (Just (zone (UTCOffset Minus (h 11) (Just (m 12)))))
               )
           ),
           ( "--0731T0309+01",
@@ -1755,7 +1757,7 @@ units_DateTimeList_valid =
               (dateNoReduc (md 07 31))
               ( timeNoTrunc
                   (hm 03 09)
-                  (Just (UTCOffset Plus (h 01) Nothing))
+                  (Just (zone (UTCOffset Plus (h 01) Nothing)))
               )
           ),
           ( "---17T06+1231",
@@ -1763,7 +1765,7 @@ units_DateTimeList_valid =
               (dateNoReduc (d 17))
               ( timeNoTrunc
                   (h 06)
-                  (Just (UTCOffset Plus (h 12) (Just (m 31))))
+                  (Just (zone (UTCOffset Plus (h 12) (Just (m 31)))))
               )
           )
         ],
@@ -1778,19 +1780,19 @@ units_DateTimeList_valid =
                      (dateNoReduc (ymd 3031 07 20))
                      ( timeNoTrunc
                          (hms 09 10 24)
-                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                         (Just (zone (UTCOffset Minus (h 11) (Just (m 12)))))
                      )
                  ]
           ),
           ( "--0222T1329Z,--0731T0309+01",
             DateTime
               (dateNoReduc (md 02 22))
-              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+              (timeNoTrunc (hm 13 29) (Just (zone UTCDesignator)))
               :| [ DateTime
                      (dateNoReduc (md 07 31))
                      ( timeNoTrunc
                          (hm 03 09)
-                         (Just (UTCOffset Plus (h 01) Nothing))
+                         (Just (zone (UTCOffset Plus (h 01) Nothing)))
                      )
                  ]
           ),
@@ -1799,13 +1801,13 @@ units_DateTimeList_valid =
               (dateNoReduc (d 09))
               ( timeNoTrunc
                   (hms 12 06 31)
-                  (Just (UTCOffset Minus (h 04) Nothing))
+                  (Just (zone (UTCOffset Minus (h 04) Nothing)))
               )
               :| [ DateTime
                      (dateNoReduc (d 17))
                      ( timeNoTrunc
                          (h 06)
-                         (Just (UTCOffset Plus (h 12) (Just (m 31))))
+                         (Just (zone (UTCOffset Plus (h 12) (Just (m 31)))))
                      )
                  ]
           )
@@ -1821,31 +1823,31 @@ units_DateTimeList_valid =
                      (dateNoReduc (d 09))
                      ( timeNoTrunc
                          (hms 12 06 31)
-                         (Just (UTCOffset Minus (h 04) Nothing))
+                         (Just (zone (UTCOffset Minus (h 04) Nothing)))
                      ),
                    DateTime
                      (dateNoReduc (md 07 31))
                      ( timeNoTrunc
                          (hm 03 09)
-                         (Just (UTCOffset Plus (h 01) Nothing))
+                         (Just (zone (UTCOffset Plus (h 01) Nothing)))
                      )
                  ]
           ),
           ( "--0222T1329Z,30310720T091024-1112,---17T06+1231",
             DateTime
               (dateNoReduc (md 02 22))
-              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+              (timeNoTrunc (hm 13 29) (Just (zone UTCDesignator)))
               :| [ DateTime
                      (dateNoReduc (ymd 3031 07 20))
                      ( timeNoTrunc
                          (hms 09 10 24)
-                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                         (Just (zone (UTCOffset Minus (h 11) (Just (m 12)))))
                      ),
                    DateTime
                      (dateNoReduc (d 17))
                      ( timeNoTrunc
                          (h 06)
-                         (Just (UTCOffset Plus (h 12) (Just (m 31))))
+                         (Just (zone (UTCOffset Plus (h 12) (Just (m 31)))))
                      )
                  ]
           )
@@ -1865,16 +1867,16 @@ units_DateTimeList_valid =
           ( "--0222T1329Z,---09T120631-04,--0222T1329Z",
             DateTime
               (dateNoReduc (md 02 22))
-              (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+              (timeNoTrunc (hm 13 29) (Just (zone UTCDesignator)))
               :| [ DateTime
                      (dateNoReduc (d 09))
                      ( timeNoTrunc
                          (hms 12 06 31)
-                         (Just (UTCOffset Minus (h 04) Nothing))
+                         (Just (zone (UTCOffset Minus (h 04) Nothing)))
                      ),
                    DateTime
                      (dateNoReduc (md 02 22))
-                     (timeNoTrunc (hm 13 29) (Just UTCDesignator))
+                     (timeNoTrunc (hm 13 29) (Just (zone UTCDesignator)))
                  ]
           ),
           ( "30310720T091024-1112,30310720T091024-1112,30310720T091024-1112",
@@ -1882,19 +1884,19 @@ units_DateTimeList_valid =
               (dateNoReduc (ymd 3031 07 20))
               ( timeNoTrunc
                   (hms 09 10 24)
-                  (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                  (Just (zone (UTCOffset Minus (h 11) (Just (m 12)))))
               )
               :| [ DateTime
                      (dateNoReduc (ymd 3031 07 20))
                      ( timeNoTrunc
                          (hms 09 10 24)
-                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                         (Just (zone (UTCOffset Minus (h 11) (Just (m 12)))))
                      ),
                    DateTime
                      (dateNoReduc (ymd 3031 07 20))
                      ( timeNoTrunc
                          (hms 09 10 24)
-                         (Just (UTCOffset Minus (h 11) (Just (m 12))))
+                         (Just (zone (UTCOffset Minus (h 11) (Just (m 12)))))
                      )
                  ]
           )
@@ -1981,7 +1983,7 @@ units_DateAndOrTime_valid =
           (dateNoReduc (ymd 8926 05 25))
           ( timeNoTrunc
               (hms 06 48 05)
-              (Just (UTCOffset Minus (h 16) (Just (m 44))))
+              (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
           )
     ),
     -- Date
@@ -1993,19 +1995,19 @@ units_DateAndOrTime_valid =
     ("--0712", dateAndOrTime (date (md 07 12))),
     -- Time
     ( "T15-1537",
-      dateAndOrTime (time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37)))))
+      dateAndOrTime (time (h 15) (Just (zone (UTCOffset Minus (h 15) (Just (m 37))))))
     ),
     ( "T-45+15",
-      dateAndOrTime (time (m 45) (Just (UTCOffset Plus (h 15) Nothing)))
+      dateAndOrTime (time (m 45) (Just (zone (UTCOffset Plus (h 15) Nothing))))
     ),
-    ("T--08Z", dateAndOrTime (time (s 08) (Just UTCDesignator))),
+    ("T--08Z", dateAndOrTime (time (s 08) (Just (zone UTCDesignator)))),
     ("T081739", dateAndOrTime (time (hms 08 17 39) Nothing)),
     ( "T1329-1537",
       dateAndOrTime
-        (time (hm 13 29) (Just (UTCOffset Minus (h 15) (Just (m 37)))))
+        (time (hm 13 29) (Just (zone (UTCOffset Minus (h 15) (Just (m 37))))))
     ),
     ( "T-3726+15",
-      dateAndOrTime (time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing)))
+      dateAndOrTime (time (ms 37 26) (Just (zone (UTCOffset Plus (h 15) Nothing))))
     )
   ]
 
@@ -2087,7 +2089,7 @@ units_DateAndOrTimeList_valid =
                 (dateNoReduc (ymd 8926 05 25))
                 ( timeNoTrunc
                     (hms 06 48 05)
-                    (Just (UTCOffset Minus (h 16) (Just (m 44))))
+                    (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
                 )
           ),
           ( "--05",
@@ -2096,14 +2098,14 @@ units_DateAndOrTimeList_valid =
           ("4810-07", dateAndOrTime (date (ym 4810 07))),
           ( "T15-1537",
             dateAndOrTime $
-              time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+              time (h 15) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
           ),
           ( "T--08Z",
-            dateAndOrTime (time (s 08) (Just UTCDesignator))
+            dateAndOrTime (time (s 08) (Just (zone UTCDesignator)))
           ),
           ( "T-3726+15",
             dateAndOrTime $
-              time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing))
+              time (ms 37 26) (Just (zone (UTCOffset Plus (h 15) Nothing)))
           )
         ],
       -- pairs
@@ -2115,21 +2117,21 @@ units_DateAndOrTimeList_valid =
                   (dateNoReduc (ymd 8926 05 25))
                   ( timeNoTrunc
                       (hms 06 48 05)
-                      (Just (UTCOffset Minus (h 16) (Just (m 44))))
+                      (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
                   )
               )
               :| [ dateAndOrTime $
-                     time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37))))
+                     time (h 15) (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
                  ]
           ),
           ( "--05,T--08Z",
             dateAndOrTime (date (mo 05))
-              :| [dateAndOrTime (time (s 08) (Just UTCDesignator))]
+              :| [dateAndOrTime (time (s 08) (Just (zone UTCDesignator)))]
           ),
           ( "4810-07,T-3726+15",
             dateAndOrTime (date (ym 4810 07))
               :| [ dateAndOrTime
-                     (time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing)))
+                     (time (ms 37 26) (Just (zone (UTCOffset Plus (h 15) Nothing))))
                  ]
           )
         ],
@@ -2142,19 +2144,19 @@ units_DateAndOrTimeList_valid =
                   (dateNoReduc (ymd 8926 05 25))
                   ( timeNoTrunc
                       (hms 06 48 05)
-                      (Just (UTCOffset Minus (h 16) (Just (m 44))))
+                      (Just (zone (UTCOffset Minus (h 16) (Just (m 44)))))
                   )
               )
               :| [ dateAndOrTime (date (ym 4810 07)),
-                   dateAndOrTime (time (s 08) (Just UTCDesignator))
+                   dateAndOrTime (time (s 08) (Just (zone UTCDesignator)))
                  ]
           ),
           ( "--05,T15-1537,T-3726+15",
             dateAndOrTime (date (mo 05))
               :| [ dateAndOrTime $
-                     time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37)))),
+                     time (h 15) (Just (zone (UTCOffset Minus (h 15) (Just (m 37))))),
                    dateAndOrTime $
-                     time (ms 37 26) (Just (UTCOffset Plus (h 15) Nothing))
+                     time (ms 37 26) (Just (zone (UTCOffset Plus (h 15) Nothing)))
                  ]
           )
         ],
@@ -2168,14 +2170,14 @@ units_DateAndOrTimeList_valid =
           ( "4810-07,T15-1537,4810-07",
             dateAndOrTime (date (ym 4810 07))
               :| [ dateAndOrTime $
-                     time (h 15) (Just (UTCOffset Minus (h 15) (Just (m 37)))),
+                     time (h 15) (Just (zone (UTCOffset Minus (h 15) (Just (m 37))))),
                    dateAndOrTime (date (ym 4810 07))
                  ]
           ),
           ( "T--08Z,T--08Z,T--08Z",
-            dateAndOrTime (time (s 08) (Just UTCDesignator))
-              :| [ dateAndOrTime (time (s 08) (Just UTCDesignator)),
-                   dateAndOrTime (time (s 08) (Just UTCDesignator))
+            dateAndOrTime (time (s 08) (Just (zone UTCDesignator)))
+              :| [ dateAndOrTime (time (s 08) (Just (zone UTCDesignator))),
+                   dateAndOrTime (time (s 08) (Just (zone UTCDesignator)))
                  ]
           )
         ]
@@ -2263,7 +2265,7 @@ units_Timestamp_valid =
       Timestamp
         { timestampDateComplete = DateComplete (ymd 5317 04 12),
           timestampTimeComplete =
-            timeComplete (hms 08 17 39) (Just UTCDesignator)
+            timeComplete (hms 08 17 39) (Just (zone UTCDesignator))
         }
     ),
     ( "53170412T081739+15",
@@ -2272,7 +2274,7 @@ units_Timestamp_valid =
           timestampTimeComplete =
             timeComplete
               (hms 08 17 39)
-              (Just (UTCOffset Plus (h 15) Nothing))
+              (Just (zone (UTCOffset Plus (h 15) Nothing)))
         }
     ),
     ( "53170412T081739-1537",
@@ -2281,7 +2283,7 @@ units_Timestamp_valid =
           timestampTimeComplete =
             timeComplete
               (hms 08 17 39)
-              (Just (UTCOffset Minus (h 15) (Just (m 37))))
+              (Just (zone (UTCOffset Minus (h 15) (Just (m 37)))))
         }
     )
   ]
@@ -2358,7 +2360,7 @@ units_TimestampList_valid =
             Timestamp
               { timestampDateComplete = DateComplete (ymd 4771 07 12),
                 timestampTimeComplete =
-                  timeComplete (hms 13 29 54) (Just UTCDesignator)
+                  timeComplete (hms 13 29 54) (Just (zone UTCDesignator))
               }
           ),
           ( "39090817T013726+13",
@@ -2367,7 +2369,7 @@ units_TimestampList_valid =
                 timestampTimeComplete =
                   timeComplete
                     (hms 01 37 26)
-                    (Just (UTCOffset Plus (h 13) Nothing))
+                    (Just (zone (UTCOffset Plus (h 13) Nothing)))
               }
           ),
           ( "49220228T105537+1409",
@@ -2376,7 +2378,7 @@ units_TimestampList_valid =
                 timestampTimeComplete =
                   timeComplete
                     (hms 10 55 37)
-                    (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                    (Just (zone (UTCOffset Plus (h 14) (Just (m 09)))))
               }
           ),
           ( "99000228T065753-16",
@@ -2385,7 +2387,7 @@ units_TimestampList_valid =
                 timestampTimeComplete =
                   timeComplete
                     (hms 06 57 53)
-                    (Just (UTCOffset Minus (h 16) Nothing))
+                    (Just (zone (UTCOffset Minus (h 16) Nothing)))
               }
           ),
           ( "68000229T054405-1746",
@@ -2394,7 +2396,7 @@ units_TimestampList_valid =
                 timestampTimeComplete =
                   timeComplete
                     (hms 05 44 05)
-                    (Just (UTCOffset Minus (h 17) (Just (m 46))))
+                    (Just (zone (UTCOffset Minus (h 17) (Just (m 46)))))
               }
           )
         ],
@@ -2412,7 +2414,7 @@ units_TimestampList_valid =
                        timestampTimeComplete =
                          timeComplete
                            (hms 10 55 37)
-                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                           (Just (zone (UTCOffset Plus (h 14) (Just (m 09)))))
                      }
                  ]
           ),
@@ -2420,7 +2422,7 @@ units_TimestampList_valid =
             ( Timestamp
                 { timestampDateComplete = DateComplete (ymd 4771 07 12),
                   timestampTimeComplete =
-                    timeComplete (hms 13 29 54) (Just UTCDesignator)
+                    timeComplete (hms 13 29 54) (Just (zone UTCDesignator))
                 }
             )
               :| [ Timestamp
@@ -2428,7 +2430,7 @@ units_TimestampList_valid =
                        timestampTimeComplete =
                          timeComplete
                            (hms 06 57 53)
-                           (Just (UTCOffset Minus (h 16) Nothing))
+                           (Just (zone (UTCOffset Minus (h 16) Nothing)))
                      }
                  ]
           ),
@@ -2438,7 +2440,7 @@ units_TimestampList_valid =
                   timestampTimeComplete =
                     timeComplete
                       (hms 01 37 26)
-                      (Just (UTCOffset Plus (h 13) Nothing))
+                      (Just (zone (UTCOffset Plus (h 13) Nothing)))
                 }
             )
               :| [ Timestamp
@@ -2446,7 +2448,7 @@ units_TimestampList_valid =
                        timestampTimeComplete =
                          timeComplete
                            (hms 05 44 05)
-                           (Just (UTCOffset Minus (h 17) (Just (m 46))))
+                           (Just (zone (UTCOffset Minus (h 17) (Just (m 46)))))
                      }
                  ]
           )
@@ -2465,14 +2467,14 @@ units_TimestampList_valid =
                        timestampTimeComplete =
                          timeComplete
                            (hms 01 37 26)
-                           (Just (UTCOffset Plus (h 13) Nothing))
+                           (Just (zone (UTCOffset Plus (h 13) Nothing)))
                      },
                    Timestamp
                      { timestampDateComplete = DateComplete (ymd 9900 02 28),
                        timestampTimeComplete =
                          timeComplete
                            (hms 06 57 53)
-                           (Just (UTCOffset Minus (h 16) Nothing))
+                           (Just (zone (UTCOffset Minus (h 16) Nothing)))
                      }
                  ]
           ),
@@ -2480,7 +2482,7 @@ units_TimestampList_valid =
             ( Timestamp
                 { timestampDateComplete = DateComplete (ymd 4771 07 12),
                   timestampTimeComplete =
-                    timeComplete (hms 13 29 54) (Just UTCDesignator)
+                    timeComplete (hms 13 29 54) (Just (zone UTCDesignator))
                 }
             )
               :| [ Timestamp
@@ -2488,14 +2490,14 @@ units_TimestampList_valid =
                        timestampTimeComplete =
                          timeComplete
                            (hms 10 55 37)
-                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                           (Just (zone (UTCOffset Plus (h 14) (Just (m 09)))))
                      },
                    Timestamp
                      { timestampDateComplete = DateComplete (ymd 6800 02 29),
                        timestampTimeComplete =
                          timeComplete
                            (hms 05 44 05)
-                           (Just (UTCOffset Minus (h 17) (Just (m 46))))
+                           (Just (zone (UTCOffset Minus (h 17) (Just (m 46)))))
                      }
                  ]
           )
@@ -2519,7 +2521,7 @@ units_TimestampList_valid =
             ( Timestamp
                 { timestampDateComplete = DateComplete (ymd 4771 07 12),
                   timestampTimeComplete =
-                    timeComplete (hms 13 29 54) (Just UTCDesignator)
+                    timeComplete (hms 13 29 54) (Just (zone UTCDesignator))
                 }
             )
               :| [ Timestamp
@@ -2527,12 +2529,12 @@ units_TimestampList_valid =
                        timestampTimeComplete =
                          timeComplete
                            (hms 01 37 26)
-                           (Just (UTCOffset Plus (h 13) Nothing))
+                           (Just (zone (UTCOffset Plus (h 13) Nothing)))
                      },
                    Timestamp
                      { timestampDateComplete = DateComplete (ymd 4771 07 12),
                        timestampTimeComplete =
-                         timeComplete (hms 13 29 54) (Just UTCDesignator)
+                         timeComplete (hms 13 29 54) (Just (zone UTCDesignator))
                      }
                  ]
           ),
@@ -2542,7 +2544,7 @@ units_TimestampList_valid =
                   timestampTimeComplete =
                     timeComplete
                       (hms 10 55 37)
-                      (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                      (Just (zone (UTCOffset Plus (h 14) (Just (m 09)))))
                 }
             )
               :| [ Timestamp
@@ -2550,14 +2552,14 @@ units_TimestampList_valid =
                        timestampTimeComplete =
                          timeComplete
                            (hms 10 55 37)
-                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                           (Just (zone (UTCOffset Plus (h 14) (Just (m 09)))))
                      },
                    Timestamp
                      { timestampDateComplete = DateComplete (ymd 4922 02 28),
                        timestampTimeComplete =
                          timeComplete
                            (hms 10 55 37)
-                           (Just (UTCOffset Plus (h 14) (Just (m 09))))
+                           (Just (zone (UTCOffset Plus (h 14) (Just (m 09)))))
                      }
                  ]
           )
@@ -2857,3 +2859,9 @@ dateAndOrTime ::
   a ->
   DateAndOrTime
 dateAndOrTime = DateAndOrTime . Vary.from
+
+zone ::
+  (a :| '[UTCDesignator, UTCOffset]) =>
+  a ->
+  Zone
+zone = Zone . Vary.from
