@@ -8,6 +8,7 @@ import Test.VCard.Types.Value.Boolean qualified
 import Test.VCard.Types.Value.Date qualified
 import Test.VCard.Types.Value.Float qualified
 import Test.VCard.Types.Value.Integer qualified
+import Test.VCard.Types.Value.LanguageTag qualified
 import Test.VCard.Types.Value.Text qualified
 import Test.VCard.Types.Value.Time qualified
 import Test.VCard.Types.Value.URI qualified
@@ -22,5 +23,6 @@ tests =
       Test.VCard.Types.Value.Time.tests,
       Test.VCard.Types.Value.Boolean.tests,
       Test.VCard.Types.Value.Integer.tests,
-      Test.VCard.Types.Value.Float.tests
+      Test.VCard.Types.Value.Float.tests,
+      Test.VCard.Types.Value.LanguageTag.tests
     ]
