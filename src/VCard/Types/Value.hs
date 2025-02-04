@@ -111,7 +111,7 @@ module VCard.Types.Value
     UTCOffset (..),
 
     -- * Section 4.7 @LANGUAGE-TAG@
-    LanguageTag,
+    LanguageTag (..),
   )
 where
 
@@ -134,7 +134,7 @@ import VCard.Types.Value.Date
     mkYearMonthDay,
   )
 import VCard.Types.Value.Integer (Integer (..), IntegerList)
-import VCard.Types.Value.LanguageTag (LanguageTag)
+import VCard.Types.Value.LanguageTag (LanguageTag (..))
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 import VCard.Types.Value.Time

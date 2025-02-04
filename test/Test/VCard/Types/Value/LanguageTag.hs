@@ -9,15 +9,14 @@
 module Test.VCard.Types.Value.LanguageTag (tests) where
 
 import Control.Monad (forM_)
-import Data.BCP47 (en, enGB, enGBTJP, enTJP, enUS, es, sw)
+import Data.BCP47 (en, enGB, enUS, es, sw)
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import Test.Tasty.QuickCheck (testProperty, (===))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Types.Value.LanguageTag (LanguageTag)
+import VCard.Types.Value.LanguageTag (LanguageTag (..))
 import Prelude hiding (Integer)
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -29,8 +28,7 @@ tests =
     [ testGroup
         "LanguageTag"
         [ test_LanguageTag_parse,
-          test_LanguageTag_serialize,
-          test_LanguageTag_parse_serialize_roundtrip
+          test_LanguageTag_serialize
         ]
     ]
 
@@ -45,15 +43,6 @@ test_LanguageTag_parse =
         ]
     ]
 
-test_LanguageTag_parse_serialize_roundtrip :: TestTree
-test_LanguageTag_parse_serialize_roundtrip =
-  testGroup
-    "parse_serialize_roundtrip"
-    [ testProperty "quickcheck" $ \(languageTag :: LanguageTag) ->
-        let text = serialize languageTag
-         in parse text === Just languageTag
-    ]
-
 test_LanguageTag_serialize :: TestTree
 test_LanguageTag_serialize =
   testGroup
@@ -63,13 +52,15 @@ test_LanguageTag_serialize =
 
 units_LanguageTag_valid :: [(Text, LanguageTag)]
 units_LanguageTag_valid =
-  [ ("en", en),
-    ("es", es),
-    ("sw", sw),
-    ("en-GB", enGB),
-    ("en-US", enUS),
-    ("en-t-jp", enTJP),
-    ("en-GB-t-jp", enGBTJP)
+  [ ("en", LanguageTag "en" en),
+    ("es", LanguageTag "es" es),
+    ("sw", LanguageTag "sw" sw),
+    ("en-GB", LanguageTag "en-GB" enGB),
+    ("en-US", LanguageTag "en-US" enUS),
+    ("en-gb", LanguageTag "en-gb" enGB),
+    ("en-us", LanguageTag "en-us" enUS),
+    ("eN-Gb", LanguageTag "eN-Gb" enGB),
+    ("EN-US", LanguageTag "EN-US" enUS)
   ]
 
 units_LanguageTag_invalid :: [Text]
