@@ -96,7 +96,8 @@ tests =
       test_DateAndOrTime,
       test_DateAndOrTimeList,
       test_Timestamp,
-      test_TimestampList
+      test_TimestampList,
+      test_UTCOffset
     ]
 
 --
@@ -2607,6 +2608,100 @@ units_TimestampList_invalidSyntax =
         "39090817T013726+13,--0712T132954Z"
       ]
     ]
+
+--
+-- UTCOffset
+--
+test_UTCOffset :: TestTree
+test_UTCOffset =
+  testGroup
+    "UTCOffset"
+    [ test_UTCOffset_parse,
+      test_UTCOffset_serialize
+    ]
+
+test_UTCOffset_parse :: TestTree
+test_UTCOffset_parse =
+  testGroup
+    "parse"
+    [ testParseValid units_UTCOffset_valid,
+      testParseInvalidSemantics
+        (Proxy @UTCOffset)
+        units_UTCOffset_invalidSemantics,
+      testParseInvalidSyntax
+        (Proxy @UTCOffset)
+        units_UTCOffset_invalidSyntax
+    ]
+
+test_UTCOffset_serialize :: TestTree
+test_UTCOffset_serialize =
+  testSerialize "serialize" units_UTCOffset_valid
+
+units_UTCOffset_valid :: [(Text, UTCOffset)]
+units_UTCOffset_valid =
+  [ ("+00", UTCOffset Plus (h 00) Nothing),
+    ("+05", UTCOffset Plus (h 05) Nothing),
+    ("+23", UTCOffset Plus (h 23) Nothing),
+    ("-00", UTCOffset Minus (h 00) Nothing),
+    ("-05", UTCOffset Minus (h 05) Nothing),
+    ("-23", UTCOffset Minus (h 23) Nothing),
+    --
+    ("+0000", UTCOffset Plus (h 00) (Just (m 00))),
+    ("+0032", UTCOffset Plus (h 00) (Just (m 32))),
+    ("+0059", UTCOffset Plus (h 00) (Just (m 59))),
+    ("+0500", UTCOffset Plus (h 05) (Just (m 00))),
+    ("+0532", UTCOffset Plus (h 05) (Just (m 32))),
+    ("+0559", UTCOffset Plus (h 05) (Just (m 59))),
+    ("+2300", UTCOffset Plus (h 23) (Just (m 00))),
+    ("+2332", UTCOffset Plus (h 23) (Just (m 32))),
+    ("+2359", UTCOffset Plus (h 23) (Just (m 59))),
+    ("-0000", UTCOffset Minus (h 00) (Just (m 00))),
+    ("-0032", UTCOffset Minus (h 00) (Just (m 32))),
+    ("-0059", UTCOffset Minus (h 00) (Just (m 59))),
+    ("-0500", UTCOffset Minus (h 05) (Just (m 00))),
+    ("-0532", UTCOffset Minus (h 05) (Just (m 32))),
+    ("-0559", UTCOffset Minus (h 05) (Just (m 59))),
+    ("-2300", UTCOffset Minus (h 23) (Just (m 00))),
+    ("-2332", UTCOffset Minus (h 23) (Just (m 32))),
+    ("-2359", UTCOffset Minus (h 23) (Just (m 59)))
+  ]
+
+units_UTCOffset_invalidSemantics :: [Text]
+units_UTCOffset_invalidSemantics =
+  [ "+2400",
+    "+2405",
+    "+9900",
+    "+9905",
+    "-2400",
+    "-2405",
+    "-9900",
+    "-9905",
+    "+0060",
+    "+0099",
+    "+0560",
+    "+0599",
+    "-0060",
+    "-0099",
+    "-0560",
+    "-0599"
+  ]
+
+units_UTCOffset_invalidSyntax :: [Text]
+units_UTCOffset_invalidSyntax =
+  [ -- extraneous whitespace
+    " +0532",
+    "\n+0532",
+    "\r\n+0532",
+    "+0532 ",
+    "+0532\n",
+    "+0532\r\n",
+    -- incorrect constructions
+    "Z",
+    "0000",
+    "0532",
+    "+053",
+    "++0532"
+  ]
 
 -- =========
 -- UTILITIES
