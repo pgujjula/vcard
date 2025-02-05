@@ -9,6 +9,7 @@
 -- Stability  : experimental
 --
 -- Main 'VCard' and 'VCardEntity' types, described in Section 3.3 of RFC 6350.
+{-# OPTIONS_GHC -Wno-all #-}
 module VCard.Types.VCard
   ( -- * VCard
     VCard,
@@ -16,7 +17,38 @@ module VCard.Types.VCard
 
     -- * VCardEntity
     VCardEntity (..),
+
+    -- * VCard1
+    VCard1 (..),
   )
 where
 
+import VCard.Types.Property (Begin)
 import VCard.Types.VCard.Internal (VCard, VCardEntity (..), version)
+import Data.Sequence qualified as Seq
+import Data.Sequence (Seq)
+import Data.IntMap (IntMap)
+import Data.IntMap qualified as IntMap
+
+data SomeProperty
+
+data VCard1
+  = VCard1
+  { vcardPropOrder :: Seq Int
+  , vcardPropTable :: IntMap SomeProperty
+  , vcardBegin :: Int
+  , vcardEnd :: Int
+  , vcardSource :: [Int]
+  }
+
+getBegin :: VCard1 -> Begin
+getBegin = undefined
+
+getBeginRef :: VCard -> Int
+getBeginRef = undefined
+
+editBegin :: VCard -> Int -> (Begin -> Begin) -> Maybe VCard
+editBegin = undefined
+
+appendProperty :: VCard -> SomeProperty -> Maybe VCard
+appendProperty = undefined

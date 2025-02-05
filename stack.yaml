@@ -1,12 +1,15 @@
 # SPDX-FileCopyrightText: Copyright Preetham Gujjula
 # SPDX-License-Identifier: BSD-3-Clause
-resolver: lts-21.25
+resolver: lts-22.43
 packages:
 - .
 
 extra-deps:
-- genvalidity-network-uri-0.0.0.0
-- validity-network-uri-0.0.0.0
+- closed-classes-0.1
+- ghc-tcplugin-api-0.11.0.0
+- large-anon-0.3.1
+- large-generics-0.2.2
+- typelet-0.1.4
 - vary-0.1.1.0
 
 flags:
