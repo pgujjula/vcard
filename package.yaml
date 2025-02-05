@@ -16,6 +16,8 @@ license:      BSD-3-Clause
 tested-with:
 - GHC == 9.4.8
 - GHC == 9.6.6
+- GHC == 9.8.4
+- GHC == 9.10.1
 
 extra-doc-files:
 - README.md
@@ -28,7 +30,7 @@ default-extensions:
 - ImportQualifiedPost
 
 dependencies:
-- base ^>= {4.17, 4.18}
+- base ^>= {4.17, 4.18, 4.19, 4.20}
 
 ghc-options:
 - -Wall
