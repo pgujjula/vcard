@@ -6,7 +6,7 @@ SPDX-License-Identifier: BSD-3-Clause
 # vcard
 
 [![Made in Haskell](https://img.shields.io/badge/Made_in-Haskell-5e5086?logo=haskell&style=flat)](https://haskell.org)
-[![CI](https://github.com/pgujjula/vcard/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pgujjula/vcard/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI](https://ci.codeberg.org/api/badges/14199/status.svg)](https://ci.codeberg.org/repos/14199)
 
 
 🚧 _Under construction. No guarantees, even commit history may be overwritten._

@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: Copyright Preetham Gujjula
+# SPDX-License-Identifier: BSD-3-Clause
+when:
+    branch: main
+    event: [push, pull_request]
+
+depends_on:
+  - reuse
+  - ormolu
+
+matrix:
+  GHC_VERSION:
+    - 9.2.8
+    - 9.4.8
+    - 9.6.6
+    - 9.8.2
+    - 9.10.1-slim-bullseye
+
+steps:
+  - name: build_test_${GHC_VERSION}
+    image: haskell:${GHC_VERSION}
+    commands:
+      - cabal update
+      - cabal configure
+          --enable-tests
+          --test-show-details=streaming
+          --enable-benchmarks
+          --ghc-options="-Werror -Wall"
+          --test-options='-p "$0 !~ /exhaustive/"'
+          --disable-optimization
+      - cabal outdated --exit-code --ignore=base
+      - cabal build -j4
+      - cabal test

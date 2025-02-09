@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Copyright Preetham Gujjula
+# SPDX-License-Identifier: BSD-3-Clause
+when:
+    branch: main
+    event: [push, pull_request]
+
+steps:
+  - name: ormolu
+    image: alpine
+    commands:
+      - apk add ormolu
+      - find src/ test/ -name '*.hs' | xargs ormolu --mode check
