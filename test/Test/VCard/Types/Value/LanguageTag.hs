@@ -9,7 +9,6 @@
 module Test.VCard.Types.Value.LanguageTag (tests) where
 
 import Control.Monad (forM_)
-import Data.BCP47 (en, enGB, enUS, es, sw)
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Test.Tasty (TestName, TestTree, testGroup)
@@ -52,15 +51,15 @@ test_LanguageTag_serialize =
 
 units_LanguageTag_valid :: [(Text, LanguageTag)]
 units_LanguageTag_valid =
-  [ ("en", LanguageTag "en" en),
-    ("es", LanguageTag "es" es),
-    ("sw", LanguageTag "sw" sw),
-    ("en-GB", LanguageTag "en-GB" enGB),
-    ("en-US", LanguageTag "en-US" enUS),
-    ("en-gb", LanguageTag "en-gb" enGB),
-    ("en-us", LanguageTag "en-us" enUS),
-    ("eN-Gb", LanguageTag "eN-Gb" enGB),
-    ("EN-US", LanguageTag "EN-US" enUS)
+  [ ("en", LanguageTag "en"),
+    ("es", LanguageTag "es"),
+    ("sw", LanguageTag "sw"),
+    ("en-GB", LanguageTag "en-GB"),
+    ("en-US", LanguageTag "en-US"),
+    ("en-gb", LanguageTag "en-gb"),
+    ("en-us", LanguageTag "en-us"),
+    ("eN-Gb", LanguageTag "eN-Gb"),
+    ("EN-US", LanguageTag "EN-US")
   ]
 
 units_LanguageTag_invalid :: [Text]

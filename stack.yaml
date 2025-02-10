@@ -8,7 +8,3 @@ extra-deps:
 - genvalidity-network-uri-0.0.0.0
 - validity-network-uri-0.0.0.0
 - vary-0.1.0.5
-- github: freckle/bcp47
-  commit: '49b1b4dea58fcf22404ae9a40ffa233083d27a34'
-  subdirs:
-  - bcp47

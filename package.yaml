@@ -69,7 +69,6 @@ library:
   - VCard.Types.VCard.Internal
   - VCard.Util
   dependencies:
-  - bcp47 ^>= {0.2}
   - containers ^>= {0.6, 0.7}
   - finite-typelits ^>= {0.1, 0.2}
   - megaparsec >= 9.0 && < 10
@@ -96,7 +95,6 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - bcp47 ^>= {0.2}
     - containers ^>= {0.6, 0.7}
     - data-ordlist ^>= {0.4}
     - finite-typelits ^>= {0.1, 0.2}
