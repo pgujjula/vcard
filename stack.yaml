@@ -7,4 +7,12 @@ packages:
 extra-deps:
 - genvalidity-network-uri-0.0.0.0
 - validity-network-uri-0.0.0.0
-- vary-0.1.0.5
+- vary-0.1.1.0
+
+flags:
+  vary:
+    aeson: false
+    binary: false
+    cereal: false
+    hashable: false
+    quickcheck: false

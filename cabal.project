@@ -1,3 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 packages: .
+
+package vary
+  flags: -aeson -binary -cereal -hashable -quickcheck
