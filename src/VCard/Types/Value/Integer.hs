@@ -31,10 +31,10 @@ import GHC.Word (Word (W#))
 import Numeric.Natural (Natural)
 import Text.Megaparsec (choice, takeWhile1P)
 import Text.Megaparsec.Char (char)
-import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Types.Value.List (List (..))
+import VCard.Util (intToText)
 import Prelude hiding (Integer)
 
 data Integer = Integer
@@ -117,7 +117,7 @@ instance HasSerializer Integer where
         Positive _ -> "+"
         Negative _ -> "-"
       zeros = Text.replicate (word2Int (integerNumLeadingZeros integer)) "0"
-      value = showt $ case integerIntegerValue integer of
+      value = intToText $ case integerIntegerValue integer of
         Unsigned x -> getFinite x
         Positive x -> getFinite x
         Negative x -> getFinite x

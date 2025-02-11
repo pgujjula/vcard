@@ -30,12 +30,12 @@ import GHC.Word (Word (W#))
 import Numeric.Natural (Natural)
 import Text.Megaparsec (optional)
 import Text.Megaparsec.Char (char)
-import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Types.Value.Integer (naturalP)
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Time (Sign (..))
+import VCard.Util (intToText)
 import Prelude hiding (Float, Integer)
 import Prelude qualified (Integer)
 
@@ -60,7 +60,7 @@ naturalLeadingZerosS naturalLeadingZeros =
   Text.replicate
     (word2Int $ naturalLeadingZerosNumLeadingZeros naturalLeadingZeros)
     "0"
-    <> showt (naturalLeadingZerosValue naturalLeadingZeros)
+    <> intToText (naturalLeadingZerosValue naturalLeadingZeros)
 
 instance HasParser Float where
   parser :: Parser Float

@@ -44,7 +44,6 @@ import Data.Time.Calendar.MonthDay
   )
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
-import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Date
@@ -65,6 +64,7 @@ import VCard.Types.Value.Date
     mkYearMonthDay,
   )
 import VCard.Types.Value.List (List (..))
+import VCard.Util (intToText)
 import Vary ((:|))
 import Vary qualified
 
@@ -1398,12 +1398,12 @@ exhaustive_Year_valid =
 
 exhaustive_Month_valid :: [(Text, Month)]
 exhaustive_Month_valid =
-  let texts = map (Text.justifyRight 2 '0' . showt @Int) [1 .. 12]
+  let texts = map (Text.justifyRight 2 '0' . intToText @Int) [1 .. 12]
    in zip texts months
 
 exhaustive_Day_valid :: [(Text, Day)]
 exhaustive_Day_valid =
-  let texts = map (Text.justifyRight 2 '0' . showt @Int) [1 .. 31]
+  let texts = map (Text.justifyRight 2 '0' . intToText @Int) [1 .. 31]
    in zip texts days
 
 -- `Text`s that fit the syntactic format of `Year`, `Month`, `Date`, but are not

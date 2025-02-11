@@ -32,10 +32,10 @@ import Data.Function ((&))
 import Data.Text qualified as Text
 import Text.Megaparsec (choice, try)
 import Text.Megaparsec.Char (char, digitChar, string)
-import TextShow (showt)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Types.Value.List (List (..))
+import VCard.Util (intToText)
 import Vary (Vary, exhaustiveCase, from, on)
 
 --
@@ -70,7 +70,7 @@ instance HasSerializer Year where
         (d1, r1) = yearInt `quotRem` 1000
         (d2, r2) = r1 `quotRem` 100
         (d3, d4) = r2 `quotRem` 10
-     in Text.concat (map showt [d1, d2, d3, d4])
+     in Text.concat (map intToText [d1, d2, d3, d4])
 
 --
 -- Month
@@ -97,7 +97,7 @@ instance HasSerializer Month where
   serializer (Month month) =
     let monthInt = getFinite month + 1
         (d1, d2) = monthInt `quotRem` 10
-     in showt d1 <> showt d2
+     in intToText d1 <> intToText d2
 
 --
 -- Day
@@ -123,7 +123,7 @@ instance HasSerializer Day where
   serializer (Day day) =
     let dayInt = getFinite day + 1
         (d1, d2) = dayInt `quotRem` 10
-     in showt d1 <> showt d2
+     in intToText d1 <> intToText d2
 
 --
 -- YearMonthDay

@@ -18,7 +18,6 @@ import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Integer
@@ -29,6 +28,7 @@ import VCard.Types.Value.Integer
     toInt64,
   )
 import VCard.Types.Value.List (List (..))
+import VCard.Util (intToText)
 import Prelude hiding (Integer)
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -96,11 +96,11 @@ units_Integer_valid =
       Integer 0 (Negative (finite 9223372036854775808)),
       -9223372036854775808
     ),
-    ( showt (maxBound @Int64),
+    ( intToText (maxBound @Int64),
       Integer 0 (Unsigned (finite 9223372036854775807)),
       9223372036854775807
     ),
-    ( showt (minBound @Int64),
+    ( intToText (minBound @Int64),
       Integer 0 (Negative (finite 9223372036854775808)),
       -9223372036854775808
     ),
@@ -150,8 +150,8 @@ units_Integer_invalid =
     "9223372036854775808",
     "+9223372036854775808",
     "-9223372036854775809",
-    showt (toInteger (maxBound @Int64) + 1),
-    showt (toInteger (minBound @Int64) - 1),
+    intToText (toInteger (maxBound @Int64) + 1),
+    intToText (toInteger (minBound @Int64) - 1),
     "10000000000000000000",
     "009223372036854775808",
     "+009223372036854775808",

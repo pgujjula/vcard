@@ -37,7 +37,6 @@ import Test.VCard.Types.Value.Date
     ym,
     ymd,
   )
-import TextShow (showt)
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Value.Date (Date (..), DateComplete (..))
@@ -67,6 +66,7 @@ import VCard.Types.Value.Time
     UTCOffset (..),
     Zone (..),
   )
+import VCard.Util (intToText)
 import Vary ((:|))
 import Vary qualified
 
@@ -2735,17 +2735,17 @@ universe_Second = map Text.pack (replicateM 2 ['0' .. '9'])
 -- paired with their parsed value.
 exhaustive_Hour_valid :: [(Text, Hour)]
 exhaustive_Hour_valid =
-  let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 23]
+  let texts = map (Text.justifyRight 2 '0' . intToText @Int) [0 .. 23]
    in zip texts hours
 
 exhaustive_Minute_valid :: [(Text, Minute)]
 exhaustive_Minute_valid =
-  let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 60]
+  let texts = map (Text.justifyRight 2 '0' . intToText @Int) [0 .. 60]
    in zip texts minutes
 
 exhaustive_Second_valid :: [(Text, Second)]
 exhaustive_Second_valid =
-  let texts = map (Text.justifyRight 2 '0' . showt @Int) [0 .. 61]
+  let texts = map (Text.justifyRight 2 '0' . intToText @Int) [0 .. 61]
    in zip texts seconds
 
 -- `Text`s that fit the syntactic format of `Hour`, `Minute`, or `Second` but
