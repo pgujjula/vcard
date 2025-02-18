@@ -51,6 +51,8 @@ library:
   - VCard.Types.Property
   - VCard.Types.Value
   - VCard.Types.VCard
+  - VCard.Symbol
+  - VCard.Symbol.Internal
   other-modules:
   - VCard.Parse
   - VCard.Serialize
@@ -72,6 +74,7 @@ library:
   - megaparsec >= 9.0 && < 10
   - network-uri ^>= {2.6}
   - scientific ^>= {0.3}
+  - singletons-base ^>= {3.2, 3.3, 3.4, 3.5}
   - text ^>= {1.2, 2.0, 2.1}
   - vary ^>= {0.1}
 
@@ -98,6 +101,7 @@ tests:
     - megaparsec >= 9.0 && < 10
     - network-uri ^>= {2.6}
     - scientific ^>= {0.3}
+    - singletons-base ^>= {3.2, 3.3, 3.4, 3.5}
     - tasty ^>= {1.4, 1.5}
     - tasty-hunit ^>= {0.10}
     - tasty-quickcheck ^>= {0.10, 0.11}
