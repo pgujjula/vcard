@@ -10,8 +10,6 @@ depends_on:
 
 matrix:
   GHC_VERSION:
-    - 9.2.8
-    - 9.4.8
     - 9.6.6
     - 9.8.2
     - 9.10.1-slim-bullseye
