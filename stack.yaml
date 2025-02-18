@@ -8,6 +8,7 @@ extra-deps:
 - genvalidity-network-uri-0.0.0.0
 - validity-network-uri-0.0.0.0
 - vary-0.1.1.0
+- validity-0.12.1.0
 
 flags:
   vary:

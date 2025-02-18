@@ -5,11 +5,13 @@
 module Test.VCard (tests) where
 
 import Test.Tasty (TestTree, testGroup)
+import Test.VCard.Symbol qualified
 import Test.VCard.Types qualified
 
 tests :: TestTree
 tests =
   testGroup
     "VCard"
-    [ Test.VCard.Types.tests
+    [ Test.VCard.Symbol.tests,
+      Test.VCard.Types.tests
     ]
