@@ -83,6 +83,7 @@ test-suite vcard-tests
   main-is: Main.hs
   other-modules:
       Test.VCard
+      Test.VCard.Symbol.Private
       Test.VCard.Types
       Test.VCard.Types.Property
       Test.VCard.Types.Property.Version
