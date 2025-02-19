@@ -1,21 +1,30 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Test.VCard.Symbol.Private (tests) where
 
+import Control.Monad (forM_)
+import Data.Char (toLower, toUpper)
 import Data.Maybe (isJust, isNothing)
-import GHC.TypeLits (charVal, symbolVal)
+import Data.Proxy (Proxy (..))
+import GHC.TypeLits (SomeChar (..), charVal, someCharVal, symbolVal)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase, (@?=))
 import VCard.Symbol.Private
   ( SChar,
     SSymbol,
+    ToLowerChar,
+    ToUpperChar,
     charSing,
+    sToLowerChar,
+    sToUpperChar,
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
+    withKnownChar,
   )
 
 tests :: TestTree
@@ -25,7 +34,9 @@ tests =
     [ test_Symbol_charSing,
       test_Symbol_symbolSing,
       test_Symbol_testSCharEquality,
-      test_Symbol_testSSymbolEquality
+      test_Symbol_testSSymbolEquality,
+      test_Symbol_sToLowerChar,
+      test_Symbol_sToUpperChar
     ]
 
 test_Symbol_charSing :: TestTree
@@ -87,3 +98,39 @@ test_Symbol_testSSymbolEquality =
     testUnequal
       (symbolSing @"The quick brown fox\n")
       (symbolSing @"The quick brown fox\r\n")
+
+test_Symbol_sToLowerChar :: TestTree
+test_Symbol_sToLowerChar =
+  testCase "sToLowerChar" $ do
+    let toLowerViaSingleton :: Char -> Char
+        toLowerViaSingleton c =
+          case someCharVal c of
+            SomeChar (Proxy :: Proxy c) ->
+              let sc :: SChar c
+                  sc = charSing
+
+                  sc' :: SChar (ToLowerChar c)
+                  sc' = sToLowerChar sc
+               in withKnownChar sc' $ charVal sc'
+    forM_ asciiChars $ \c ->
+      toLowerViaSingleton c @?= toLower c
+
+test_Symbol_sToUpperChar :: TestTree
+test_Symbol_sToUpperChar =
+  testCase "sToUpperChar" $ do
+    let toUpperViaSingleton :: Char -> Char
+        toUpperViaSingleton c =
+          case someCharVal c of
+            SomeChar (Proxy :: Proxy c) ->
+              let sc :: SChar c
+                  sc = charSing
+
+                  sc' :: SChar (ToUpperChar c)
+                  sc' = sToUpperChar sc
+               in withKnownChar sc' $ charVal sc'
+    forM_ asciiChars $ \c ->
+      toUpperViaSingleton c @?= toUpper c
+
+-- Utilities
+asciiChars :: [Char]
+asciiChars = ['\0' .. '\127']
