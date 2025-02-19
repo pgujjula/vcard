@@ -2,9 +2,19 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Symbol.Private
-  ( charSing,
+  ( -- * 'Char' and 'Symbol' singletons
+    charSing,
     symbolSing,
+
+    -- * Singleton equality
+    testSCharEquality,
+    testSSymbolEquality,
   )
 where
 
-import VCard.Symbol.Private.Compat (charSing, symbolSing)
+import VCard.Symbol.Private.Compat
+  ( charSing,
+    symbolSing,
+    testSCharEquality,
+    testSSymbolEquality,
+  )
