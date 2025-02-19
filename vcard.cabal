@@ -72,6 +72,20 @@ test-suite vcard-tests
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      Test.VCard
+      Test.VCard.Types
+      Test.VCard.Types.Property
+      Test.VCard.Types.Property.Version
+      Test.VCard.Types.Value
+      Test.VCard.Types.Value.Boolean
+      Test.VCard.Types.Value.Date
+      Test.VCard.Types.Value.Float
+      Test.VCard.Types.Value.Integer
+      Test.VCard.Types.Value.LanguageTag
+      Test.VCard.Types.Value.Text
+      Test.VCard.Types.Value.Time
+      Test.VCard.Types.Value.URI
+      Test.VCard.Types.VCard
       VCard
       VCard.Parse
       VCard.Serialize
@@ -91,20 +105,6 @@ test-suite vcard-tests
       VCard.Types.VCard
       VCard.Types.VCard.Internal
       VCard.Util
-      Test.VCard
-      Test.VCard.Types
-      Test.VCard.Types.Property
-      Test.VCard.Types.Property.Version
-      Test.VCard.Types.Value
-      Test.VCard.Types.Value.Boolean
-      Test.VCard.Types.Value.Date
-      Test.VCard.Types.Value.Float
-      Test.VCard.Types.Value.Integer
-      Test.VCard.Types.Value.LanguageTag
-      Test.VCard.Types.Value.Text
-      Test.VCard.Types.Value.Time
-      Test.VCard.Types.Value.URI
-      Test.VCard.Types.VCard
   hs-source-dirs:
       src
       test

@@ -88,6 +88,40 @@ tests:
     # suite.
     - src
     - test
+    other-modules:
+    - Test.VCard
+    - Test.VCard.Types
+    - Test.VCard.Types.Property
+    - Test.VCard.Types.Property.Version
+    - Test.VCard.Types.Value
+    - Test.VCard.Types.Value.Boolean
+    - Test.VCard.Types.Value.Date
+    - Test.VCard.Types.Value.Float
+    - Test.VCard.Types.Value.Integer
+    - Test.VCard.Types.Value.LanguageTag
+    - Test.VCard.Types.Value.Text
+    - Test.VCard.Types.Value.Time
+    - Test.VCard.Types.Value.URI
+    - Test.VCard.Types.VCard
+    - VCard
+    - VCard.Parse
+    - VCard.Serialize
+    - VCard.Types.Param
+    - VCard.Types.Property
+    - VCard.Types.Property.Version
+    - VCard.Types.Value
+    - VCard.Types.Value.Boolean
+    - VCard.Types.Value.Date
+    - VCard.Types.Value.Float
+    - VCard.Types.Value.Integer
+    - VCard.Types.Value.LanguageTag
+    - VCard.Types.Value.List
+    - VCard.Types.Value.Text
+    - VCard.Types.Value.Time
+    - VCard.Types.Value.URI
+    - VCard.Types.VCard
+    - VCard.Types.VCard.Internal
+    - VCard.Util
     ghc-options:
     - -threaded
     - -rtsopts
