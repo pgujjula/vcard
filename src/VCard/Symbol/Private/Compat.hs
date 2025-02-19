@@ -3,7 +3,9 @@
 {-# LANGUAGE CPP #-}
 
 module VCard.Symbol.Private.Compat
-  ( charSing,
+  ( SChar,
+    SSymbol,
+    charSing,
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
@@ -12,14 +14,18 @@ where
 
 #if MIN_VERSION_base(4,18,0)
 import VCard.Symbol.Private.Compat.New
-  ( charSing,
+  ( SChar,
+    SSymbol,
+    charSing,
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
   )
 #else
 import VCard.Symbol.Private.Compat.Old
-  ( charSing,
+  ( SChar,
+    SSymbol,
+    charSing,
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,

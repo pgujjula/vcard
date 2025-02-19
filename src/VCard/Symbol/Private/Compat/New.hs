@@ -3,7 +3,9 @@
 {-# LANGUAGE TypeOperators #-}
 
 module VCard.Symbol.Private.Compat.New
-  ( charSing,
+  ( SChar,
+    SSymbol,
+    charSing,
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
