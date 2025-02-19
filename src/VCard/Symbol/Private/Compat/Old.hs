@@ -1,5 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 
@@ -10,6 +11,8 @@ module VCard.Symbol.Private.Compat.Old
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
+    withKnownChar,
+    withKnownSymbol,
   )
 where
 
@@ -18,7 +21,9 @@ import GHC.TypeLits (KnownChar, KnownSymbol)
 import GHC.TypeLits.Singletons
   ( SChar (..),
     SSymbol (SSym),
-    withKnownChar,
+  )
+import GHC.TypeLits.Singletons qualified as Singletons
+  ( withKnownChar,
     withKnownSymbol,
   )
 import Type.Reflection (TypeRep, typeRep)
@@ -48,3 +53,11 @@ testSSymbolEquality_ sa sb =
   withKnownSymbol sa $
     withKnownSymbol sb $
       testEquality (typeRep :: TypeRep a) (typeRep :: TypeRep b)
+
+-- | Obtain a @'KnownChar' c@ constraint given an @'SChar' c@ value.
+withKnownChar :: SChar c -> ((KnownChar c) => r) -> r
+withKnownChar = Singletons.withKnownChar
+
+-- | Obtain a @'KnownSymbol' s@ constraint given an @'SSymbol' s@ value.
+withKnownSymbol :: SSymbol s -> ((KnownSymbol s) => r) -> r
+withKnownSymbol = Singletons.withKnownSymbol

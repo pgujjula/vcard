@@ -5,10 +5,12 @@ module VCard.Symbol.Private
   ( -- * 'Char' singleton
     SChar,
     charSing,
+    withKnownChar,
 
     -- * 'Symbol' singleton
     SSymbol,
     symbolSing,
+    withKnownSymbol,
 
     -- * Singleton equality
     testSCharEquality,
@@ -23,4 +25,6 @@ import VCard.Symbol.Private.Compat
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
+    withKnownChar,
+    withKnownSymbol,
   )

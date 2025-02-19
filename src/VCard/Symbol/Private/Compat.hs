@@ -9,6 +9,8 @@ module VCard.Symbol.Private.Compat
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
+    withKnownChar,
+    withKnownSymbol,
   )
 where
 
@@ -20,6 +22,8 @@ import VCard.Symbol.Private.Compat.New
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
+    withKnownChar,
+    withKnownSymbol,
   )
 #else
 import VCard.Symbol.Private.Compat.Old
@@ -29,5 +33,7 @@ import VCard.Symbol.Private.Compat.Old
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
+    withKnownChar,
+    withKnownSymbol,
   )
 #endif
