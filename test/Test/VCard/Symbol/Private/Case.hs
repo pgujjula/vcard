@@ -9,24 +9,60 @@ module Test.VCard.Symbol.Private.Case (tests) where
 import Control.Monad (forM_)
 import Data.Char (toLower, toUpper)
 import Data.Proxy (Proxy (..))
-import GHC.TypeLits (SomeChar (..), charVal, someCharVal)
+import GHC.TypeLits
+  ( SomeChar (..),
+    SomeSymbol (..),
+    charVal,
+    someCharVal,
+    someSymbolVal,
+    symbolVal,
+  )
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Symbol.Private.Case
-  ( ToLowerChar,
+  ( ToLower,
+    ToLowerChar,
+    ToUpper,
     ToUpperChar,
+    sToLower,
     sToLowerChar,
+    sToUpper,
     sToUpperChar,
   )
-import VCard.Symbol.Private.Compat (SChar, charSing, withKnownChar)
+import VCard.Symbol.Private.Compat
+  ( SChar,
+    SSymbol,
+    charSing,
+    symbolSing,
+    withKnownChar,
+    withKnownSymbol,
+  )
 
 tests :: TestTree
 tests =
   testGroup
     "Case"
-    [ test_sToLowerChar,
+    [ test_sToLower,
+      test_sToLowerChar,
+      test_sToUpper,
       test_sToUpperChar
     ]
+
+test_sToLower :: TestTree
+test_sToLower =
+  testCase "sToLower" $ do
+    let toLowerViaSingleton :: String -> String
+        toLowerViaSingleton s =
+          case someSymbolVal s of
+            SomeSymbol (Proxy :: Proxy s) ->
+              let ss :: SSymbol s
+                  ss = symbolSing
+
+                  ss' :: SSymbol (ToLower s)
+                  ss' = sToLower ss
+               in withKnownSymbol ss' $ symbolVal ss'
+    forM_ ["", "abc", "DEF", "Foo", asciiChars] $ \s ->
+      toLowerViaSingleton s @?= map toLower s
 
 test_sToLowerChar :: TestTree
 test_sToLowerChar =
@@ -43,6 +79,22 @@ test_sToLowerChar =
                in withKnownChar sc' $ charVal sc'
     forM_ asciiChars $ \c ->
       toLowerViaSingleton c @?= toLower c
+
+test_sToUpper :: TestTree
+test_sToUpper =
+  testCase "sToUpper" $ do
+    let toUpperViaSingleton :: String -> String
+        toUpperViaSingleton s =
+          case someSymbolVal s of
+            SomeSymbol (Proxy :: Proxy s) ->
+              let ss :: SSymbol s
+                  ss = symbolSing
+
+                  ss' :: SSymbol (ToUpper s)
+                  ss' = sToUpper ss
+               in withKnownSymbol ss' $ symbolVal ss'
+    forM_ ["", "abc", "DEF", "Foo", asciiChars] $ \s ->
+      toUpperViaSingleton s @?= map toUpper s
 
 test_sToUpperChar :: TestTree
 test_sToUpperChar =
