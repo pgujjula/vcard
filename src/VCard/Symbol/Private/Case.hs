@@ -1,6 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -8,16 +9,49 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module VCard.Symbol.Private.Case
-  ( ToLowerChar,
+  ( ToLower,
+    sToLower,
+    ToLowerChar,
     sToLowerChar,
+    ToUpper,
+    sToUpper,
     ToUpperChar,
     sToUpperChar,
   )
 where
 
+import Data.Maybe.Singletons (SMaybe (SJust, SNothing))
+import Data.Tuple.Singletons (STuple2 (..))
 import Data.Type.Equality ((:~:) (Refl))
+import GHC.TypeLits (ConsSymbol, Symbol, UnconsSymbol)
+import GHC.TypeLits.Singletons (sConsSymbol)
 import Unsafe.Coerce (unsafeCoerce)
-import VCard.Symbol.Private.Compat (SChar, charSing, testSCharEquality)
+import VCard.Symbol.Private.Compat
+  ( SChar,
+    SSymbol,
+    charSing,
+    sUnconsSymbol,
+    symbolSing,
+    testSCharEquality,
+  )
+
+-- | Convert a 'Symbol' to lower case. Only affects ASCII characters, so @É@ is
+--   not converted to @é@, for example.
+type family ToLower (s :: Symbol) :: Symbol where
+  ToLower s = ToLowerUncons (UnconsSymbol s)
+
+-- | Singleton of 'ToLower'.
+sToLower :: SSymbol s -> SSymbol (ToLower s)
+sToLower ss = sToLowerUncons (sUnconsSymbol ss)
+
+type family ToLowerUncons (mcs :: Maybe (Char, Symbol)) :: Symbol where
+  ToLowerUncons 'Nothing = ""
+  ToLowerUncons ('Just '(c, s)) = ConsSymbol (ToLowerChar c) (ToLower s)
+
+sToLowerUncons :: SMaybe mcs -> SSymbol (ToLowerUncons mcs)
+sToLowerUncons = \case
+  SNothing -> symbolSing @""
+  SJust (STuple2 sc ss) -> sConsSymbol (sToLowerChar sc) (sToLower ss)
 
 -- | Convert a 'Char' to lower case. Only affects ASCII characters, so @É@ is
 --   not converted to @é@, for example.
@@ -86,6 +120,24 @@ sToLowerChar_ sc =
   where
     handleCase :: (SChar x, c :~: x -> SChar fx) -> SChar fx -> SChar fx
     handleCase = handleCaseWith sc
+
+-- | Convert a 'Symbol' to upper case. Only affects ASCII characters, so @é@ is
+--   not converted to @É@, for example.
+type family ToUpper (s :: Symbol) :: Symbol where
+  ToUpper s = ToUpperUncons (UnconsSymbol s)
+
+-- | Singleton of 'ToUpper'.
+sToUpper :: SSymbol s -> SSymbol (ToUpper s)
+sToUpper ss = sToUpperUncons (sUnconsSymbol ss)
+
+type family ToUpperUncons (mcs :: Maybe (Char, Symbol)) :: Symbol where
+  ToUpperUncons 'Nothing = ""
+  ToUpperUncons ('Just '(c, s)) = ConsSymbol (ToUpperChar c) (ToUpper s)
+
+sToUpperUncons :: SMaybe mcs -> SSymbol (ToUpperUncons mcs)
+sToUpperUncons = \case
+  SNothing -> symbolSing @""
+  SJust (STuple2 sc ss) -> sConsSymbol (sToUpperChar sc) (sToUpper ss)
 
 -- | Convert a 'Char' to upper case. Only affects ASCII characters, so @é@ is
 --   not converted to @É@, for example.

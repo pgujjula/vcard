@@ -16,24 +16,19 @@ module VCard.Symbol.Private
     testSCharEquality,
     testSSymbolEquality,
 
-    -- * Change case of 'Char'
+    -- * Change case of 'Symbol'
 
     -- ** Lower case
-    ToLowerChar,
-    sToLowerChar,
+    ToLower,
+    sToLower,
 
     -- ** Upper case
-    ToUpperChar,
-    sToUpperChar,
+    ToUpper,
+    sToUpper,
   )
 where
 
-import VCard.Symbol.Private.Case
-  ( ToLowerChar,
-    ToUpperChar,
-    sToLowerChar,
-    sToUpperChar,
-  )
+import VCard.Symbol.Private.Case (ToLower, ToUpper, sToLower, sToUpper)
 import VCard.Symbol.Private.Compat
   ( SChar,
     SSymbol,
