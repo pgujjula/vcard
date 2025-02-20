@@ -12,15 +12,13 @@ import Data.Proxy (Proxy (..))
 import GHC.TypeLits (SomeChar (..), charVal, someCharVal)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import VCard.Symbol.Private
-  ( SChar,
-    ToLowerChar,
+import VCard.Symbol.Private.Case
+  ( ToLowerChar,
     ToUpperChar,
-    charSing,
     sToLowerChar,
     sToUpperChar,
-    withKnownChar,
   )
+import VCard.Symbol.Private.Compat (SChar, charSing, withKnownChar)
 
 tests :: TestTree
 tests =
