@@ -54,6 +54,7 @@ library:
   - VCard.Types.Value
   - VCard.Types.VCard
   other-modules:
+  - VCard.CaseInsensitive
   - VCard.Parse
   - VCard.Serialize
   - VCard.Symbol.Private
@@ -118,6 +119,7 @@ tests:
     - Test.VCard.Types.Value.URI
     - Test.VCard.Types.VCard
     - VCard
+    - VCard.CaseInsensitive
     - VCard.Parse
     - VCard.Serialize
     - VCard.Symbol.Private
