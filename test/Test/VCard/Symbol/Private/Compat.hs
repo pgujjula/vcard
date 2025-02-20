@@ -47,44 +47,45 @@ test_symbolSing =
 test_testSCharEquality :: TestTree
 test_testSCharEquality =
   testCase "testSCharEquality" $ do
-    let testEqual :: SChar a -> SChar b -> Assertion
-        testEqual sa sb =
-          assertBool "expected equal SChars" $
-            isJust (testSCharEquality sa sb)
-
-        testUnequal :: SChar a -> SChar b -> Assertion
-        testUnequal sa sb =
-          assertBool "expected different SChars" $
-            isNothing (testSCharEquality sa sb)
-
-    testEqual (charSing @'a') (charSing @'a')
-    testEqual (charSing @'\t') (charSing @'\t')
-    testUnequal (charSing @' ') (charSing @'\t')
-    testUnequal (charSing @'.') (charSing @',')
+    assertEqualSChar (charSing @'a') (charSing @'a')
+    assertEqualSChar (charSing @'\t') (charSing @'\t')
+    assertUnequalSChar (charSing @' ') (charSing @'\t')
+    assertUnequalSChar (charSing @'.') (charSing @',')
 
 test_testSSymbolEquality :: TestTree
 test_testSSymbolEquality =
   testCase "testSSymbolEquality" $ do
-    let testEqual :: SSymbol a -> SSymbol b -> Assertion
-        testEqual sa sb =
-          assertBool "expected equal SSymbols" $
-            isJust (testSSymbolEquality sa sb)
-
-        testUnequal :: SSymbol a -> SSymbol b -> Assertion
-        testUnequal sa sb =
-          assertBool "expected different SSymbols" $
-            isNothing (testSSymbolEquality sa sb)
-
-    testEqual (symbolSing @"") (symbolSing @"")
-    testEqual (symbolSing @"a") (symbolSing @"a")
-    testEqual (symbolSing @"Foo") (symbolSing @"Foo")
-    testEqual
+    assertEqualSSymbol (symbolSing @"") (symbolSing @"")
+    assertEqualSSymbol (symbolSing @"a") (symbolSing @"a")
+    assertEqualSSymbol (symbolSing @"Foo") (symbolSing @"Foo")
+    assertEqualSSymbol
       (symbolSing @"The quick brown fox")
       (symbolSing @"The quick brown fox")
 
-    testUnequal (symbolSing @"") (symbolSing @"a")
-    testUnequal (symbolSing @"abc") (symbolSing @"ab c")
-    testUnequal (symbolSing @"Foo") (symbolSing @"foo")
-    testUnequal
+    assertUnequalSSymbol (symbolSing @"") (symbolSing @"a")
+    assertUnequalSSymbol (symbolSing @"abc") (symbolSing @"ab c")
+    assertUnequalSSymbol (symbolSing @"Foo") (symbolSing @"foo")
+    assertUnequalSSymbol
       (symbolSing @"The quick brown fox\n")
       (symbolSing @"The quick brown fox\r\n")
+
+-- Utilities
+assertEqualSChar :: SChar a -> SChar b -> Assertion
+assertEqualSChar sa sb =
+  assertBool "expected equal SChars" $
+    isJust (testSCharEquality sa sb)
+
+assertUnequalSChar :: SChar a -> SChar b -> Assertion
+assertUnequalSChar sa sb =
+  assertBool "expected different SChars" $
+    isNothing (testSCharEquality sa sb)
+
+assertEqualSSymbol :: SSymbol a -> SSymbol b -> Assertion
+assertEqualSSymbol sa sb =
+  assertBool "expected equal SSymbols" $
+    isJust (testSSymbolEquality sa sb)
+
+assertUnequalSSymbol :: SSymbol a -> SSymbol b -> Assertion
+assertUnequalSSymbol sa sb =
+  assertBool "expected different SSymbols" $
+    isNothing (testSSymbolEquality sa sb)
