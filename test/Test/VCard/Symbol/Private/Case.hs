@@ -3,12 +3,15 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Test.VCard.Symbol.Private.Case (tests) where
 
 import Control.Monad (forM_)
 import Data.Char (toLower, toUpper)
+import Data.Dynamic (Dynamic, toDyn)
 import Data.Proxy (Proxy (..))
+import Data.Type.Equality ((:~:) (Refl))
 import GHC.TypeLits
   ( SomeChar (..),
     SomeSymbol (..),
@@ -40,13 +43,42 @@ import VCard.Symbol.Private.Compat
 
 tests :: TestTree
 tests =
-  testGroup
-    "Case"
-    [ test_sToLower,
-      test_sToLowerChar,
-      test_sToUpper,
-      test_sToUpperChar
+  -- We include test_Types here to avoid an unused-top-binds warning
+  seq test_Types $
+    testGroup
+      "Case"
+      [ test_sToLower,
+        test_sToLowerChar,
+        test_sToUpper,
+        test_sToUpperChar
+      ]
+
+test_Types :: [Dynamic]
+test_Types =
+  concat
+    [ test_ToLower,
+      test_ToUpper
     ]
+
+test_ToLower :: [Dynamic]
+test_ToLower =
+  [ toDyn (Refl :: (ToLower "" :~: "")),
+    toDyn (Refl :: (ToLower "abc" :~: "abc")),
+    toDyn (Refl :: (ToLower "DEF" :~: "def")),
+    toDyn (Refl :: (ToLower "Foo" :~: "foo")),
+    toDyn
+      ( Refl ::
+          ( ToLower "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+              :~: "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+          )
+      ),
+    toDyn
+      ( Refl ::
+          ( ToLower "1234567890!@#$%^&*()-_=+`~[{]}\\|;:'\",<.>/? \t\r\n"
+              :~: "1234567890!@#$%^&*()-_=+`~[{]}\\|;:'\",<.>/? \t\r\n"
+          )
+      )
+  ]
 
 test_sToLower :: TestTree
 test_sToLower =
@@ -79,6 +111,26 @@ test_sToLowerChar =
                in withKnownChar sc' $ charVal sc'
     forM_ asciiChars $ \c ->
       toLowerViaSingleton c @?= toLower c
+
+test_ToUpper :: [Dynamic]
+test_ToUpper =
+  [ toDyn (Refl :: (ToUpper "" :~: "")),
+    toDyn (Refl :: (ToUpper "abc" :~: "ABC")),
+    toDyn (Refl :: (ToUpper "DEF" :~: "DEF")),
+    toDyn (Refl :: (ToUpper "Foo" :~: "FOO")),
+    toDyn
+      ( Refl ::
+          ( ToUpper "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+              :~: "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+          )
+      ),
+    toDyn
+      ( Refl ::
+          ( ToUpper "1234567890!@#$%^&*()-_=+`~[{]}\\|;:'\",<.>/? \t\r\n"
+              :~: "1234567890!@#$%^&*()-_=+`~[{]}\\|;:'\",<.>/? \t\r\n"
+          )
+      )
+  ]
 
 test_sToUpper :: TestTree
 test_sToUpper =
