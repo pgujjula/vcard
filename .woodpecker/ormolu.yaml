@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 when:
     branch: main
-    event: [push, pull_request]
+    event: [manual, pull_request]
 
 steps:
   - name: ormolu
