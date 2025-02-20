@@ -13,20 +13,31 @@ module VCard.Symbol.Private.Compat.Old
     testSSymbolEquality,
     withKnownChar,
     withKnownSymbol,
+    sUnconsSymbol,
   )
 where
 
+import Data.Maybe.Singletons (SMaybe (..))
+import Data.Proxy (Proxy (..))
+import Data.Tuple.Singletons (STuple2 (..))
 import Data.Type.Equality (testEquality, (:~:))
-import GHC.TypeLits (KnownChar, KnownSymbol)
-import GHC.TypeLits.Singletons
-  ( SChar (..),
-    SSymbol (SSym),
+import GHC.TypeLits
+  ( KnownChar,
+    KnownSymbol,
+    SomeChar (..),
+    SomeSymbol (..),
+    UnconsSymbol,
+    someCharVal,
+    someSymbolVal,
+    symbolVal,
   )
+import GHC.TypeLits.Singletons (SChar (..), SSymbol (SSym))
 import GHC.TypeLits.Singletons qualified as Singletons
   ( withKnownChar,
     withKnownSymbol,
   )
 import Type.Reflection (TypeRep, typeRep)
+import Unsafe.Coerce (unsafeCoerce)
 
 charSing :: (KnownChar c) => SChar c
 charSing = SChar
@@ -61,3 +72,20 @@ withKnownChar = Singletons.withKnownChar
 -- | Obtain a @'KnownSymbol' s@ constraint given an @'SSymbol' s@ value.
 withKnownSymbol :: SSymbol s -> ((KnownSymbol s) => r) -> r
 withKnownSymbol = Singletons.withKnownSymbol
+
+-- | Singleton of 'UnconsSymbol'.
+
+-- There is a bug in `sUnconsSymbol` in the `singletons-base` library when
+-- GHC < 9.6, so we implement our own.
+sUnconsSymbol :: forall s. SSymbol s -> SMaybe (UnconsSymbol s)
+sUnconsSymbol ss =
+  case withKnownSymbol ss (symbolVal (Proxy :: Proxy s)) of
+    [] -> unsafeCoerce SNothing
+    (c : s') ->
+      case someCharVal c of
+        SomeChar (Proxy :: Proxy c) ->
+          case someSymbolVal s' of
+            SomeSymbol (Proxy :: Proxy s') ->
+              let sc = charSing :: SChar c
+                  ss' = symbolSing :: SSymbol s'
+               in unsafeCoerce (SJust (STuple2 sc ss'))
