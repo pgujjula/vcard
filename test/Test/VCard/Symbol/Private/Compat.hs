@@ -1,12 +1,15 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Test.VCard.Symbol.Private.Compat (tests) where
 
 import Data.Maybe (isJust, isNothing)
+import Data.Maybe.Singletons (SMaybe (SJust, SNothing))
+import Data.Tuple.Singletons (STuple2 (..))
 import GHC.TypeLits (charVal, symbolVal)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase, (@?=))
@@ -14,6 +17,7 @@ import VCard.Symbol.Private.Compat
   ( SChar,
     SSymbol,
     charSing,
+    sUnconsSymbol,
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
@@ -26,7 +30,8 @@ tests =
     [ test_charSing,
       test_symbolSing,
       test_testSCharEquality,
-      test_testSSymbolEquality
+      test_testSSymbolEquality,
+      test_sUnconsSymbol
     ]
 
 test_charSing :: TestTree
@@ -68,6 +73,20 @@ test_testSSymbolEquality =
     assertUnequalSSymbol
       (symbolSing @"The quick brown fox\n")
       (symbolSing @"The quick brown fox\r\n")
+
+test_sUnconsSymbol :: TestTree
+test_sUnconsSymbol =
+  testCase "sUnconsSymbol" $ do
+    case sUnconsSymbol (symbolSing @"") of
+      SNothing -> pure ()
+    case sUnconsSymbol (symbolSing @"a") of
+      SJust (STuple2 sc ss) -> do
+        assertEqualSChar sc (charSing @'a')
+        assertEqualSSymbol ss (symbolSing @"")
+    case sUnconsSymbol (symbolSing @"abc") of
+      SJust (STuple2 sc ss) -> do
+        assertEqualSChar sc (charSing @'a')
+        assertEqualSSymbol ss (symbolSing @"bc")
 
 -- Utilities
 assertEqualSChar :: SChar a -> SChar b -> Assertion
