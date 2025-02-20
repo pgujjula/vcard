@@ -103,6 +103,8 @@ tests:
     other-modules:
     - Test.VCard
     - Test.VCard.Symbol.Private
+    - Test.VCard.Symbol.Private.Case
+    - Test.VCard.Symbol.Private.Compat
     - Test.VCard.Types
     - Test.VCard.Types.Property
     - Test.VCard.Types.Property.Version
