@@ -25,6 +25,10 @@ module VCard.Symbol.Private
     -- ** Upper case
     ToUpper,
     sToUpper,
+
+    -- * Prefix checking
+    IsPrefixOf,
+    IsPrefixOfInsensitive,
   )
 where
 
@@ -39,3 +43,4 @@ import VCard.Symbol.Private.Compat
     withKnownChar,
     withKnownSymbol,
   )
+import VCard.Symbol.Private.Prefix (IsPrefixOf, IsPrefixOfInsensitive)
