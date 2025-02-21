@@ -109,6 +109,7 @@ tests:
     - Test.VCard.Symbol.Private
     - Test.VCard.Symbol.Private.Case
     - Test.VCard.Symbol.Private.Compat
+    - Test.VCard.Symbol.Private.Prefix
     - Test.VCard.Types
     - Test.VCard.Types.Param
     - Test.VCard.Types.Param.Generic
