@@ -84,6 +84,7 @@ test-suite vcard-tests
   main-is: Main.hs
   other-modules:
       Test.VCard
+      Test.VCard.CaseInsensitive
       Test.VCard.Symbol.Private
       Test.VCard.Symbol.Private.Case
       Test.VCard.Symbol.Private.Compat
