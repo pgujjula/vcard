@@ -58,6 +58,7 @@ library:
   - VCard.Parse
   - VCard.Serialize
   - VCard.Types.Param.Generic
+  - VCard.Types.Param.Language
   - VCard.Symbol.Private
   - VCard.Symbol.Private.Case
   - VCard.Symbol.Private.Compat
@@ -131,6 +132,7 @@ tests:
     - VCard.Symbol.Private.Compat
     - VCard.Types.Param
     - VCard.Types.Param.Generic
+    - VCard.Types.Param.Language
     - VCard.Types.Property
     - VCard.Types.Property.Version
     - VCard.Types.Value
