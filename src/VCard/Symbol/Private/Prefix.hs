@@ -25,14 +25,14 @@ type family IsPrefixOfInsensitive (s :: Symbol) (t :: Symbol) :: Bool where
   IsPrefixOfInsensitive s t = IsPrefixOf (ToLower s) (ToLower t)
 
 type family IsPrefixOfList (s :: [Char]) (t :: [Char]) :: Bool where
-  IsPrefixOfList '[] '[] = 'True
-  IsPrefixOfList '[] (y ': ys) = 'True
-  IsPrefixOfList (x ': xs) (y ': ys) = (x == y) && IsPrefixOfList xs ys
-  IsPrefixOfList (x ': xs) '[] = 'False
+  IsPrefixOfList '[] '[] = True
+  IsPrefixOfList '[] (y : ys) = True
+  IsPrefixOfList (x : xs) (y : ys) = (x == y) && IsPrefixOfList xs ys
+  IsPrefixOfList (x : xs) '[] = False
 
 type family ToList (s :: Symbol) :: [Char] where
   ToList s = ToListUncons (UnconsSymbol s)
 
 type family ToListUncons (x :: (Maybe (Char, Symbol))) :: [Char] where
-  ToListUncons 'Nothing = '[]
-  ToListUncons ('Just '(c, s)) = c ': ToList s
+  ToListUncons Nothing = '[]
+  ToListUncons (Just '(c, s)) = c : ToList s

@@ -45,8 +45,8 @@ sToLower :: SSymbol s -> SSymbol (ToLower s)
 sToLower ss = sToLowerUncons (sUnconsSymbol ss)
 
 type family ToLowerUncons (mcs :: Maybe (Char, Symbol)) :: Symbol where
-  ToLowerUncons 'Nothing = ""
-  ToLowerUncons ('Just '(c, s)) = ConsSymbol (ToLowerChar c) (ToLower s)
+  ToLowerUncons Nothing = ""
+  ToLowerUncons (Just '(c, s)) = ConsSymbol (ToLowerChar c) (ToLower s)
 
 sToLowerUncons :: SMaybe mcs -> SSymbol (ToLowerUncons mcs)
 sToLowerUncons = \case
@@ -131,8 +131,8 @@ sToUpper :: SSymbol s -> SSymbol (ToUpper s)
 sToUpper ss = sToUpperUncons (sUnconsSymbol ss)
 
 type family ToUpperUncons (mcs :: Maybe (Char, Symbol)) :: Symbol where
-  ToUpperUncons 'Nothing = ""
-  ToUpperUncons ('Just '(c, s)) = ConsSymbol (ToUpperChar c) (ToUpper s)
+  ToUpperUncons Nothing = ""
+  ToUpperUncons (Just '(c, s)) = ConsSymbol (ToUpperChar c) (ToUpper s)
 
 sToUpperUncons :: SMaybe mcs -> SSymbol (ToUpperUncons mcs)
 sToUpperUncons = \case

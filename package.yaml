@@ -44,6 +44,10 @@ ghc-options:
 - -Wpartial-fields
 - -Wredundant-constraints
 - -Wunused-packages
+when:
+- condition: impl(ghc < 9.4)
+  ghc-options:
+  - -Wno-unticked-promoted-constructors
 
 library:
   source-dirs: src
