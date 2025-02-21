@@ -25,7 +25,7 @@ steps:
           --enable-tests
           --test-show-details=streaming
           --enable-benchmarks
-          --ghc-options="-Werror -Wall"
+          --ghc-options="-Werror"
           --test-options='-p "$0 !~ /exhaustive/"'
           --disable-optimization
       - cabal outdated --exit-code --ignore=base
