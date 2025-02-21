@@ -9,16 +9,23 @@ depends_on:
   - ormolu
 
 matrix:
-  GHC_VERSION:
-    - 9.2.8
-    - 9.4.8
-    - 9.6.6
-    - 9.8.2
-    - 9.10.1-slim-bullseye
+  include:
+    - GHC_VERSION: 9.2.8
+      SOURCE: haskell
+    - GHC_VERSION: 9.4.8
+      SOURCE: haskell
+    - GHC_VERSION: 9.6.6
+      SOURCE: haskell
+    - GHC_VERSION: 9.8.2
+      SOURCE: haskell
+    - GHC_VERSION: 9.10.1-slim-bullseye
+      SOURCE: haskell
+    - GHC_VERSION: 9.12.1
+      SOURCE: benz0li/ghc-musl
 
 steps:
   - name: build_test_${GHC_VERSION}
-    image: haskell:${GHC_VERSION}
+    image: ${SOURCE}:${GHC_VERSION}
     commands:
       - cabal update
       - cabal configure
