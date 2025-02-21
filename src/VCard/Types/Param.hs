@@ -10,6 +10,8 @@
 --
 -- Types for the property parameters described in Section 5 of RFC 6350.
 module VCard.Types.Param
-  (
+  ( Param (..),
   )
 where
+
+import VCard.Types.Param.Generic (Param (..))
