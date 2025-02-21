@@ -16,7 +16,7 @@ matrix:
       SOURCE: haskell
     - GHC_VERSION: 9.6.6
       SOURCE: haskell
-    - GHC_VERSION: 9.8.2
+    - GHC_VERSION: 9.8.4
       SOURCE: haskell
     - GHC_VERSION: 9.10.1-slim-bullseye
       SOURCE: haskell
