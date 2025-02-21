@@ -111,6 +111,7 @@ tests:
     - Test.VCard.Types
     - Test.VCard.Types.Param
     - Test.VCard.Types.Param.Generic
+    - Test.VCard.Types.Param.Language
     - Test.VCard.Types.Property
     - Test.VCard.Types.Property.Version
     - Test.VCard.Types.Value
