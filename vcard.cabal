@@ -90,6 +90,8 @@ test-suite vcard-tests
       Test.VCard.Symbol.Private.Case
       Test.VCard.Symbol.Private.Compat
       Test.VCard.Types
+      Test.VCard.Types.Param
+      Test.VCard.Types.Param.Generic
       Test.VCard.Types.Property
       Test.VCard.Types.Property.Version
       Test.VCard.Types.Value
