@@ -40,6 +40,7 @@ library
       VCard.Types.VCard
   other-modules:
       VCard.CaseInsensitive
+      VCard.Internal.Closed
       VCard.Parse
       VCard.Serialize
       VCard.Types.Param.Generic
@@ -119,6 +120,7 @@ test-suite vcard-tests
       Test.VCard.XName
       VCard
       VCard.CaseInsensitive
+      VCard.Internal.Closed
       VCard.Parse
       VCard.Serialize
       VCard.Symbol.Private
