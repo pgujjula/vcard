@@ -96,6 +96,7 @@ test-suite vcard-tests
       Test.VCard.Symbol.Private
       Test.VCard.Symbol.Private.Case
       Test.VCard.Symbol.Private.Compat
+      Test.VCard.Symbol.Private.Length
       Test.VCard.Symbol.Private.List
       Test.VCard.Symbol.Private.Prefix
       Test.VCard.Types
