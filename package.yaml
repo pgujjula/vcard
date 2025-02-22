@@ -82,6 +82,7 @@ library:
   - VCard.Types.Value.URI
   - VCard.Types.VCard.Internal
   - VCard.Util
+  - VCard.XName
   dependencies:
   - containers ^>= {0.6, 0.7}
   - finite-typelits ^>= {0.1, 0.2}
@@ -163,6 +164,7 @@ tests:
     - VCard.Types.VCard
     - VCard.Types.VCard.Internal
     - VCard.Util
+    - VCard.XName
     ghc-options:
     - -threaded
     - -rtsopts
