@@ -13,8 +13,9 @@ where
 
 import Data.Type.Bool (type (&&))
 import Data.Type.Equality (type (==))
-import GHC.TypeLits (Symbol, UnconsSymbol)
+import GHC.TypeLits (Symbol)
 import VCard.Symbol.Private.Case (ToLower)
+import VCard.Symbol.Private.List (ToList)
 
 -- | Determine whether @s@ is a prefix of @t@.
 type family IsPrefixOf (s :: Symbol) (t :: Symbol) :: Bool where
@@ -29,10 +30,3 @@ type family IsPrefixOfList (s :: [Char]) (t :: [Char]) :: Bool where
   IsPrefixOfList '[] (y : ys) = True
   IsPrefixOfList (x : xs) (y : ys) = (x == y) && IsPrefixOfList xs ys
   IsPrefixOfList (x : xs) '[] = False
-
-type family ToList (s :: Symbol) :: [Char] where
-  ToList s = ToListUncons (UnconsSymbol s)
-
-type family ToListUncons (x :: (Maybe (Char, Symbol))) :: [Char] where
-  ToListUncons Nothing = '[]
-  ToListUncons (Just '(c, s)) = c : ToList s

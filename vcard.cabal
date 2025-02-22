@@ -47,6 +47,7 @@ library
       VCard.Symbol.Private
       VCard.Symbol.Private.Case
       VCard.Symbol.Private.Compat
+      VCard.Symbol.Private.List
       VCard.Symbol.Private.Prefix
       VCard.Types.Property.Version
       VCard.Types.Value.Boolean
@@ -118,6 +119,7 @@ test-suite vcard-tests
       VCard.Symbol.Private
       VCard.Symbol.Private.Case
       VCard.Symbol.Private.Compat
+      VCard.Symbol.Private.List
       VCard.Symbol.Private.Prefix
       VCard.Types.Param
       VCard.Types.Param.Generic

@@ -16,6 +16,9 @@ module VCard.Symbol.Private
     testSCharEquality,
     testSSymbolEquality,
 
+    -- * Convert to 'List'
+    ToList,
+
     -- * Change case of 'Symbol'
 
     -- ** Lower case
@@ -43,4 +46,5 @@ import VCard.Symbol.Private.Compat
     withKnownChar,
     withKnownSymbol,
   )
+import VCard.Symbol.Private.List (ToList)
 import VCard.Symbol.Private.Prefix (IsPrefixOf, IsPrefixOfInsensitive)
