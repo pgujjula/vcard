@@ -116,6 +116,7 @@ test-suite vcard-tests
       Test.VCard.Types.Value.Time
       Test.VCard.Types.Value.URI
       Test.VCard.Types.VCard
+      Test.VCard.XName
       VCard
       VCard.CaseInsensitive
       VCard.Parse
@@ -155,11 +156,13 @@ test-suite vcard-tests
       base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21 || >=4.21 && <4.22
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , data-ordlist ==0.4.*
+    , deepseq >=1.4 && <1.5 || >=1.5 && <1.6 || >=1.6 && <1.7
     , finite-typelits >=0.1 && <0.2 || >=0.2 && <0.3
     , genvalidity-network-uri ==0.0.*
     , megaparsec >=9.0 && <10
     , network-uri ==2.6.*
     , scientific ==0.3.*
+    , should-not-typecheck ==2.1.*
     , singletons-base >=3.0 && <3.1 || >=3.1 && <3.2 || >=3.2 && <3.3 || >=3.3 && <3.4 || >=3.4 && <3.5 || >=3.5 && <3.6
     , tasty >=1.4 && <1.5 || >=1.5 && <1.6
     , tasty-hunit ==0.10.*
