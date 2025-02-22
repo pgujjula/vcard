@@ -67,6 +67,7 @@ library:
   - VCard.Symbol.Private
   - VCard.Symbol.Private.Case
   - VCard.Symbol.Private.Compat
+  - VCard.Symbol.Private.Length
   - VCard.Symbol.Private.List
   - VCard.Symbol.Private.Prefix
   - VCard.Types.Property.Version
@@ -140,6 +141,7 @@ tests:
     - VCard.Symbol.Private
     - VCard.Symbol.Private.Case
     - VCard.Symbol.Private.Compat
+    - VCard.Symbol.Private.Length
     - VCard.Symbol.Private.List
     - VCard.Symbol.Private.Prefix
     - VCard.Types.Param
