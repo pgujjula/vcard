@@ -28,7 +28,9 @@ module VCard.Symbol.Private
 
     -- * Prefix checking
     IsPrefixOf,
+    sIsPrefixOf,
     IsPrefixOfInsensitive,
+    sIsPrefixOfInsensitive,
 
     -- * Miscellaneous utilities
     ToList,
@@ -50,4 +52,9 @@ import VCard.Symbol.Private.Compat
   )
 import VCard.Symbol.Private.Length (Length)
 import VCard.Symbol.Private.List (ToList, sToList)
-import VCard.Symbol.Private.Prefix (IsPrefixOf, IsPrefixOfInsensitive)
+import VCard.Symbol.Private.Prefix
+  ( IsPrefixOf,
+    IsPrefixOfInsensitive,
+    sIsPrefixOf,
+    sIsPrefixOfInsensitive,
+  )
