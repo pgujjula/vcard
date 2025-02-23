@@ -61,6 +61,8 @@ library:
   other-modules:
   - VCard.CaseInsensitive
   - VCard.Internal.Closed
+  - VCard.Natural.Private
+  - VCard.Natural.Private.Compat
   - VCard.Parse
   - VCard.Serialize
   - VCard.Types.Param.Generic
@@ -96,9 +98,11 @@ library:
   when:
   - condition: impl(ghc >= 9.6)
     other-modules:
+    - VCard.Natural.Private.Compat.New
     - VCard.Symbol.Private.Compat.New
   - condition: impl(ghc < 9.6)
     other-modules:
+    - VCard.Natural.Private.Compat.Old
     - VCard.Symbol.Private.Compat.Old
 
 tests:
@@ -141,6 +145,8 @@ tests:
     - VCard
     - VCard.CaseInsensitive
     - VCard.Internal.Closed
+    - VCard.Natural.Private
+    - VCard.Natural.Private.Compat
     - VCard.Parse
     - VCard.Serialize
     - VCard.Symbol.Private
@@ -192,7 +198,9 @@ tests:
     when:
     - condition: impl(ghc >= 9.6)
       other-modules:
+      - VCard.Natural.Private.Compat.New
       - VCard.Symbol.Private.Compat.New
     - condition: impl(ghc < 9.6)
       other-modules:
+      - VCard.Natural.Private.Compat.Old
       - VCard.Symbol.Private.Compat.Old

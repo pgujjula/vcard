@@ -41,6 +41,8 @@ library
   other-modules:
       VCard.CaseInsensitive
       VCard.Internal.Closed
+      VCard.Natural.Private
+      VCard.Natural.Private.Compat
       VCard.Parse
       VCard.Serialize
       VCard.Types.Param.Generic
@@ -84,9 +86,11 @@ library
     ghc-options: -Wno-unticked-promoted-constructors
   if impl(ghc >= 9.6)
     other-modules:
+        VCard.Natural.Private.Compat.New
         VCard.Symbol.Private.Compat.New
   if impl(ghc < 9.6)
     other-modules:
+        VCard.Natural.Private.Compat.Old
         VCard.Symbol.Private.Compat.Old
 
 test-suite vcard-tests
@@ -121,6 +125,8 @@ test-suite vcard-tests
       VCard
       VCard.CaseInsensitive
       VCard.Internal.Closed
+      VCard.Natural.Private
+      VCard.Natural.Private.Compat
       VCard.Parse
       VCard.Serialize
       VCard.Symbol.Private
@@ -177,7 +183,9 @@ test-suite vcard-tests
     ghc-options: -Wno-unticked-promoted-constructors
   if impl(ghc >= 9.6)
     other-modules:
+        VCard.Natural.Private.Compat.New
         VCard.Symbol.Private.Compat.New
   if impl(ghc < 9.6)
     other-modules:
+        VCard.Natural.Private.Compat.Old
         VCard.Symbol.Private.Compat.Old
