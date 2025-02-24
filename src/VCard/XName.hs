@@ -25,43 +25,24 @@ type Valid = ()
 -- not work on GHC 9.2. Once we drop support for GHC 9.2 we can rewrite them as
 -- type synonyms.
 type family XNameSymbol (s :: Symbol) :: Constraint where
-  XNameSymbol s =
-    If
-      (IsPrefixOfInsensitive "x-" s && Length s > 2 && AllIsXChar (ToList s))
-      Valid
-      ( TypeError
-          ( Text "No instance for (XNameSymbol "
-              :<>: ShowType s
-              :<>: Text ")"
-          )
-      )
+  XNameSymbol s = If (IsXNameSymbol s) Valid (NoInstance "XNameSymbol" s)
+
+type IsXNameSymbol s =
+  IsPrefixOfInsensitive "x-" s && Length s > 2 && AllIsXChar (ToList s)
 
 type family XNameLowerSymbol (s :: Symbol) :: Constraint where
   XNameLowerSymbol s =
-    If
-      (IsPrefixOf "x-" s && Length s > 2 && AllIsXCharLower (ToList s))
-      Valid
-      ( TypeError
-          ( Text "No instance for (XNameLowerSymbol "
-              :<>: ShowType s
-              :<>: Text ")"
-          )
-      )
+    If (IsXNameLowerSymbol s) Valid (NoInstance "XNameLowerSymbol" s)
+
+type IsXNameLowerSymbol s =
+  IsPrefixOf "x-" s && Length s > 2 && AllIsXCharLower (ToList s)
 
 type family XNameUpperSymbol (s :: Symbol) :: Constraint where
   XNameUpperSymbol s =
-    If
-      ( IsPrefixOfInsensitive "X-" s
-          && Length s > 2
-          && AllIsXCharUpper (ToList s)
-      )
-      Valid
-      ( TypeError
-          ( Text "No instance for (XNameUpperSymbol "
-              :<>: ShowType s
-              :<>: Text ")"
-          )
-      )
+    If (IsXNameUpperSymbol s) Valid (NoInstance "XNameUpperSymbol" s)
+
+type IsXNameUpperSymbol s =
+  IsPrefixOfInsensitive "X-" s && Length s > 2 && AllIsXCharUpper (ToList s)
 
 type family AllIsXChar (xs :: [Char]) where
   AllIsXChar '[] = True
@@ -153,3 +134,14 @@ type family IsDigit c where
   IsDigit '8' = True
   IsDigit '9' = True
   IsDigit c = False
+
+-- Utilities
+type family NoInstance (c :: Symbol) (s :: Symbol) where
+  NoInstance c s =
+    TypeError
+      ( Text "No instance for ("
+          :<>: Text c
+          :<>: Text " "
+          :<>: ShowType s
+          :<>: Text ")"
+      )
