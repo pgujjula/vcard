@@ -5,6 +5,7 @@
 module VCard.Natural.Private.Compat
   ( SNat,
     natSing,
+    withKnownNat,
   )
 where
 
@@ -12,10 +13,12 @@ where
 import VCard.Natural.Private.Compat.New
   ( SNat,
     natSing,
+    withKnownNat,
   )
 #else
 import VCard.Natural.Private.Compat.Old
   ( SNat,
     natSing,
+    withKnownNat,
   )
 #endif

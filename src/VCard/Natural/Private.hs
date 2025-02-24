@@ -5,7 +5,8 @@ module VCard.Natural.Private
   ( -- * 'Nat' singleton
     SNat,
     natSing,
+    withKnownNat,
   )
 where
 
-import VCard.Natural.Private.Compat (SNat, natSing)
+import VCard.Natural.Private.Compat (SNat, natSing, withKnownNat)
