@@ -12,9 +12,9 @@
 module VCard.XName (XNameSymbol, XNameLowerSymbol, XNameUpperSymbol) where
 
 import Data.Kind (Constraint)
+import Data.Ord.Singletons (type (>))
 import Data.Type.Bool (If, type (&&), type (||))
 import Data.Type.Equality (type (==))
-import Data.Type.Ord (type (>?))
 import GHC.TypeLits (ErrorMessage (ShowType, Text, (:<>:)), Symbol, TypeError)
 import VCard.Symbol.Private (IsPrefixOf, IsPrefixOfInsensitive, Length, ToList)
 
@@ -27,7 +27,7 @@ type Valid = ()
 type family XNameSymbol (s :: Symbol) :: Constraint where
   XNameSymbol s =
     If
-      (IsPrefixOfInsensitive "x-" s && Length s >? 2 && AllIsXChar (ToList s))
+      (IsPrefixOfInsensitive "x-" s && Length s > 2 && AllIsXChar (ToList s))
       Valid
       ( TypeError
           ( Text "No instance for (XNameSymbol "
@@ -39,7 +39,7 @@ type family XNameSymbol (s :: Symbol) :: Constraint where
 type family XNameLowerSymbol (s :: Symbol) :: Constraint where
   XNameLowerSymbol s =
     If
-      (IsPrefixOf "x-" s && Length s >? 2 && AllIsXCharLower (ToList s))
+      (IsPrefixOf "x-" s && Length s > 2 && AllIsXCharLower (ToList s))
       Valid
       ( TypeError
           ( Text "No instance for (XNameLowerSymbol "
@@ -52,7 +52,7 @@ type family XNameUpperSymbol (s :: Symbol) :: Constraint where
   XNameUpperSymbol s =
     If
       ( IsPrefixOfInsensitive "X-" s
-          && Length s >? 2
+          && Length s > 2
           && AllIsXCharUpper (ToList s)
       )
       Valid
