@@ -36,6 +36,7 @@ module VCard.Symbol.Private
     ToList,
     sToList,
     Length,
+    sLength,
   )
 where
 
@@ -50,7 +51,7 @@ import VCard.Symbol.Private.Compat
     withKnownChar,
     withKnownSymbol,
   )
-import VCard.Symbol.Private.Length (Length)
+import VCard.Symbol.Private.Length (Length, sLength)
 import VCard.Symbol.Private.List (ToList, sToList)
 import VCard.Symbol.Private.Prefix
   ( IsPrefixOf,
