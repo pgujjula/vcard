@@ -42,7 +42,7 @@ type family XNameUpperSymbol (s :: Symbol) :: Constraint where
     If (IsXNameUpperSymbol s) Valid (NoInstance "XNameUpperSymbol" s)
 
 type IsXNameUpperSymbol s =
-  IsPrefixOfInsensitive "X-" s && Length s > 2 && AllIsXCharUpper (ToList s)
+  IsPrefixOf "X-" s && Length s > 2 && AllIsXCharUpper (ToList s)
 
 type family AllIsXChar (xs :: [Char]) where
   AllIsXChar '[] = True
