@@ -99,6 +99,8 @@ test-suite vcard-tests
   other-modules:
       Test.VCard
       Test.VCard.CaseInsensitive
+      Test.VCard.Natural.Private
+      Test.VCard.Natural.Private.Compat
       Test.VCard.Symbol.Private
       Test.VCard.Symbol.Private.Case
       Test.VCard.Symbol.Private.Compat
