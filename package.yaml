@@ -65,6 +65,8 @@ library:
   - VCard.Natural.Private.Compat
   - VCard.Parse
   - VCard.Serialize
+  - VCard.Types.Param.Calscale
+  - VCard.Types.Param.Calscale.CalscaleValueSymbol
   - VCard.Types.Param.Generic
   - VCard.Types.Param.Language
   - VCard.Types.Param.Pref
@@ -165,6 +167,8 @@ tests:
     - VCard.Symbol.Private.List
     - VCard.Symbol.Private.Prefix
     - VCard.Types.Param
+    - VCard.Types.Param.Calscale
+    - VCard.Types.Param.Calscale.CalscaleValueSymbol
     - VCard.Types.Param.Generic
     - VCard.Types.Param.Language
     - VCard.Types.Param.Pref
