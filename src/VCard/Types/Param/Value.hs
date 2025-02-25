@@ -26,8 +26,6 @@ import VCard.Types.Param.Value.ValueValueSymbol
     testValueValueSymbol,
   )
 
-{-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
-
 type Value s = Param "VALUE" (ValueValue s)
 
 data ValueValue (s :: Symbol) where
