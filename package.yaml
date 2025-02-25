@@ -67,6 +67,7 @@ library:
   - VCard.Serialize
   - VCard.Types.Param.Generic
   - VCard.Types.Param.Language
+  - VCard.Types.Param.Pref
   - VCard.Types.Param.Value
   - VCard.Types.Param.Value.ValueValueSymbol
   - VCard.Symbol.Private
@@ -165,6 +166,7 @@ tests:
     - VCard.Types.Param
     - VCard.Types.Param.Generic
     - VCard.Types.Param.Language
+    - VCard.Types.Param.Pref
     - VCard.Types.Param.Value
     - VCard.Types.Param.Value.ValueValueSymbol
     - VCard.Types.Property
