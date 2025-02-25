@@ -73,6 +73,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages
   build-depends:
       base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21 || >=4.21 && <4.22
+    , constraints >=0.13 && <0.14 || >=0.14 && <0.15
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , finite-typelits >=0.1 && <0.2 || >=0.2 && <0.3
     , megaparsec >=9.0 && <10
@@ -164,6 +165,7 @@ test-suite vcard-tests
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21 || >=4.21 && <4.22
+    , constraints >=0.13 && <0.14 || >=0.14 && <0.15
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , data-ordlist ==0.4.*
     , deepseq >=1.4 && <1.5 || >=1.5 && <1.6 || >=1.6 && <1.7
