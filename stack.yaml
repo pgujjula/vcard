@@ -5,9 +5,13 @@ packages:
 - .
 
 extra-deps:
+- ghc-tcplugin-api-0.11.0.0
 - genvalidity-network-uri-0.0.0.0
+- large-generics-0.2.2
+- typelet-0.1.4
 - validity-network-uri-0.0.0.0
 - vary-0.1.1.0
+- large-anon-0.3.1
 
 flags:
   vary:
@@ -16,3 +20,5 @@ flags:
     cereal: false
     hashable: false
     quickcheck: false
+  large-anon:
+    disablefourmoluexec: true

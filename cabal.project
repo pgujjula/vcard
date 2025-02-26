@@ -4,3 +4,6 @@ packages: .
 
 package vary
   flags: -aeson -binary -cereal -hashable -quickcheck
+
+package large-anon
+  flags: -disablefourmoluexec

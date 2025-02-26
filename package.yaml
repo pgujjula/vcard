@@ -111,6 +111,7 @@ library:
   - VCard.Types.Param.Tz
   - VCard.Types.Param.Value
   - VCard.Types.Param.Value.ValueValueSymbol
+  - VCard.Types.Property.Generic
   - VCard.Types.Property.Version
   - VCard.Types.VCard.Internal
   - VCard.Types.Value.Boolean
@@ -128,6 +129,7 @@ library:
   - constraints ^>= {0.13, 0.14}
   - containers ^>= {0.6, 0.7, 0.8}
   - finite-typelits ^>= {0.1, 0.2}
+  - large-anon ^>= {0.3}
   - megaparsec >= 9.0 && < 10
   - network-uri ^>= {2.6}
   - parser-combinators ^>= {1.3}
@@ -246,6 +248,7 @@ tests:
     - VCard.Types.Param.Value.ValueValueSymbol
     - VCard.Types.Param.Tz
     - VCard.Types.Property
+    - VCard.Types.Property.Generic
     - VCard.Types.Property.Version
     - VCard.Types.VCard
     - VCard.Types.VCard.Internal
@@ -272,6 +275,7 @@ tests:
     - deepseq ^>= {1.4, 1.5, 1.6}
     - finite-typelits ^>= {0.1, 0.2}
     - genvalidity-network-uri ^>= {0.0}
+    - large-anon ^>= {0.3}
     - megaparsec >= 9.0 && < 10
     - network-uri ^>= {2.6}
     - parser-combinators ^>= {1.3}
