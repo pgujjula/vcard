@@ -48,6 +48,7 @@ library
       VCard.Types.Param.Calscale
       VCard.Types.Param.Calscale.CalscaleValueSymbol
       VCard.Types.Param.Generic
+      VCard.Types.Param.Geo
       VCard.Types.Param.Language
       VCard.Types.Param.Pref
       VCard.Types.Param.Value
@@ -151,6 +152,7 @@ test-suite vcard-tests
       VCard.Types.Param.Calscale
       VCard.Types.Param.Calscale.CalscaleValueSymbol
       VCard.Types.Param.Generic
+      VCard.Types.Param.Geo
       VCard.Types.Param.Language
       VCard.Types.Param.Pref
       VCard.Types.Param.Value
