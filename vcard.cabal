@@ -118,6 +118,7 @@ test-suite vcard-tests
       Test.VCard.Types.Param
       Test.VCard.Types.Param.Calscale
       Test.VCard.Types.Param.Generic
+      Test.VCard.Types.Param.Geo
       Test.VCard.Types.Param.Language
       Test.VCard.Types.Param.Pref
       Test.VCard.Types.Param.Value
