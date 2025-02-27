@@ -1,15 +1,18 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeApplications #-}
 
-module VCard.Types.Param.Generic (Param (..)) where
+module VCard.Types.Param.Generic
+  ( Param (..),
+    mkParamParser,
+    mkParamSerializer,
+  )
+where
 
 import Control.Monad (void)
 import Data.Kind (Type)
@@ -27,19 +30,17 @@ data Param (name :: Symbol) (value :: Type) = Param
   }
   deriving (Eq, Show)
 
-instance
+mkParamParser ::
   forall name value.
-  (KnownSymbol name, HasParser value) =>
-  HasParser (Param name value)
-  where
-  parser :: Parser (Param name value)
-  parser = do
-    paramName <- parser @(CaseInsensitiveUpper name)
-    void (char '=')
-    paramValue <- parser @value
-    pure $ Param {..}
+  (KnownSymbol name) =>
+  Parser value ->
+  Parser (Param name value)
+mkParamParser valueParser = do
+  paramName <- parser @(CaseInsensitiveUpper name)
+  void (char '=')
+  paramValue <- valueParser
+  pure $ Param {..}
 
-instance (HasSerializer value) => HasSerializer (Param name value) where
-  serializer :: Serializer (Param name value)
-  serializer (Param {..}) =
-    serializer paramName <> "=" <> serializer paramValue
+mkParamSerializer :: Serializer value -> Serializer (Param name value)
+mkParamSerializer valueSerializer (Param {..}) =
+  serializer paramName <> "=" <> valueSerializer paramValue
