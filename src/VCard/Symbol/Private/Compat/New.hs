@@ -12,6 +12,8 @@ module VCard.Symbol.Private.Compat.New
     testSSymbolEquality,
     withKnownChar,
     withKnownSymbol,
+    withSomeSChar,
+    withSomeSSymbol,
     sUnconsSymbol,
   )
 where
@@ -26,6 +28,8 @@ import GHC.TypeLits
     UnconsSymbol,
     charSing,
     symbolSing,
+    withSomeSChar,
+    withSomeSSymbol,
   )
 import GHC.TypeLits qualified as GHC (withKnownChar, withKnownSymbol)
 import GHC.TypeLits.Singletons qualified as Singletons (sUnconsSymbol)

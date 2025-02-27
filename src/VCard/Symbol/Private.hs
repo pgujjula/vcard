@@ -6,11 +6,13 @@ module VCard.Symbol.Private
     SChar,
     charSing,
     withKnownChar,
+    withSomeSChar,
 
     -- * 'Symbol' singleton
     SSymbol,
     symbolSing,
     withKnownSymbol,
+    withSomeSSymbol,
 
     -- * Singleton equality
     testSCharEquality,
@@ -50,6 +52,8 @@ import VCard.Symbol.Private.Compat
     testSSymbolEquality,
     withKnownChar,
     withKnownSymbol,
+    withSomeSChar,
+    withSomeSSymbol,
   )
 import VCard.Symbol.Private.Length (Length, sLength)
 import VCard.Symbol.Private.List (ToList, sToList)

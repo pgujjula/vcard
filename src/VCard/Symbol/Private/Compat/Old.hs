@@ -1,5 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
@@ -13,6 +15,8 @@ module VCard.Symbol.Private.Compat.Old
     testSSymbolEquality,
     withKnownChar,
     withKnownSymbol,
+    withSomeSChar,
+    withSomeSSymbol,
     sUnconsSymbol,
   )
 where
@@ -26,6 +30,7 @@ import GHC.TypeLits
     KnownSymbol,
     SomeChar (..),
     SomeSymbol (..),
+    Symbol,
     UnconsSymbol,
     someCharVal,
     someSymbolVal,
@@ -72,6 +77,18 @@ withKnownChar = Singletons.withKnownChar
 -- | Obtain a @'KnownSymbol' s@ constraint given an @'SSymbol' s@ value.
 withKnownSymbol :: SSymbol s -> ((KnownSymbol s) => r) -> r
 withKnownSymbol = Singletons.withKnownSymbol
+
+-- | Convert a 'Char' into an 'SChar c' value.
+withSomeSChar :: Char -> (forall (c :: Char). SChar c -> r) -> r
+withSomeSChar char f =
+  case someCharVal char of
+    SomeChar (Proxy :: Proxy c) -> f (charSing :: SChar c)
+
+-- | Convert a 'String' into an 'SSymbol s' value.
+withSomeSSymbol :: String -> (forall (s :: Symbol). SSymbol s -> r) -> r
+withSomeSSymbol string f =
+  case someSymbolVal string of
+    SomeSymbol (Proxy :: Proxy s) -> f (symbolSing :: SSymbol s)
 
 -- | Singleton of 'UnconsSymbol'.
 
