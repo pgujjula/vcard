@@ -3,6 +3,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE TypeApplications #-}
 
 module VCard.Types.Param.Pref
   ( Pref,
@@ -14,7 +15,7 @@ import Control.Monad (when)
 import Data.Finite (Finite, getFinite, packFinite)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param)
+import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
 import VCard.Types.Value.Integer (naturalP)
 import VCard.Util (intToText)
 
@@ -24,6 +25,12 @@ type Pref = Param "PREF" PrefValue
 --   `finite 99` represents 100
 newtype PrefValue = PrefValue {unPrefValue :: Finite 100}
   deriving (Eq, Show, Ord)
+
+instance HasParser (Param "PREF" PrefValue) where
+  parser = mkParamParser (parser @PrefValue)
+
+instance HasSerializer (Param "PREF" PrefValue) where
+  serializer = mkParamSerializer (serializer @PrefValue)
 
 instance HasParser PrefValue where
   parser :: Parser PrefValue

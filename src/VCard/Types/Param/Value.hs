@@ -1,6 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE KindSignatures #-}
@@ -20,7 +21,7 @@ import VCard.CaseInsensitive (CaseInsensitiveLower)
 import VCard.Parse (HasParser (..), Parser)
 import VCard.Serialize (HasSerializer (..), Serializer)
 import VCard.Symbol.Private (symbolSing)
-import VCard.Types.Param.Generic (Param)
+import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
 import VCard.Types.Param.Value.ValueValueSymbol
   ( ValueValueSymbol,
     testValueValueSymbol,
@@ -34,6 +35,12 @@ data ValueValue (s :: Symbol) where
 deriving instance Eq (ValueValue s)
 
 deriving instance Show (ValueValue s)
+
+instance (KnownSymbol s) => HasParser (Param "VALUE" (ValueValue s)) where
+  parser = mkParamParser (parser @(ValueValue s))
+
+instance HasSerializer (Param "VALUE" (ValueValue s)) where
+  serializer = mkParamSerializer (serializer @(ValueValue s))
 
 instance (KnownSymbol s) => HasParser (ValueValue s) where
   parser :: Parser (ValueValue s)

@@ -15,7 +15,7 @@ import Control.Monad (void)
 import Text.Megaparsec.Char (string)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param)
+import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
 import VCard.Types.Value.URI (URI)
 import VCard.Util (dquote)
 
@@ -23,6 +23,12 @@ type Geo = Param "GEO" GeoValue
 
 newtype GeoValue = GeoValue {unGeoValue :: URI}
   deriving (Eq, Show, Ord)
+
+instance HasParser (Param "GEO" GeoValue) where
+  parser = mkParamParser (parser @GeoValue)
+
+instance HasSerializer (Param "GEO" GeoValue) where
+  serializer = mkParamSerializer (serializer @GeoValue)
 
 instance HasParser GeoValue where
   parser :: Parser GeoValue
