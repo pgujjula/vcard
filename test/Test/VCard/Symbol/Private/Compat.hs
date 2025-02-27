@@ -4,15 +4,29 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Test.VCard.Symbol.Private.Compat (tests) where
 
 import Data.Maybe (isJust, isNothing)
 import Data.Maybe.Singletons (SMaybe (SJust, SNothing))
 import Data.Tuple.Singletons (STuple2 (..))
-import GHC.TypeLits (charVal, symbolVal)
+import GHC.TypeLits
+  ( CharToNat,
+    NatToChar,
+    Symbol,
+    UnconsSymbol,
+    charVal,
+    symbolVal,
+    type (+),
+  )
+import GHC.TypeLits.Singletons (sCharToNat, sNatToChar)
+import Prelude.Singletons ((%+))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase, (@?=))
+import VCard.Natural.Private (natSing)
 import VCard.Symbol.Private.Compat
   ( SChar,
     SSymbol,
@@ -21,6 +35,10 @@ import VCard.Symbol.Private.Compat
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
+    withKnownChar,
+    withKnownSymbol,
+    withSomeSChar,
+    withSomeSSymbol,
   )
 
 tests :: TestTree
@@ -31,6 +49,8 @@ tests =
       test_symbolSing,
       test_testSCharEquality,
       test_testSSymbolEquality,
+      test_withSomeSChar,
+      test_withSomeSSymbol,
       test_sUnconsSymbol
     ]
 
@@ -73,6 +93,53 @@ test_testSSymbolEquality =
     assertUnequalSSymbol
       (symbolSing @"The quick brown fox\n")
       (symbolSing @"The quick brown fox\r\n")
+
+test_withSomeSChar :: TestTree
+test_withSomeSChar =
+  testCase "withSomeSChar" $ do
+    let bumpCharViaSingleton :: Char -> Char
+        bumpCharViaSingleton c =
+          withSomeSChar c $ \(sc :: SChar c) ->
+            let sc' = sBumpChar sc
+             in withKnownChar sc' $ charVal sc'
+    bumpCharViaSingleton 'a' @?= 'b'
+    bumpCharViaSingleton 'x' @?= 'y'
+    bumpCharViaSingleton 'A' @?= 'B'
+    bumpCharViaSingleton 'J' @?= 'K'
+    bumpCharViaSingleton '1' @?= '2'
+
+type family BumpChar (c :: Char) :: Char where
+  BumpChar c = NatToChar (CharToNat c + 1)
+
+sBumpChar :: forall c. SChar c -> SChar (BumpChar c)
+sBumpChar sc = sNatToChar (sCharToNat sc %+ natSing @1)
+
+test_withSomeSSymbol :: TestTree
+test_withSomeSSymbol =
+  testCase "withSomeSSymbol" $ do
+    let drop1ViaSingleton :: String -> String
+        drop1ViaSingleton s =
+          withSomeSSymbol s $ \(ss :: SSymbol s) ->
+            let ss' = sDrop1 ss
+             in withKnownSymbol ss' $ symbolVal ss'
+    drop1ViaSingleton "" @?= ""
+    drop1ViaSingleton "a" @?= ""
+    drop1ViaSingleton "ab" @?= "b"
+    drop1ViaSingleton "abc" @?= "bc"
+
+type family Drop1 (s :: Symbol) :: Symbol where
+  Drop1 s = Drop1Uncons (UnconsSymbol s)
+
+type family Drop1Uncons (a :: Maybe (Char, Symbol)) :: Symbol where
+  Drop1Uncons Nothing = ""
+  Drop1Uncons (Just '(c, s)) = s
+
+sDrop1 :: SSymbol s -> SSymbol (Drop1 s)
+sDrop1 ss = sDrop1Uncons (sUnconsSymbol ss)
+
+sDrop1Uncons :: SMaybe a -> SSymbol (Drop1Uncons a)
+sDrop1Uncons SNothing = symbolSing @""
+sDrop1Uncons (SJust (STuple2 _ ss)) = ss
 
 test_sUnconsSymbol :: TestTree
 test_sUnconsSymbol =
