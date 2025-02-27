@@ -13,10 +13,16 @@
 
 module VCard.XName
   ( XNameSymbol,
+    IsXNameSymbol,
+    sIsXNameSymbol,
     testXNameSymbol,
     XNameLowerSymbol,
+    IsXNameLowerSymbol,
+    sIsXNameLowerSymbol,
     testXNameLowerSymbol,
     XNameUpperSymbol,
+    IsXNameUpperSymbol,
+    sIsXNameUpperSymbol,
     testXNameUpperSymbol,
   )
 where

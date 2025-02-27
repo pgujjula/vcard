@@ -57,6 +57,8 @@ library
       VCard.Types.Param.Geo
       VCard.Types.Param.Language
       VCard.Types.Param.Pref
+      VCard.Types.Param.Type
+      VCard.Types.Param.Type.TypeValueSymbol
       VCard.Types.Param.Value
       VCard.Types.Param.Value.ValueValueSymbol
       VCard.Types.Property.Version
@@ -156,6 +158,8 @@ test-suite vcard-tests
       VCard.Types.Param.Geo
       VCard.Types.Param.Language
       VCard.Types.Param.Pref
+      VCard.Types.Param.Type
+      VCard.Types.Param.Type.TypeValueSymbol
       VCard.Types.Param.Value
       VCard.Types.Param.Value.ValueValueSymbol
       VCard.Types.Property

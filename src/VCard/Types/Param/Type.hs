@@ -1,0 +1,161 @@
+-- SPDX-FileCopyrightText: Copyright Preetham Gujjula
+-- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
+
+module VCard.Types.Param.Type
+  ( Type,
+    TypeGeneral,
+    TypeGeneralSymbol,
+    TypeTel,
+    TypeTelSymbol,
+    TypeRelated,
+    TypeRelatedSymbol,
+    TypeValue (..),
+  )
+where
+
+import Control.Monad (MonadPlus)
+import Data.Char (isAlpha, isAscii, isDigit)
+import Data.Constraint (Dict (..))
+import Data.Kind (Constraint)
+import Data.List qualified as List (intersperse)
+import Data.List.NonEmpty (NonEmpty (..))
+import Data.List.NonEmpty qualified as NonEmpty (toList)
+import Data.Maybe (isJust)
+import Data.Text (Text)
+import Data.Text qualified as Text
+import GHC.TypeLits (Symbol)
+import Text.Megaparsec (many, takeWhile1P)
+import Text.Megaparsec.Char (char)
+import VCard.CaseInsensitive (CaseInsensitiveLower (..))
+import VCard.Parse (HasParser, Parser, parser)
+import VCard.Serialize (HasSerializer, Serializer, serializer)
+import VCard.Symbol.Private
+  ( SSymbol,
+    sToLower,
+    testSSymbolEquality,
+    withSomeSSymbol,
+  )
+import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Type.TypeValueSymbol
+  ( TypeGeneralSymbol,
+    TypeRelatedSymbol,
+    TypeTelSymbol,
+    testTypeGeneralSymbol,
+    testTypeRelatedSymbol,
+    testTypeTelSymbol,
+  )
+
+type Type symbol_class = Param "TYPE" (NonEmpty (TypeValue symbol_class))
+
+type TypeGeneral = Type TypeGeneralSymbol
+
+type TypeRelated = Type TypeRelatedSymbol
+
+type TypeTel = Type TypeTelSymbol
+
+data TypeValue (symbol_class :: Symbol -> Constraint) where
+  TypeValue ::
+    (symbol_class s) => CaseInsensitiveLower s -> TypeValue symbol_class
+
+instance Eq (TypeValue symbol_class) where
+  (==)
+    (TypeValue (CaseInsensitiveLower s1))
+    (TypeValue (CaseInsensitiveLower s2)) = isJust (testSSymbolEquality s1 s2)
+
+deriving instance Show (TypeValue symbol_class)
+
+mkTypeValueParser ::
+  (forall s. SSymbol s -> Maybe (Dict (symbol_class s))) ->
+  Parser (TypeValue symbol_class)
+mkTypeValueParser tester = do
+  (name :: Text) <- takeWhile1P (Just "type name") isTokenChar
+  withSomeSSymbol (Text.unpack name) $ \(sname :: SSymbol name) ->
+    case tester (sToLower sname) of
+      Nothing -> fail "TypeValue TypeGeneralSymbol: no parse"
+      Just Dict -> pure $ TypeValue (CaseInsensitiveLower sname)
+
+instance HasParser (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol))) where
+  parser :: Parser (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
+  parser =
+    mkParamParser
+      (sepByNonEmpty (parser @(TypeValue TypeGeneralSymbol)) (char ','))
+
+instance
+  HasSerializer
+    (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
+  where
+  serializer ::
+    Serializer (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
+  serializer =
+    mkParamSerializer $
+      intersperseCommaNE (serializer @(TypeValue TypeGeneralSymbol))
+
+instance HasParser (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol))) where
+  parser :: Parser (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol)))
+  parser =
+    mkParamParser
+      (sepByNonEmpty (parser @(TypeValue TypeTelSymbol)) (char ','))
+
+instance HasSerializer (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol))) where
+  serializer :: Serializer (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol)))
+  serializer =
+    mkParamSerializer $
+      intersperseCommaNE (serializer @(TypeValue TypeTelSymbol))
+
+instance HasParser (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol))) where
+  parser :: Parser (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
+  parser =
+    mkParamParser
+      (sepByNonEmpty (parser @(TypeValue TypeRelatedSymbol)) (char ','))
+
+instance
+  HasSerializer
+    (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
+  where
+  serializer ::
+    Serializer (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
+  serializer =
+    mkParamSerializer $
+      intersperseCommaNE (serializer @(TypeValue TypeRelatedSymbol))
+
+instance HasParser (TypeValue TypeGeneralSymbol) where
+  parser :: Parser (TypeValue TypeGeneralSymbol)
+  parser = mkTypeValueParser testTypeGeneralSymbol
+
+instance HasParser (TypeValue TypeTelSymbol) where
+  parser :: Parser (TypeValue TypeTelSymbol)
+  parser = mkTypeValueParser testTypeTelSymbol
+
+instance HasParser (TypeValue TypeRelatedSymbol) where
+  parser :: Parser (TypeValue TypeRelatedSymbol)
+  parser = mkTypeValueParser testTypeRelatedSymbol
+
+instance HasSerializer (TypeValue symbol_class) where
+  serializer :: Serializer (TypeValue symbol_class)
+  serializer (TypeValue x) = serializer x
+
+-- Utilities
+isTokenChar :: Char -> Bool
+isTokenChar c =
+  (isAlpha c && isAscii c)
+    || isDigit c
+    || c == '-'
+
+sepByNonEmpty :: (MonadPlus m) => m a -> m sep -> m (NonEmpty a)
+sepByNonEmpty p sep = do
+  x <- p
+  (x :|) <$> many (sep >> p)
+
+intersperseCommaNE :: Serializer a -> Serializer (NonEmpty a)
+intersperseCommaNE s xs =
+  Text.concat (List.intersperse (Text.pack ",") (map s (NonEmpty.toList xs)))
