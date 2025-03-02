@@ -94,7 +94,7 @@ library:
   - VCard.XName
   dependencies:
   - constraints ^>= {0.13, 0.14}
-  - containers ^>= {0.6, 0.7}
+  - containers ^>= {0.6, 0.7, 0.8}
   - finite-typelits ^>= {0.1, 0.2}
   - megaparsec >= 9.0 && < 10
   - network-uri ^>= {2.6}
@@ -200,7 +200,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - constraints ^>= {0.13, 0.14}
-    - containers ^>= {0.6, 0.7}
+    - containers ^>= {0.6, 0.7, 0.8}
     - data-ordlist ^>= {0.4}
     - deepseq ^>= {1.4, 1.5, 1.6}
     - finite-typelits ^>= {0.1, 0.2}
