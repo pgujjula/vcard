@@ -56,6 +56,7 @@ library
       VCard.Types.Param.Generic
       VCard.Types.Param.Geo
       VCard.Types.Param.Language
+      VCard.Types.Param.PID
       VCard.Types.Param.Pref
       VCard.Types.Param.Type
       VCard.Types.Param.Type.TypeValueSymbol
@@ -86,6 +87,7 @@ library
     , finite-typelits >=0.1 && <0.2 || >=0.2 && <0.3
     , megaparsec >=9.0 && <10
     , network-uri ==2.6.*
+    , parser-combinators ==1.3.*
     , scientific ==0.3.*
     , singletons-base >=3.0 && <3.1 || >=3.1 && <3.2 || >=3.2 && <3.3 || >=3.3 && <3.4 || >=3.4 && <3.5 || >=3.5 && <3.6
     , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
@@ -158,6 +160,7 @@ test-suite vcard-tests
       VCard.Types.Param.Generic
       VCard.Types.Param.Geo
       VCard.Types.Param.Language
+      VCard.Types.Param.PID
       VCard.Types.Param.Pref
       VCard.Types.Param.Type
       VCard.Types.Param.Type.TypeValueSymbol
@@ -195,6 +198,7 @@ test-suite vcard-tests
     , genvalidity-network-uri ==0.0.*
     , megaparsec >=9.0 && <10
     , network-uri ==2.6.*
+    , parser-combinators ==1.3.*
     , scientific ==0.3.*
     , should-not-typecheck ==2.1.*
     , singletons-base >=3.0 && <3.1 || >=3.1 && <3.2 || >=3.2 && <3.3 || >=3.3 && <3.4 || >=3.4 && <3.5 || >=3.5 && <3.6
