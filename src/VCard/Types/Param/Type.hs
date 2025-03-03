@@ -23,18 +23,15 @@ module VCard.Types.Param.Type
   )
 where
 
-import Control.Monad (MonadPlus)
 import Data.Char (isAlpha, isAscii, isDigit)
 import Data.Constraint (Dict (..))
 import Data.Kind (Constraint)
-import Data.List qualified as List (intersperse)
 import Data.List.NonEmpty (NonEmpty (..))
-import Data.List.NonEmpty qualified as NonEmpty (toList)
 import Data.Maybe (isJust)
 import Data.Text (Text)
 import Data.Text qualified as Text
 import GHC.TypeLits (Symbol)
-import Text.Megaparsec (many, takeWhile1P)
+import Text.Megaparsec (takeWhile1P)
 import Text.Megaparsec.Char (char)
 import VCard.CaseInsensitive (CaseInsensitiveLower (..))
 import VCard.Parse (HasParser, Parser, parser)
@@ -54,6 +51,7 @@ import VCard.Types.Param.Type.TypeValueSymbol
     testTypeRelatedSymbol,
     testTypeTelSymbol,
   )
+import VCard.Util (intersperseCommaNE, sepByNonEmpty)
 
 type Type symbol_class = Param "TYPE" (NonEmpty (TypeValue symbol_class))
 
@@ -150,12 +148,3 @@ isTokenChar c =
   (isAlpha c && isAscii c)
     || isDigit c
     || c == '-'
-
-sepByNonEmpty :: (MonadPlus m) => m a -> m sep -> m (NonEmpty a)
-sepByNonEmpty p sep = do
-  x <- p
-  (x :|) <$> many (sep >> p)
-
-intersperseCommaNE :: Serializer a -> Serializer (NonEmpty a)
-intersperseCommaNE s xs =
-  Text.concat (List.intersperse (Text.pack ",") (map s (NonEmpty.toList xs)))
