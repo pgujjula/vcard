@@ -26,31 +26,30 @@ module VCard.XName
   )
 where
 
-import Data.Bool.Singletons (SBool (SFalse, STrue), (%&&), (%||))
+import Data.Bool.Singletons (SBool (SFalse, STrue), (%&&))
 import Data.Constraint (Dict (..))
-import Data.Eq.Singletons ((%==), type (==))
 import Data.Kind (Constraint)
-import Data.List.Singletons (SList (SCons, SNil))
 import Data.Ord.Singletons ((%>), type (>))
-import Data.Type.Bool (If, type (&&), type (||))
-import Data.Type.Equality ((:~:) (Refl))
+import Data.Type.Bool (If, type (&&))
 import GHC.TypeLits (Symbol)
-import Unsafe.Coerce (unsafeCoerce)
+import VCard.AlphaDigitDash
+  ( IsAlphaDigitDashLowerSymbol,
+    IsAlphaDigitDashSymbol,
+    IsAlphaDigitDashUpperSymbol,
+    sIsAlphaDigitDashLowerSymbol,
+    sIsAlphaDigitDashSymbol,
+    sIsAlphaDigitDashUpperSymbol,
+  )
 import VCard.Natural.Private (natSing)
 import VCard.Symbol.Private
   ( IsPrefixOf,
     IsPrefixOfInsensitive,
     Length,
-    SChar,
     SSymbol,
-    ToList,
-    charSing,
     sIsPrefixOf,
     sIsPrefixOfInsensitive,
     sLength,
-    sToList,
     symbolSing,
-    testSCharEquality,
   )
 import VCard.Util (NoInstance, Truth)
 
@@ -67,13 +66,13 @@ testXNameSymbol ss =
     SFalse -> Nothing
 
 type IsXNameSymbol s =
-  IsPrefixOfInsensitive "x-" s && Length s > 2 && AllIsXChar (ToList s)
+  IsPrefixOfInsensitive "x-" s && Length s > 2 && IsAlphaDigitDashSymbol s
 
 sIsXNameSymbol :: SSymbol s -> SBool (IsXNameSymbol s)
 sIsXNameSymbol ss =
   sIsPrefixOfInsensitive (symbolSing @"x-") ss
     %&& sLength ss %> natSing @2
-    %&& sAllIsXChar (sToList ss)
+    %&& sIsAlphaDigitDashSymbol ss
 
 type family XNameLowerSymbol (s :: Symbol) :: Constraint where
   XNameLowerSymbol s =
@@ -86,13 +85,13 @@ testXNameLowerSymbol ss =
     SFalse -> Nothing
 
 type IsXNameLowerSymbol s =
-  IsPrefixOf "x-" s && Length s > 2 && AllIsXCharLower (ToList s)
+  IsPrefixOf "x-" s && Length s > 2 && IsAlphaDigitDashLowerSymbol s
 
 sIsXNameLowerSymbol :: SSymbol s -> SBool (IsXNameLowerSymbol s)
 sIsXNameLowerSymbol ss =
   sIsPrefixOf (symbolSing @"x-") ss
     %&& sLength ss %> natSing @2
-    %&& sAllIsXCharLower (sToList ss)
+    %&& sIsAlphaDigitDashLowerSymbol ss
 
 type family XNameUpperSymbol (s :: Symbol) :: Constraint where
   XNameUpperSymbol s =
@@ -105,221 +104,10 @@ testXNameUpperSymbol ss =
     SFalse -> Nothing
 
 type IsXNameUpperSymbol s =
-  IsPrefixOf "X-" s && Length s > 2 && AllIsXCharUpper (ToList s)
+  IsPrefixOf "X-" s && Length s > 2 && IsAlphaDigitDashUpperSymbol s
 
 sIsXNameUpperSymbol :: SSymbol s -> SBool (IsXNameUpperSymbol s)
 sIsXNameUpperSymbol ss =
   sIsPrefixOf (symbolSing @"X-") ss
     %&& sLength ss %> natSing @2
-    %&& sAllIsXCharUpper (sToList ss)
-
-type family AllIsXChar (xs :: [Char]) where
-  AllIsXChar '[] = True
-  AllIsXChar (x : xs) = IsXChar x && AllIsXChar xs
-
-sAllIsXChar :: SList (xs :: [Char]) -> SBool (AllIsXChar xs)
-sAllIsXChar SNil = STrue
-sAllIsXChar (SCons sx sxs) = sIsXChar sx %&& sAllIsXChar sxs
-
-type family AllIsXCharLower (xs :: [Char]) where
-  AllIsXCharLower '[] = True
-  AllIsXCharLower (x : xs) = IsXCharLower x && AllIsXCharLower xs
-
-sAllIsXCharLower :: SList (xs :: [Char]) -> SBool (AllIsXCharLower xs)
-sAllIsXCharLower SNil = STrue
-sAllIsXCharLower (SCons sx sxs) = sIsXCharLower sx %&& sAllIsXCharLower sxs
-
-type family AllIsXCharUpper (xs :: [Char]) where
-  AllIsXCharUpper '[] = True
-  AllIsXCharUpper (x : xs) = IsXCharUpper x && AllIsXCharUpper xs
-
-sAllIsXCharUpper :: SList (xs :: [Char]) -> SBool (AllIsXCharUpper xs)
-sAllIsXCharUpper SNil = STrue
-sAllIsXCharUpper (SCons sx sxs) = sIsXCharUpper sx %&& sAllIsXCharUpper sxs
-
-type IsXChar c = IsAlpha c || IsDigit c || c == '-'
-
-sIsXChar :: SChar c -> SBool (IsXChar c)
-sIsXChar sc = sIsAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
-
-type IsXCharLower c = IsAlphaLower c || IsDigit c || c == '-'
-
-sIsXCharLower :: SChar c -> SBool (IsXCharLower c)
-sIsXCharLower sc = sIsAlphaLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
-
-type IsXCharUpper c = IsAlphaUpper c || IsDigit c || c == '-'
-
-sIsXCharUpper :: SChar c -> SBool (IsXCharUpper c)
-sIsXCharUpper sc = sIsAlphaUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
-
-type IsAlpha c = IsAlphaLower c || IsAlphaUpper c
-
-sIsAlpha :: SChar c -> SBool (IsAlpha c)
-sIsAlpha sc = sIsAlphaLower sc %|| sIsAlphaUpper sc
-
-type family IsAlphaUpper c where
-  IsAlphaUpper 'A' = True
-  IsAlphaUpper 'B' = True
-  IsAlphaUpper 'C' = True
-  IsAlphaUpper 'D' = True
-  IsAlphaUpper 'E' = True
-  IsAlphaUpper 'F' = True
-  IsAlphaUpper 'G' = True
-  IsAlphaUpper 'H' = True
-  IsAlphaUpper 'I' = True
-  IsAlphaUpper 'J' = True
-  IsAlphaUpper 'K' = True
-  IsAlphaUpper 'L' = True
-  IsAlphaUpper 'M' = True
-  IsAlphaUpper 'N' = True
-  IsAlphaUpper 'O' = True
-  IsAlphaUpper 'P' = True
-  IsAlphaUpper 'Q' = True
-  IsAlphaUpper 'R' = True
-  IsAlphaUpper 'S' = True
-  IsAlphaUpper 'T' = True
-  IsAlphaUpper 'U' = True
-  IsAlphaUpper 'V' = True
-  IsAlphaUpper 'W' = True
-  IsAlphaUpper 'X' = True
-  IsAlphaUpper 'Y' = True
-  IsAlphaUpper 'Z' = True
-  IsAlphaUpper c = False
-
-sIsAlphaUpper :: forall c. SChar c -> SBool (IsAlphaUpper c)
-sIsAlphaUpper sc =
-  markUpper (charSing @'A')
-    . markUpper (charSing @'B')
-    . markUpper (charSing @'C')
-    . markUpper (charSing @'D')
-    . markUpper (charSing @'E')
-    . markUpper (charSing @'F')
-    . markUpper (charSing @'G')
-    . markUpper (charSing @'H')
-    . markUpper (charSing @'I')
-    . markUpper (charSing @'J')
-    . markUpper (charSing @'K')
-    . markUpper (charSing @'L')
-    . markUpper (charSing @'M')
-    . markUpper (charSing @'N')
-    . markUpper (charSing @'O')
-    . markUpper (charSing @'P')
-    . markUpper (charSing @'Q')
-    . markUpper (charSing @'R')
-    . markUpper (charSing @'S')
-    . markUpper (charSing @'T')
-    . markUpper (charSing @'U')
-    . markUpper (charSing @'V')
-    . markUpper (charSing @'W')
-    . markUpper (charSing @'X')
-    . markUpper (charSing @'Y')
-    . markUpper (charSing @'Z')
-    $ unsafeCoerce SFalse
-  where
-    markUpper ::
-      (IsAlphaUpper x ~ True) =>
-      SChar x ->
-      SBool (IsAlphaUpper c) ->
-      SBool (IsAlphaUpper c)
-    markUpper sx sb = maybe sb (\Refl -> STrue) (testSCharEquality sc sx)
-
-type family IsAlphaLower c where
-  IsAlphaLower 'a' = True
-  IsAlphaLower 'b' = True
-  IsAlphaLower 'c' = True
-  IsAlphaLower 'd' = True
-  IsAlphaLower 'e' = True
-  IsAlphaLower 'f' = True
-  IsAlphaLower 'g' = True
-  IsAlphaLower 'h' = True
-  IsAlphaLower 'i' = True
-  IsAlphaLower 'j' = True
-  IsAlphaLower 'k' = True
-  IsAlphaLower 'l' = True
-  IsAlphaLower 'm' = True
-  IsAlphaLower 'n' = True
-  IsAlphaLower 'o' = True
-  IsAlphaLower 'p' = True
-  IsAlphaLower 'q' = True
-  IsAlphaLower 'r' = True
-  IsAlphaLower 's' = True
-  IsAlphaLower 't' = True
-  IsAlphaLower 'u' = True
-  IsAlphaLower 'v' = True
-  IsAlphaLower 'w' = True
-  IsAlphaLower 'x' = True
-  IsAlphaLower 'y' = True
-  IsAlphaLower 'z' = True
-  IsAlphaLower c = False
-
-sIsAlphaLower :: forall c. SChar c -> SBool (IsAlphaLower c)
-sIsAlphaLower sc =
-  markLower (charSing @'a')
-    . markLower (charSing @'b')
-    . markLower (charSing @'c')
-    . markLower (charSing @'d')
-    . markLower (charSing @'e')
-    . markLower (charSing @'f')
-    . markLower (charSing @'g')
-    . markLower (charSing @'h')
-    . markLower (charSing @'i')
-    . markLower (charSing @'j')
-    . markLower (charSing @'k')
-    . markLower (charSing @'l')
-    . markLower (charSing @'m')
-    . markLower (charSing @'n')
-    . markLower (charSing @'o')
-    . markLower (charSing @'p')
-    . markLower (charSing @'q')
-    . markLower (charSing @'r')
-    . markLower (charSing @'s')
-    . markLower (charSing @'t')
-    . markLower (charSing @'u')
-    . markLower (charSing @'v')
-    . markLower (charSing @'w')
-    . markLower (charSing @'x')
-    . markLower (charSing @'y')
-    . markLower (charSing @'z')
-    $ unsafeCoerce SFalse
-  where
-    markLower ::
-      (IsAlphaLower x ~ True) =>
-      SChar x ->
-      SBool (IsAlphaLower c) ->
-      SBool (IsAlphaLower c)
-    markLower sx sb = maybe sb (\Refl -> STrue) (testSCharEquality sc sx)
-
-type family IsDigit c where
-  IsDigit '0' = True
-  IsDigit '1' = True
-  IsDigit '2' = True
-  IsDigit '3' = True
-  IsDigit '4' = True
-  IsDigit '5' = True
-  IsDigit '6' = True
-  IsDigit '7' = True
-  IsDigit '8' = True
-  IsDigit '9' = True
-  IsDigit c = False
-
-sIsDigit :: forall c. SChar c -> SBool (IsDigit c)
-sIsDigit sc =
-  markDigit (charSing @'0')
-    . markDigit (charSing @'1')
-    . markDigit (charSing @'2')
-    . markDigit (charSing @'3')
-    . markDigit (charSing @'4')
-    . markDigit (charSing @'5')
-    . markDigit (charSing @'6')
-    . markDigit (charSing @'7')
-    . markDigit (charSing @'8')
-    . markDigit (charSing @'9')
-    $ unsafeCoerce SFalse
-  where
-    markDigit ::
-      forall x.
-      (IsDigit x ~ True) =>
-      SChar x ->
-      SBool (IsDigit c) ->
-      SBool (IsDigit c)
-    markDigit sx sb = maybe sb (\Refl -> STrue) (testSCharEquality sc sx)
+    %&& sIsAlphaDigitDashUpperSymbol ss
