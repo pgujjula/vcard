@@ -36,7 +36,7 @@ shouldTypecheck r = deepseq r (pure ())
 
 test_XNameSymbol :: TestTree
 test_XNameSymbol =
-  testCase "XName" $ do
+  testCase "XNameSymbol" $ do
     shouldTypecheck (Refl :: XNameSymbol "x-a" :~: Truth)
     shouldTypecheck (Refl :: XNameSymbol "X-a" :~: Truth)
     shouldTypecheck (Refl :: XNameSymbol "x-A" :~: Truth)
