@@ -5,7 +5,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
@@ -35,7 +34,7 @@ import Data.List.Singletons (SList (SCons, SNil))
 import Data.Ord.Singletons ((%>), type (>))
 import Data.Type.Bool (If, type (&&), type (||))
 import Data.Type.Equality ((:~:) (Refl))
-import GHC.TypeLits (ErrorMessage (ShowType, Text, (:<>:)), Symbol, TypeError)
+import GHC.TypeLits (Symbol)
 import Unsafe.Coerce (unsafeCoerce)
 import VCard.Natural.Private (natSing)
 import VCard.Symbol.Private
@@ -53,9 +52,7 @@ import VCard.Symbol.Private
     symbolSing,
     testSCharEquality,
   )
-
-type Valid :: Constraint
-type Valid = ()
+import VCard.Util (Valid, NoInstance)
 
 -- Writing XNameSymbol/XNameSymbolLower/XNameSymbolUpper as type synonyms does
 -- not work on GHC 9.2. Once we drop support for GHC 9.2 we can rewrite them as
@@ -326,14 +323,3 @@ sIsDigit sc =
       SBool (IsDigit c) ->
       SBool (IsDigit c)
     markDigit sx sb = maybe sb (\Refl -> STrue) (testSCharEquality sc sx)
-
--- Utilities
-type family NoInstance (c :: Symbol) (s :: Symbol) where
-  NoInstance c s =
-    TypeError
-      ( Text "No instance for ("
-          :<>: Text c
-          :<>: Text " "
-          :<>: ShowType s
-          :<>: Text ")"
-      )
