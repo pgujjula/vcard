@@ -13,7 +13,7 @@ module VCard.Util
     intToText,
     sepByNonEmpty,
     intersperseCommaNE,
-    Valid,
+    Truth,
     NoInstance,
   )
 where
@@ -51,8 +51,8 @@ intersperseCommaNE :: Serializer a -> Serializer (NonEmpty a)
 intersperseCommaNE s xs =
   Text.concat (List.intersperse (Text.pack ",") (map s (NonEmpty.toList xs)))
 
-type Valid :: Constraint
-type Valid = ()
+type Truth :: Constraint
+type Truth = ()
 
 type family NoInstance (c :: Symbol) (s :: Symbol) :: Constraint where
   NoInstance c s =

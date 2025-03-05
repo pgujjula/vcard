@@ -52,13 +52,13 @@ import VCard.Symbol.Private
     symbolSing,
     testSCharEquality,
   )
-import VCard.Util (Valid, NoInstance)
+import VCard.Util (NoInstance, Truth)
 
 -- Writing XNameSymbol/XNameSymbolLower/XNameSymbolUpper as type synonyms does
 -- not work on GHC 9.2. Once we drop support for GHC 9.2 we can rewrite them as
 -- type synonyms.
 type family XNameSymbol (s :: Symbol) :: Constraint where
-  XNameSymbol s = If (IsXNameSymbol s) Valid (NoInstance "XNameSymbol" s)
+  XNameSymbol s = If (IsXNameSymbol s) Truth (NoInstance "XNameSymbol" s)
 
 testXNameSymbol :: SSymbol s -> Maybe (Dict (XNameSymbol s))
 testXNameSymbol ss =
@@ -77,7 +77,7 @@ sIsXNameSymbol ss =
 
 type family XNameLowerSymbol (s :: Symbol) :: Constraint where
   XNameLowerSymbol s =
-    If (IsXNameLowerSymbol s) Valid (NoInstance "XNameLowerSymbol" s)
+    If (IsXNameLowerSymbol s) Truth (NoInstance "XNameLowerSymbol" s)
 
 testXNameLowerSymbol :: SSymbol s -> Maybe (Dict (XNameLowerSymbol s))
 testXNameLowerSymbol ss =
@@ -96,7 +96,7 @@ sIsXNameLowerSymbol ss =
 
 type family XNameUpperSymbol (s :: Symbol) :: Constraint where
   XNameUpperSymbol s =
-    If (IsXNameUpperSymbol s) Valid (NoInstance "XNameUpperSymbol" s)
+    If (IsXNameUpperSymbol s) Truth (NoInstance "XNameUpperSymbol" s)
 
 testXNameUpperSymbol :: SSymbol s -> Maybe (Dict (XNameUpperSymbol s))
 testXNameUpperSymbol ss =
