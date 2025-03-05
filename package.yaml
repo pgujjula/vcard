@@ -59,6 +59,7 @@ library:
   - VCard.Types.VCard
   - VCard.Types.Value
   other-modules:
+  - VCard.AlphaDigitDash
   - VCard.CaseInsensitive
   - VCard.Internal.Closed
   - VCard.Natural.Private
@@ -163,6 +164,7 @@ tests:
     - Test.VCard.XName
     - Test.VCard.XName.TypeTests
     - VCard
+    - VCard.AlphaDigitDash
     - VCard.CaseInsensitive
     - VCard.Internal.Closed
     - VCard.Natural.Private
