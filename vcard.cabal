@@ -110,6 +110,8 @@ test-suite vcard-tests
   main-is: Main.hs
   other-modules:
       Test.VCard
+      Test.VCard.AlphaDigitDash
+      Test.VCard.AlphaDigitDash.TypeTests
       Test.VCard.CaseInsensitive
       Test.VCard.Natural.Private
       Test.VCard.Natural.Private.Compat

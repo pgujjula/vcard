@@ -130,6 +130,8 @@ tests:
     - test
     other-modules:
     - Test.VCard
+    - Test.VCard.AlphaDigitDash
+    - Test.VCard.AlphaDigitDash.TypeTests
     - Test.VCard.CaseInsensitive
     - Test.VCard.Natural.Private
     - Test.VCard.Natural.Private.Compat
