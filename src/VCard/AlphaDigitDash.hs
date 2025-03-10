@@ -5,16 +5,19 @@
 
 module VCard.AlphaDigitDash
   ( AlphaDigitDashSymbol,
+    SomeAlphaDigitDashSymbol (..),
     testAlphaDigitDashSymbol,
     IsAlphaDigitDashSymbol,
     sIsAlphaDigitDashSymbol,
     --
     AlphaDigitDashLowerSymbol,
+    SomeAlphaDigitDashLowerSymbol (..),
     testAlphaDigitDashLowerSymbol,
     IsAlphaDigitDashLowerSymbol,
     sIsAlphaDigitDashLowerSymbol,
     --
     AlphaDigitDashUpperSymbol,
+    SomeAlphaDigitDashUpperSymbol (..),
     testAlphaDigitDashUpperSymbol,
     IsAlphaDigitDashUpperSymbol,
     sIsAlphaDigitDashUpperSymbol,
@@ -22,16 +25,22 @@ module VCard.AlphaDigitDash
 where
 
 import Data.Bool.Singletons (SBool (SFalse, STrue), (%&&), (%||))
+import Data.Char (isAsciiLower, isAsciiUpper, isDigit)
 import Data.Constraint (Dict (..))
 import Data.Eq.Singletons ((%==), type (==))
 import Data.Kind (Constraint)
 import Data.List.Singletons (SList (SCons, SNil))
+import Data.Maybe (isJust)
 import Data.Ord.Singletons ((%>), type (>))
+import Data.Text qualified as Text
 import Data.Type.Bool (If, type (&&), type (||))
 import Data.Type.Equality ((:~:) (Refl))
-import GHC.TypeLits (Symbol)
+import GHC.TypeLits (Symbol, symbolVal)
+import Text.Megaparsec (takeWhile1P)
 import Unsafe.Coerce (unsafeCoerce)
 import VCard.Natural.Private (natSing)
+import VCard.Parse (HasParser, Parser, parser)
+import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Symbol.Private
   ( Length,
     SChar,
@@ -41,6 +50,9 @@ import VCard.Symbol.Private
     sLength,
     sToList,
     testSCharEquality,
+    testSSymbolEquality,
+    withKnownSymbol,
+    withSomeSSymbol,
   )
 import VCard.Util (NoInstance, Truth)
 
@@ -50,6 +62,33 @@ import VCard.Util (NoInstance, Truth)
 type family AlphaDigitDashSymbol (s :: Symbol) :: Constraint where
   AlphaDigitDashSymbol s =
     If (IsAlphaDigitDashSymbol s) Truth (NoInstance "AlphaDigitDashSymbol" s)
+
+data SomeAlphaDigitDashSymbol where
+  SomeAlphaDigitDashSymbol ::
+    (AlphaDigitDashSymbol s) => SSymbol s -> SomeAlphaDigitDashSymbol
+
+deriving instance Show SomeAlphaDigitDashSymbol
+
+instance Eq SomeAlphaDigitDashSymbol where
+  (==)
+    (SomeAlphaDigitDashSymbol ss1)
+    (SomeAlphaDigitDashSymbol ss2) =
+      isJust (testSSymbolEquality ss1 ss2)
+
+instance HasParser SomeAlphaDigitDashSymbol where
+  parser :: Parser SomeAlphaDigitDashSymbol
+  parser = do
+    s <- takeWhile1P (Just "SomeAlphaDigitDashSymbol") isAlphaDigitDashChar
+    withSomeSSymbol (Text.unpack s) $ \ss ->
+      case testAlphaDigitDashSymbol ss of
+        Nothing ->
+          error "parser @SomeAlphaDigitDashSymbol: the impossible happened"
+        Just Dict -> pure (SomeAlphaDigitDashSymbol ss)
+
+instance HasSerializer SomeAlphaDigitDashSymbol where
+  serializer :: Serializer SomeAlphaDigitDashSymbol
+  serializer (SomeAlphaDigitDashSymbol ss) =
+    Text.pack (withKnownSymbol ss (symbolVal ss))
 
 testAlphaDigitDashSymbol :: SSymbol s -> Maybe (Dict (AlphaDigitDashSymbol s))
 testAlphaDigitDashSymbol ss =
@@ -69,6 +108,36 @@ type family AlphaDigitDashLowerSymbol (s :: Symbol) :: Constraint where
       (IsAlphaDigitDashLowerSymbol s)
       Truth
       (NoInstance "AlphaDigitDashLowerSymbol" s)
+
+data SomeAlphaDigitDashLowerSymbol where
+  SomeAlphaDigitDashLowerSymbol ::
+    (AlphaDigitDashLowerSymbol s) => SSymbol s -> SomeAlphaDigitDashLowerSymbol
+
+deriving instance Show SomeAlphaDigitDashLowerSymbol
+
+instance Eq SomeAlphaDigitDashLowerSymbol where
+  (==)
+    (SomeAlphaDigitDashLowerSymbol ss1)
+    (SomeAlphaDigitDashLowerSymbol ss2) =
+      isJust (testSSymbolEquality ss1 ss2)
+
+instance HasParser SomeAlphaDigitDashLowerSymbol where
+  parser :: Parser SomeAlphaDigitDashLowerSymbol
+  parser = do
+    s <-
+      takeWhile1P
+        (Just "SomeAlphaDigitDashLowerSymbol")
+        isAlphaDigitDashLowerChar
+    withSomeSSymbol (Text.unpack s) $ \ss ->
+      case testAlphaDigitDashLowerSymbol ss of
+        Nothing ->
+          error "parser @SomeAlphaDigitDashLowerSymbol: the impossible happened"
+        Just Dict -> pure (SomeAlphaDigitDashLowerSymbol ss)
+
+instance HasSerializer SomeAlphaDigitDashLowerSymbol where
+  serializer :: Serializer SomeAlphaDigitDashLowerSymbol
+  serializer (SomeAlphaDigitDashLowerSymbol ss) =
+    Text.pack (withKnownSymbol ss (symbolVal ss))
 
 testAlphaDigitDashLowerSymbol ::
   SSymbol s -> Maybe (Dict (AlphaDigitDashLowerSymbol s))
@@ -91,6 +160,36 @@ type family AlphaDigitDashUpperSymbol (s :: Symbol) :: Constraint where
       (IsAlphaDigitDashUpperSymbol s)
       Truth
       (NoInstance "AlphaDigitDashUpperSymbol" s)
+
+data SomeAlphaDigitDashUpperSymbol where
+  SomeAlphaDigitDashUpperSymbol ::
+    (AlphaDigitDashUpperSymbol s) => SSymbol s -> SomeAlphaDigitDashUpperSymbol
+
+deriving instance Show SomeAlphaDigitDashUpperSymbol
+
+instance Eq SomeAlphaDigitDashUpperSymbol where
+  (==)
+    (SomeAlphaDigitDashUpperSymbol ss1)
+    (SomeAlphaDigitDashUpperSymbol ss2) =
+      isJust (testSSymbolEquality ss1 ss2)
+
+instance HasParser SomeAlphaDigitDashUpperSymbol where
+  parser :: Parser SomeAlphaDigitDashUpperSymbol
+  parser = do
+    s <-
+      takeWhile1P
+        (Just "SomeAlphaDigitDashUpperSymbol")
+        isAlphaDigitDashUpperChar
+    withSomeSSymbol (Text.unpack s) $ \ss ->
+      case testAlphaDigitDashUpperSymbol ss of
+        Nothing ->
+          error "parser @SomeAlphaDigitDashUpperSymbol: the impossible happened"
+        Just Dict -> pure (SomeAlphaDigitDashUpperSymbol ss)
+
+instance HasSerializer SomeAlphaDigitDashUpperSymbol where
+  serializer :: Serializer SomeAlphaDigitDashUpperSymbol
+  serializer (SomeAlphaDigitDashUpperSymbol ss) =
+    Text.pack (withKnownSymbol ss (symbolVal ss))
 
 testAlphaDigitDashUpperSymbol ::
   SSymbol s -> Maybe (Dict (AlphaDigitDashUpperSymbol s))
@@ -145,11 +244,17 @@ sIsAlphaDigitDashChar :: SChar c -> SBool (IsAlphaDigitDashChar c)
 sIsAlphaDigitDashChar sc =
   sIsAsciiAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
+isAlphaDigitDashChar :: Char -> Bool
+isAlphaDigitDashChar c = isAsciiAlpha c || isDigit c || c == '-'
+
 type IsAlphaDigitDashLowerChar c = IsAsciiLower c || IsDigit c || c == '-'
 
 sIsAlphaDigitDashLowerChar :: SChar c -> SBool (IsAlphaDigitDashLowerChar c)
 sIsAlphaDigitDashLowerChar sc =
   sIsAsciiLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
+
+isAlphaDigitDashLowerChar :: Char -> Bool
+isAlphaDigitDashLowerChar c = isAsciiLower c || isDigit c || c == '-'
 
 type IsAlphaDigitDashUpperChar c = IsAsciiUpper c || IsDigit c || c == '-'
 
@@ -157,10 +262,16 @@ sIsAlphaDigitDashUpperChar :: SChar c -> SBool (IsAlphaDigitDashUpperChar c)
 sIsAlphaDigitDashUpperChar sc =
   sIsAsciiUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
+isAlphaDigitDashUpperChar :: Char -> Bool
+isAlphaDigitDashUpperChar c = isAsciiUpper c || isDigit c || c == '-'
+
 type IsAsciiAlpha c = IsAsciiLower c || IsAsciiUpper c
 
 sIsAsciiAlpha :: SChar c -> SBool (IsAsciiAlpha c)
 sIsAsciiAlpha sc = sIsAsciiLower sc %|| sIsAsciiUpper sc
+
+isAsciiAlpha :: Char -> Bool
+isAsciiAlpha c = isAsciiLower c || isAsciiUpper c
 
 type family IsAsciiUpper c where
   IsAsciiUpper 'A' = True
