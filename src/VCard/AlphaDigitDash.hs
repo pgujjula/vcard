@@ -144,11 +144,11 @@ type IsAlphaDigitDashChar c = IsAlpha c || IsDigit c || c == '-'
 sIsAlphaDigitDashChar :: SChar c -> SBool (IsAlphaDigitDashChar c)
 sIsAlphaDigitDashChar sc = sIsAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
-type IsAlphaDigitDashLowerChar c = IsAlphaLower c || IsDigit c || c == '-'
+type IsAlphaDigitDashLowerChar c = IsAsciiLower c || IsDigit c || c == '-'
 
 sIsAlphaDigitDashLowerChar :: SChar c -> SBool (IsAlphaDigitDashLowerChar c)
 sIsAlphaDigitDashLowerChar sc =
-  sIsAlphaLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
+  sIsAsciiLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
 type IsAlphaDigitDashUpperChar c = IsAlphaUpper c || IsDigit c || c == '-'
 
@@ -156,10 +156,10 @@ sIsAlphaDigitDashUpperChar :: SChar c -> SBool (IsAlphaDigitDashUpperChar c)
 sIsAlphaDigitDashUpperChar sc =
   sIsAlphaUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
-type IsAlpha c = IsAlphaLower c || IsAlphaUpper c
+type IsAlpha c = IsAsciiLower c || IsAlphaUpper c
 
 sIsAlpha :: SChar c -> SBool (IsAlpha c)
-sIsAlpha sc = sIsAlphaLower sc %|| sIsAlphaUpper sc
+sIsAlpha sc = sIsAsciiLower sc %|| sIsAlphaUpper sc
 
 type family IsAlphaUpper c where
   IsAlphaUpper 'A' = True
@@ -227,37 +227,37 @@ sIsAlphaUpper sc =
       SBool (IsAlphaUpper c)
     markUpper sx sb = maybe sb (\Refl -> STrue) (testSCharEquality sc sx)
 
-type family IsAlphaLower c where
-  IsAlphaLower 'a' = True
-  IsAlphaLower 'b' = True
-  IsAlphaLower 'c' = True
-  IsAlphaLower 'd' = True
-  IsAlphaLower 'e' = True
-  IsAlphaLower 'f' = True
-  IsAlphaLower 'g' = True
-  IsAlphaLower 'h' = True
-  IsAlphaLower 'i' = True
-  IsAlphaLower 'j' = True
-  IsAlphaLower 'k' = True
-  IsAlphaLower 'l' = True
-  IsAlphaLower 'm' = True
-  IsAlphaLower 'n' = True
-  IsAlphaLower 'o' = True
-  IsAlphaLower 'p' = True
-  IsAlphaLower 'q' = True
-  IsAlphaLower 'r' = True
-  IsAlphaLower 's' = True
-  IsAlphaLower 't' = True
-  IsAlphaLower 'u' = True
-  IsAlphaLower 'v' = True
-  IsAlphaLower 'w' = True
-  IsAlphaLower 'x' = True
-  IsAlphaLower 'y' = True
-  IsAlphaLower 'z' = True
-  IsAlphaLower c = False
+type family IsAsciiLower c where
+  IsAsciiLower 'a' = True
+  IsAsciiLower 'b' = True
+  IsAsciiLower 'c' = True
+  IsAsciiLower 'd' = True
+  IsAsciiLower 'e' = True
+  IsAsciiLower 'f' = True
+  IsAsciiLower 'g' = True
+  IsAsciiLower 'h' = True
+  IsAsciiLower 'i' = True
+  IsAsciiLower 'j' = True
+  IsAsciiLower 'k' = True
+  IsAsciiLower 'l' = True
+  IsAsciiLower 'm' = True
+  IsAsciiLower 'n' = True
+  IsAsciiLower 'o' = True
+  IsAsciiLower 'p' = True
+  IsAsciiLower 'q' = True
+  IsAsciiLower 'r' = True
+  IsAsciiLower 's' = True
+  IsAsciiLower 't' = True
+  IsAsciiLower 'u' = True
+  IsAsciiLower 'v' = True
+  IsAsciiLower 'w' = True
+  IsAsciiLower 'x' = True
+  IsAsciiLower 'y' = True
+  IsAsciiLower 'z' = True
+  IsAsciiLower c = False
 
-sIsAlphaLower :: forall c. SChar c -> SBool (IsAlphaLower c)
-sIsAlphaLower sc =
+sIsAsciiLower :: forall c. SChar c -> SBool (IsAsciiLower c)
+sIsAsciiLower sc =
   markLower (charSing @'a')
     . markLower (charSing @'b')
     . markLower (charSing @'c')
@@ -287,10 +287,10 @@ sIsAlphaLower sc =
     $ unsafeCoerce SFalse
   where
     markLower ::
-      (IsAlphaLower x ~ True) =>
+      (IsAsciiLower x ~ True) =>
       SChar x ->
-      SBool (IsAlphaLower c) ->
-      SBool (IsAlphaLower c)
+      SBool (IsAsciiLower c) ->
+      SBool (IsAsciiLower c)
     markLower sx sb = maybe sb (\Refl -> STrue) (testSCharEquality sc sx)
 
 type family IsDigit c where
