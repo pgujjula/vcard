@@ -139,10 +139,11 @@ sIsAlphaDigitDashUpperList SNil = STrue
 sIsAlphaDigitDashUpperList (SCons sx sxs) =
   sIsAlphaDigitDashUpperChar sx %&& sIsAlphaDigitDashUpperList sxs
 
-type IsAlphaDigitDashChar c = IsAlpha c || IsDigit c || c == '-'
+type IsAlphaDigitDashChar c = IsAsciiAlpha c || IsDigit c || c == '-'
 
 sIsAlphaDigitDashChar :: SChar c -> SBool (IsAlphaDigitDashChar c)
-sIsAlphaDigitDashChar sc = sIsAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
+sIsAlphaDigitDashChar sc =
+  sIsAsciiAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
 type IsAlphaDigitDashLowerChar c = IsAsciiLower c || IsDigit c || c == '-'
 
@@ -156,10 +157,10 @@ sIsAlphaDigitDashUpperChar :: SChar c -> SBool (IsAlphaDigitDashUpperChar c)
 sIsAlphaDigitDashUpperChar sc =
   sIsAsciiUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
-type IsAlpha c = IsAsciiLower c || IsAsciiUpper c
+type IsAsciiAlpha c = IsAsciiLower c || IsAsciiUpper c
 
-sIsAlpha :: SChar c -> SBool (IsAlpha c)
-sIsAlpha sc = sIsAsciiLower sc %|| sIsAsciiUpper sc
+sIsAsciiAlpha :: SChar c -> SBool (IsAsciiAlpha c)
+sIsAsciiAlpha sc = sIsAsciiLower sc %|| sIsAsciiUpper sc
 
 type family IsAsciiUpper c where
   IsAsciiUpper 'A' = True
