@@ -150,48 +150,48 @@ sIsAlphaDigitDashLowerChar :: SChar c -> SBool (IsAlphaDigitDashLowerChar c)
 sIsAlphaDigitDashLowerChar sc =
   sIsAsciiLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
-type IsAlphaDigitDashUpperChar c = IsAlphaUpper c || IsDigit c || c == '-'
+type IsAlphaDigitDashUpperChar c = IsAsciiUpper c || IsDigit c || c == '-'
 
 sIsAlphaDigitDashUpperChar :: SChar c -> SBool (IsAlphaDigitDashUpperChar c)
 sIsAlphaDigitDashUpperChar sc =
-  sIsAlphaUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
+  sIsAsciiUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
-type IsAlpha c = IsAsciiLower c || IsAlphaUpper c
+type IsAlpha c = IsAsciiLower c || IsAsciiUpper c
 
 sIsAlpha :: SChar c -> SBool (IsAlpha c)
-sIsAlpha sc = sIsAsciiLower sc %|| sIsAlphaUpper sc
+sIsAlpha sc = sIsAsciiLower sc %|| sIsAsciiUpper sc
 
-type family IsAlphaUpper c where
-  IsAlphaUpper 'A' = True
-  IsAlphaUpper 'B' = True
-  IsAlphaUpper 'C' = True
-  IsAlphaUpper 'D' = True
-  IsAlphaUpper 'E' = True
-  IsAlphaUpper 'F' = True
-  IsAlphaUpper 'G' = True
-  IsAlphaUpper 'H' = True
-  IsAlphaUpper 'I' = True
-  IsAlphaUpper 'J' = True
-  IsAlphaUpper 'K' = True
-  IsAlphaUpper 'L' = True
-  IsAlphaUpper 'M' = True
-  IsAlphaUpper 'N' = True
-  IsAlphaUpper 'O' = True
-  IsAlphaUpper 'P' = True
-  IsAlphaUpper 'Q' = True
-  IsAlphaUpper 'R' = True
-  IsAlphaUpper 'S' = True
-  IsAlphaUpper 'T' = True
-  IsAlphaUpper 'U' = True
-  IsAlphaUpper 'V' = True
-  IsAlphaUpper 'W' = True
-  IsAlphaUpper 'X' = True
-  IsAlphaUpper 'Y' = True
-  IsAlphaUpper 'Z' = True
-  IsAlphaUpper c = False
+type family IsAsciiUpper c where
+  IsAsciiUpper 'A' = True
+  IsAsciiUpper 'B' = True
+  IsAsciiUpper 'C' = True
+  IsAsciiUpper 'D' = True
+  IsAsciiUpper 'E' = True
+  IsAsciiUpper 'F' = True
+  IsAsciiUpper 'G' = True
+  IsAsciiUpper 'H' = True
+  IsAsciiUpper 'I' = True
+  IsAsciiUpper 'J' = True
+  IsAsciiUpper 'K' = True
+  IsAsciiUpper 'L' = True
+  IsAsciiUpper 'M' = True
+  IsAsciiUpper 'N' = True
+  IsAsciiUpper 'O' = True
+  IsAsciiUpper 'P' = True
+  IsAsciiUpper 'Q' = True
+  IsAsciiUpper 'R' = True
+  IsAsciiUpper 'S' = True
+  IsAsciiUpper 'T' = True
+  IsAsciiUpper 'U' = True
+  IsAsciiUpper 'V' = True
+  IsAsciiUpper 'W' = True
+  IsAsciiUpper 'X' = True
+  IsAsciiUpper 'Y' = True
+  IsAsciiUpper 'Z' = True
+  IsAsciiUpper c = False
 
-sIsAlphaUpper :: forall c. SChar c -> SBool (IsAlphaUpper c)
-sIsAlphaUpper sc =
+sIsAsciiUpper :: forall c. SChar c -> SBool (IsAsciiUpper c)
+sIsAsciiUpper sc =
   markUpper (charSing @'A')
     . markUpper (charSing @'B')
     . markUpper (charSing @'C')
@@ -221,10 +221,10 @@ sIsAlphaUpper sc =
     $ unsafeCoerce SFalse
   where
     markUpper ::
-      (IsAlphaUpper x ~ True) =>
+      (IsAsciiUpper x ~ True) =>
       SChar x ->
-      SBool (IsAlphaUpper c) ->
-      SBool (IsAlphaUpper c)
+      SBool (IsAsciiUpper c) ->
+      SBool (IsAsciiUpper c)
     markUpper sx sb = maybe sb (\Refl -> STrue) (testSCharEquality sc sx)
 
 type family IsAsciiLower c where
