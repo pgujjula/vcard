@@ -1,9 +1,5 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 
 module Test.VCard.Natural.Private.Compat (tests) where
 

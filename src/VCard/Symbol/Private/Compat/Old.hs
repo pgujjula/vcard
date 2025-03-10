@@ -1,10 +1,5 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE Rank2Types #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeOperators #-}
 
 module VCard.Symbol.Private.Compat.Old
   ( SChar,

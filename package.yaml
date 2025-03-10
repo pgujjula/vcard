@@ -29,7 +29,22 @@ extra-doc-files:
 language: Haskell2010
 
 default-extensions:
+- ConstraintKinds
+- DataKinds
+- FlexibleContexts
+- FlexibleInstances
+- GADTs
 - ImportQualifiedPost
+- InstanceSigs
+- KindSignatures
+- LambdaCase
+- NoStarIsType
+- PolyKinds
+- RankNTypes
+- StandaloneDeriving
+- ScopedTypeVariables
+- TypeApplications
+- TypeOperators
 
 dependencies:
 - base ^>= {4.16, 4.17, 4.18, 4.19, 4.20, 4.21}

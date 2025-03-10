@@ -79,7 +79,22 @@ library
   hs-source-dirs:
       src
   default-extensions:
+      ConstraintKinds
+      DataKinds
+      FlexibleContexts
+      FlexibleInstances
+      GADTs
       ImportQualifiedPost
+      InstanceSigs
+      KindSignatures
+      LambdaCase
+      NoStarIsType
+      PolyKinds
+      RankNTypes
+      StandaloneDeriving
+      ScopedTypeVariables
+      TypeApplications
+      TypeOperators
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages
   build-depends:
       base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21 || >=4.21 && <4.22
@@ -191,7 +206,22 @@ test-suite vcard-tests
       src
       test
   default-extensions:
+      ConstraintKinds
+      DataKinds
+      FlexibleContexts
+      FlexibleInstances
+      GADTs
       ImportQualifiedPost
+      InstanceSigs
+      KindSignatures
+      LambdaCase
+      NoStarIsType
+      PolyKinds
+      RankNTypes
+      StandaloneDeriving
+      ScopedTypeVariables
+      TypeApplications
+      TypeOperators
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wunused-packages -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21 || >=4.21 && <4.22
