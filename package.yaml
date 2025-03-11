@@ -74,7 +74,7 @@ library:
   - VCard.Types.VCard
   - VCard.Types.Value
   other-modules:
-  - VCard.AlphaDigitDash
+  - VCard.AlphaNumDash
   - VCard.CaseInsensitive
   - VCard.Internal.Closed
   - VCard.Natural.Private
@@ -145,8 +145,8 @@ tests:
     - test
     other-modules:
     - Test.VCard
-    - Test.VCard.AlphaDigitDash
-    - Test.VCard.AlphaDigitDash.TypeTests
+    - Test.VCard.AlphaNumDash
+    - Test.VCard.AlphaNumDash.TypeTests
     - Test.VCard.CaseInsensitive
     - Test.VCard.Natural.Private
     - Test.VCard.Natural.Private.Compat
@@ -181,7 +181,7 @@ tests:
     - Test.VCard.XName
     - Test.VCard.XName.TypeTests
     - VCard
-    - VCard.AlphaDigitDash
+    - VCard.AlphaNumDash
     - VCard.CaseInsensitive
     - VCard.Internal.Closed
     - VCard.Natural.Private

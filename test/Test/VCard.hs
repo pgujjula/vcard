@@ -5,7 +5,7 @@
 module Test.VCard (tests) where
 
 import Test.Tasty (TestTree, testGroup)
-import Test.VCard.AlphaDigitDash qualified
+import Test.VCard.AlphaNumDash qualified
 import Test.VCard.CaseInsensitive qualified
 import Test.VCard.Natural.Private qualified
 import Test.VCard.Symbol.Private qualified
@@ -16,7 +16,7 @@ tests :: TestTree
 tests =
   testGroup
     "VCard"
-    [ Test.VCard.AlphaDigitDash.tests,
+    [ Test.VCard.AlphaNumDash.tests,
       Test.VCard.CaseInsensitive.tests,
       Test.VCard.Natural.Private.tests,
       Test.VCard.Symbol.Private.tests,

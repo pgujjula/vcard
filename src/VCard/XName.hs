@@ -25,13 +25,13 @@ import Data.Kind (Constraint)
 import Data.Ord.Singletons ((%>), type (>))
 import Data.Type.Bool (If, type (&&))
 import GHC.TypeLits (Symbol)
-import VCard.AlphaDigitDash
-  ( IsAlphaDigitDashLowerSymbol,
-    IsAlphaDigitDashSymbol,
-    IsAlphaDigitDashUpperSymbol,
-    sIsAlphaDigitDashLowerSymbol,
-    sIsAlphaDigitDashSymbol,
-    sIsAlphaDigitDashUpperSymbol,
+import VCard.AlphaNumDash
+  ( IsAlphaNumDashLowerSymbol,
+    IsAlphaNumDashSymbol,
+    IsAlphaNumDashUpperSymbol,
+    sIsAlphaNumDashLowerSymbol,
+    sIsAlphaNumDashSymbol,
+    sIsAlphaNumDashUpperSymbol,
   )
 import VCard.Natural.Private (natSing)
 import VCard.Symbol.Private
@@ -59,13 +59,13 @@ testXNameSymbol ss =
     SFalse -> Nothing
 
 type IsXNameSymbol s =
-  IsPrefixOfInsensitive "x-" s && Length s > 2 && IsAlphaDigitDashSymbol s
+  IsPrefixOfInsensitive "x-" s && Length s > 2 && IsAlphaNumDashSymbol s
 
 sIsXNameSymbol :: SSymbol s -> SBool (IsXNameSymbol s)
 sIsXNameSymbol ss =
   sIsPrefixOfInsensitive (symbolSing @"x-") ss
     %&& sLength ss %> natSing @2
-    %&& sIsAlphaDigitDashSymbol ss
+    %&& sIsAlphaNumDashSymbol ss
 
 type family XNameLowerSymbol (s :: Symbol) :: Constraint where
   XNameLowerSymbol s =
@@ -78,13 +78,13 @@ testXNameLowerSymbol ss =
     SFalse -> Nothing
 
 type IsXNameLowerSymbol s =
-  IsPrefixOf "x-" s && Length s > 2 && IsAlphaDigitDashLowerSymbol s
+  IsPrefixOf "x-" s && Length s > 2 && IsAlphaNumDashLowerSymbol s
 
 sIsXNameLowerSymbol :: SSymbol s -> SBool (IsXNameLowerSymbol s)
 sIsXNameLowerSymbol ss =
   sIsPrefixOf (symbolSing @"x-") ss
     %&& sLength ss %> natSing @2
-    %&& sIsAlphaDigitDashLowerSymbol ss
+    %&& sIsAlphaNumDashLowerSymbol ss
 
 type family XNameUpperSymbol (s :: Symbol) :: Constraint where
   XNameUpperSymbol s =
@@ -97,10 +97,10 @@ testXNameUpperSymbol ss =
     SFalse -> Nothing
 
 type IsXNameUpperSymbol s =
-  IsPrefixOf "X-" s && Length s > 2 && IsAlphaDigitDashUpperSymbol s
+  IsPrefixOf "X-" s && Length s > 2 && IsAlphaNumDashUpperSymbol s
 
 sIsXNameUpperSymbol :: SSymbol s -> SBool (IsXNameUpperSymbol s)
 sIsXNameUpperSymbol ss =
   sIsPrefixOf (symbolSing @"X-") ss
     %&& sLength ss %> natSing @2
-    %&& sIsAlphaDigitDashUpperSymbol ss
+    %&& sIsAlphaNumDashUpperSymbol ss

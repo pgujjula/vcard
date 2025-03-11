@@ -3,21 +3,21 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module VCard.AlphaDigitDash
-  ( AlphaDigitDashSymbol,
-    testAlphaDigitDashSymbol,
-    IsAlphaDigitDashSymbol,
-    sIsAlphaDigitDashSymbol,
+module VCard.AlphaNumDash
+  ( AlphaNumDashSymbol,
+    testAlphaNumDashSymbol,
+    IsAlphaNumDashSymbol,
+    sIsAlphaNumDashSymbol,
     --
-    AlphaDigitDashLowerSymbol,
-    testAlphaDigitDashLowerSymbol,
-    IsAlphaDigitDashLowerSymbol,
-    sIsAlphaDigitDashLowerSymbol,
+    AlphaNumDashLowerSymbol,
+    testAlphaNumDashLowerSymbol,
+    IsAlphaNumDashLowerSymbol,
+    sIsAlphaNumDashLowerSymbol,
     --
-    AlphaDigitDashUpperSymbol,
-    testAlphaDigitDashUpperSymbol,
-    IsAlphaDigitDashUpperSymbol,
-    sIsAlphaDigitDashUpperSymbol,
+    AlphaNumDashUpperSymbol,
+    testAlphaNumDashUpperSymbol,
+    IsAlphaNumDashUpperSymbol,
+    sIsAlphaNumDashUpperSymbol,
   )
 where
 
@@ -44,117 +44,117 @@ import VCard.Symbol.Private
   )
 import VCard.Util (NoInstance, Truth)
 
--- Writing AlphaDigitDashSymbol/AlphaDigitDashLowerSymbol/
--- AlphaDigitDashUpperSymbol as type synonyms does not work on GHC 9.2. Once we
+-- Writing AlphaNumDashSymbol/AlphaNumDashLowerSymbol/
+-- AlphaNumDashUpperSymbol as type synonyms does not work on GHC 9.2. Once we
 -- drop support for GHC 9.2 we can rewrite them as type synonyms.
-type family AlphaDigitDashSymbol (s :: Symbol) :: Constraint where
-  AlphaDigitDashSymbol s =
-    If (IsAlphaDigitDashSymbol s) Truth (NoInstance "AlphaDigitDashSymbol" s)
+type family AlphaNumDashSymbol (s :: Symbol) :: Constraint where
+  AlphaNumDashSymbol s =
+    If (IsAlphaNumDashSymbol s) Truth (NoInstance "AlphaNumDashSymbol" s)
 
-testAlphaDigitDashSymbol :: SSymbol s -> Maybe (Dict (AlphaDigitDashSymbol s))
-testAlphaDigitDashSymbol ss =
-  case sIsAlphaDigitDashSymbol ss of
+testAlphaNumDashSymbol :: SSymbol s -> Maybe (Dict (AlphaNumDashSymbol s))
+testAlphaNumDashSymbol ss =
+  case sIsAlphaNumDashSymbol ss of
     STrue -> Just Dict
     SFalse -> Nothing
 
-type IsAlphaDigitDashSymbol s = Length s > 0 && IsAlphaDigitDashList (ToList s)
+type IsAlphaNumDashSymbol s = Length s > 0 && IsAlphaNumDashList (ToList s)
 
-sIsAlphaDigitDashSymbol :: SSymbol s -> SBool (IsAlphaDigitDashSymbol s)
-sIsAlphaDigitDashSymbol ss =
-  sLength ss %> natSing @0 %&& sIsAlphaDigitDashList (sToList ss)
+sIsAlphaNumDashSymbol :: SSymbol s -> SBool (IsAlphaNumDashSymbol s)
+sIsAlphaNumDashSymbol ss =
+  sLength ss %> natSing @0 %&& sIsAlphaNumDashList (sToList ss)
 
-type family AlphaDigitDashLowerSymbol (s :: Symbol) :: Constraint where
-  AlphaDigitDashLowerSymbol s =
+type family AlphaNumDashLowerSymbol (s :: Symbol) :: Constraint where
+  AlphaNumDashLowerSymbol s =
     If
-      (IsAlphaDigitDashLowerSymbol s)
+      (IsAlphaNumDashLowerSymbol s)
       Truth
-      (NoInstance "AlphaDigitDashLowerSymbol" s)
+      (NoInstance "AlphaNumDashLowerSymbol" s)
 
-testAlphaDigitDashLowerSymbol ::
-  SSymbol s -> Maybe (Dict (AlphaDigitDashLowerSymbol s))
-testAlphaDigitDashLowerSymbol ss =
-  case sIsAlphaDigitDashLowerSymbol ss of
+testAlphaNumDashLowerSymbol ::
+  SSymbol s -> Maybe (Dict (AlphaNumDashLowerSymbol s))
+testAlphaNumDashLowerSymbol ss =
+  case sIsAlphaNumDashLowerSymbol ss of
     STrue -> Just Dict
     SFalse -> Nothing
 
-type IsAlphaDigitDashLowerSymbol s =
-  Length s > 0 && IsAlphaDigitDashLowerList (ToList s)
+type IsAlphaNumDashLowerSymbol s =
+  Length s > 0 && IsAlphaNumDashLowerList (ToList s)
 
-sIsAlphaDigitDashLowerSymbol ::
-  SSymbol s -> SBool (IsAlphaDigitDashLowerSymbol s)
-sIsAlphaDigitDashLowerSymbol ss =
-  sLength ss %> natSing @0 %&& sIsAlphaDigitDashLowerList (sToList ss)
+sIsAlphaNumDashLowerSymbol ::
+  SSymbol s -> SBool (IsAlphaNumDashLowerSymbol s)
+sIsAlphaNumDashLowerSymbol ss =
+  sLength ss %> natSing @0 %&& sIsAlphaNumDashLowerList (sToList ss)
 
-type family AlphaDigitDashUpperSymbol (s :: Symbol) :: Constraint where
-  AlphaDigitDashUpperSymbol s =
+type family AlphaNumDashUpperSymbol (s :: Symbol) :: Constraint where
+  AlphaNumDashUpperSymbol s =
     If
-      (IsAlphaDigitDashUpperSymbol s)
+      (IsAlphaNumDashUpperSymbol s)
       Truth
-      (NoInstance "AlphaDigitDashUpperSymbol" s)
+      (NoInstance "AlphaNumDashUpperSymbol" s)
 
-testAlphaDigitDashUpperSymbol ::
-  SSymbol s -> Maybe (Dict (AlphaDigitDashUpperSymbol s))
-testAlphaDigitDashUpperSymbol ss =
-  case sIsAlphaDigitDashUpperSymbol ss of
+testAlphaNumDashUpperSymbol ::
+  SSymbol s -> Maybe (Dict (AlphaNumDashUpperSymbol s))
+testAlphaNumDashUpperSymbol ss =
+  case sIsAlphaNumDashUpperSymbol ss of
     STrue -> Just Dict
     SFalse -> Nothing
 
-type IsAlphaDigitDashUpperSymbol s =
-  Length s > 0 && IsAlphaDigitDashUpperList (ToList s)
+type IsAlphaNumDashUpperSymbol s =
+  Length s > 0 && IsAlphaNumDashUpperList (ToList s)
 
-sIsAlphaDigitDashUpperSymbol ::
-  SSymbol s -> SBool (IsAlphaDigitDashUpperSymbol s)
-sIsAlphaDigitDashUpperSymbol ss =
-  sLength ss %> natSing @0 %&& sIsAlphaDigitDashUpperList (sToList ss)
+sIsAlphaNumDashUpperSymbol ::
+  SSymbol s -> SBool (IsAlphaNumDashUpperSymbol s)
+sIsAlphaNumDashUpperSymbol ss =
+  sLength ss %> natSing @0 %&& sIsAlphaNumDashUpperList (sToList ss)
 
-type family IsAlphaDigitDashList (xs :: [Char]) where
-  IsAlphaDigitDashList '[] = True
-  IsAlphaDigitDashList (x : xs) =
-    IsAlphaDigitDashChar x && IsAlphaDigitDashList xs
+type family IsAlphaNumDashList (xs :: [Char]) where
+  IsAlphaNumDashList '[] = True
+  IsAlphaNumDashList (x : xs) =
+    IsAlphaNumDashChar x && IsAlphaNumDashList xs
 
-sIsAlphaDigitDashList :: SList (xs :: [Char]) -> SBool (IsAlphaDigitDashList xs)
-sIsAlphaDigitDashList SNil = STrue
-sIsAlphaDigitDashList (SCons sx sxs) =
-  sIsAlphaDigitDashChar sx %&& sIsAlphaDigitDashList sxs
+sIsAlphaNumDashList :: SList (xs :: [Char]) -> SBool (IsAlphaNumDashList xs)
+sIsAlphaNumDashList SNil = STrue
+sIsAlphaNumDashList (SCons sx sxs) =
+  sIsAlphaNumDashChar sx %&& sIsAlphaNumDashList sxs
 
-type family IsAlphaDigitDashLowerList (xs :: [Char]) where
-  IsAlphaDigitDashLowerList '[] = True
-  IsAlphaDigitDashLowerList (x : xs) =
-    IsAlphaDigitDashLowerChar x && IsAlphaDigitDashLowerList xs
+type family IsAlphaNumDashLowerList (xs :: [Char]) where
+  IsAlphaNumDashLowerList '[] = True
+  IsAlphaNumDashLowerList (x : xs) =
+    IsAlphaNumDashLowerChar x && IsAlphaNumDashLowerList xs
 
-sIsAlphaDigitDashLowerList ::
-  SList (xs :: [Char]) -> SBool (IsAlphaDigitDashLowerList xs)
-sIsAlphaDigitDashLowerList SNil = STrue
-sIsAlphaDigitDashLowerList (SCons sx sxs) =
-  sIsAlphaDigitDashLowerChar sx %&& sIsAlphaDigitDashLowerList sxs
+sIsAlphaNumDashLowerList ::
+  SList (xs :: [Char]) -> SBool (IsAlphaNumDashLowerList xs)
+sIsAlphaNumDashLowerList SNil = STrue
+sIsAlphaNumDashLowerList (SCons sx sxs) =
+  sIsAlphaNumDashLowerChar sx %&& sIsAlphaNumDashLowerList sxs
 
-type family IsAlphaDigitDashUpperList (xs :: [Char]) where
-  IsAlphaDigitDashUpperList '[] = True
-  IsAlphaDigitDashUpperList (x : xs) =
-    IsAlphaDigitDashUpperChar x && IsAlphaDigitDashUpperList xs
+type family IsAlphaNumDashUpperList (xs :: [Char]) where
+  IsAlphaNumDashUpperList '[] = True
+  IsAlphaNumDashUpperList (x : xs) =
+    IsAlphaNumDashUpperChar x && IsAlphaNumDashUpperList xs
 
-sIsAlphaDigitDashUpperList ::
-  SList (xs :: [Char]) -> SBool (IsAlphaDigitDashUpperList xs)
-sIsAlphaDigitDashUpperList SNil = STrue
-sIsAlphaDigitDashUpperList (SCons sx sxs) =
-  sIsAlphaDigitDashUpperChar sx %&& sIsAlphaDigitDashUpperList sxs
+sIsAlphaNumDashUpperList ::
+  SList (xs :: [Char]) -> SBool (IsAlphaNumDashUpperList xs)
+sIsAlphaNumDashUpperList SNil = STrue
+sIsAlphaNumDashUpperList (SCons sx sxs) =
+  sIsAlphaNumDashUpperChar sx %&& sIsAlphaNumDashUpperList sxs
 
-type IsAlphaDigitDashChar c = IsAsciiAlpha c || IsDigit c || c == '-'
+type IsAlphaNumDashChar c = IsAsciiAlpha c || IsDigit c || c == '-'
 
-sIsAlphaDigitDashChar :: SChar c -> SBool (IsAlphaDigitDashChar c)
-sIsAlphaDigitDashChar sc =
+sIsAlphaNumDashChar :: SChar c -> SBool (IsAlphaNumDashChar c)
+sIsAlphaNumDashChar sc =
   sIsAsciiAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
-type IsAlphaDigitDashLowerChar c = IsAsciiLower c || IsDigit c || c == '-'
+type IsAlphaNumDashLowerChar c = IsAsciiLower c || IsDigit c || c == '-'
 
-sIsAlphaDigitDashLowerChar :: SChar c -> SBool (IsAlphaDigitDashLowerChar c)
-sIsAlphaDigitDashLowerChar sc =
+sIsAlphaNumDashLowerChar :: SChar c -> SBool (IsAlphaNumDashLowerChar c)
+sIsAlphaNumDashLowerChar sc =
   sIsAsciiLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
-type IsAlphaDigitDashUpperChar c = IsAsciiUpper c || IsDigit c || c == '-'
+type IsAlphaNumDashUpperChar c = IsAsciiUpper c || IsDigit c || c == '-'
 
-sIsAlphaDigitDashUpperChar :: SChar c -> SBool (IsAlphaDigitDashUpperChar c)
-sIsAlphaDigitDashUpperChar sc =
+sIsAlphaNumDashUpperChar :: SChar c -> SBool (IsAlphaNumDashUpperChar c)
+sIsAlphaNumDashUpperChar sc =
   sIsAsciiUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
 
 type IsAsciiAlpha c = IsAsciiLower c || IsAsciiUpper c
