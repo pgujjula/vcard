@@ -4,20 +4,23 @@
 module Test.VCard.Symbol.Private.List (tests) where
 
 import Data.Dynamic (Dynamic, toDyn)
-import Data.Singletons (fromSing)
+import Data.List.Singletons (SList)
+import Data.Singletons (fromSing, withSomeSing)
 import Data.Type.Equality ((:~:) (Refl))
 import GHC.TypeLits (symbolVal)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, testCase, (@?=))
 import VCard.Symbol.Private (SSymbol, symbolSing, withKnownSymbol)
-import VCard.Symbol.Private.List (ToList, sToList)
+import VCard.Symbol.Private.List (FromList, ToList, sFromList, sToList)
 
 tests :: TestTree
 tests =
   testGroup
     "List"
     [ test_ToList,
-      test_sToList
+      test_sToList,
+      test_FromList,
+      test_sFromList
     ]
 
 test_ToList :: TestTree
@@ -42,3 +45,28 @@ test_sToList =
     testSing (symbolSing @"ab")
     testSing (symbolSing @"abc")
     testSing (symbolSing @"Foo Bar")
+
+test_FromList :: TestTree
+test_FromList = testCase "FromList" (seq refls (pure ()))
+  where
+    refls :: [Dynamic]
+    refls =
+      [ toDyn (Refl :: FromList '[] :~: ""),
+        toDyn (Refl :: FromList '[ 'a'] :~: "a"),
+        toDyn
+          (Refl :: FromList '[ 'F', 'o', 'o', ' ', 'B', 'a', 'r'] :~: "Foo Bar")
+      ]
+
+test_sFromList :: TestTree
+test_sFromList =
+  testCase "sFromList" $ do
+    let testSing :: [Char] -> Assertion
+        testSing xs =
+          withSomeSing xs $ \(schars :: SList (xs :: [Char])) ->
+            let ss = sFromList schars
+             in withKnownSymbol ss (symbolVal ss) @?= xs
+    testSing ""
+    testSing "a"
+    testSing "ab"
+    testSing "abc"
+    testSing "Foo Bar"
