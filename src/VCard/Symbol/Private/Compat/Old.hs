@@ -12,6 +12,7 @@ module VCard.Symbol.Private.Compat.Old
     withKnownSymbol,
     withSomeSChar,
     withSomeSSymbol,
+    sConsSymbol,
     sUnconsSymbol,
   )
 where
@@ -21,12 +22,14 @@ import Data.Proxy (Proxy (..))
 import Data.Tuple.Singletons (STuple2 (..))
 import Data.Type.Equality (testEquality, (:~:))
 import GHC.TypeLits
-  ( KnownChar,
+  ( ConsSymbol,
+    KnownChar,
     KnownSymbol,
     SomeChar (..),
     SomeSymbol (..),
     Symbol,
     UnconsSymbol,
+    charVal,
     someCharVal,
     someSymbolVal,
     symbolVal,
@@ -84,6 +87,19 @@ withSomeSSymbol :: String -> (forall (s :: Symbol). SSymbol s -> r) -> r
 withSomeSSymbol string f =
   case someSymbolVal string of
     SomeSymbol (Proxy :: Proxy s) -> f (symbolSing :: SSymbol s)
+
+-- | Singleton of 'ConsSymbol'.
+
+-- See the note below about the bug in `sUnconsSymbol` from `singleton-base`.
+-- Out of an abundance of caution, we implement a custom sConsSymbol here as
+-- well.
+sConsSymbol :: forall c s. SChar c -> SSymbol s -> SSymbol (ConsSymbol c s)
+sConsSymbol sc ss =
+  let c = withKnownChar sc (charVal (Proxy :: Proxy c))
+      s = withKnownSymbol ss (symbolVal (Proxy :: Proxy s))
+   in case someSymbolVal (c : s) of
+        SomeSymbol (Proxy :: Proxy s') ->
+          unsafeCoerce (symbolSing :: SSymbol s')
 
 -- | Singleton of 'UnconsSymbol'.
 
