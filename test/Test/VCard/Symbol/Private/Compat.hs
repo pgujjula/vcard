@@ -26,6 +26,7 @@ import VCard.Symbol.Private.Compat
   ( SChar,
     SSymbol,
     charSing,
+    sConsSymbol,
     sUnconsSymbol,
     symbolSing,
     testSCharEquality,
@@ -46,6 +47,7 @@ tests =
       test_testSSymbolEquality,
       test_withSomeSChar,
       test_withSomeSSymbol,
+      test_sConsSymbol,
       test_sUnconsSymbol
     ]
 
@@ -135,6 +137,21 @@ sDrop1 ss = sDrop1Uncons (sUnconsSymbol ss)
 sDrop1Uncons :: SMaybe a -> SSymbol (Drop1Uncons a)
 sDrop1Uncons SNothing = symbolSing @""
 sDrop1Uncons (SJust (STuple2 _ ss)) = ss
+
+test_sConsSymbol :: TestTree
+test_sConsSymbol =
+  testCase "sConsSymbol" $ do
+    assertEqualSSymbol
+      (sConsSymbol (charSing @'a') (symbolSing @""))
+      (symbolSing @"a")
+
+    assertEqualSSymbol
+      (sConsSymbol (charSing @'a') (symbolSing @"b"))
+      (symbolSing @"ab")
+
+    assertEqualSSymbol
+      (sConsSymbol (charSing @'a') (symbolSing @"bc"))
+      (symbolSing @"abc")
 
 test_sUnconsSymbol :: TestTree
 test_sUnconsSymbol =
