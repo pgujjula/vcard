@@ -37,6 +37,8 @@ module VCard.Symbol.Private
     -- * Miscellaneous utilities
     ToList,
     sToList,
+    FromList,
+    sFromList,
     Length,
     sLength,
   )
@@ -56,7 +58,7 @@ import VCard.Symbol.Private.Compat
     withSomeSSymbol,
   )
 import VCard.Symbol.Private.Length (Length, sLength)
-import VCard.Symbol.Private.List (ToList, sToList)
+import VCard.Symbol.Private.List (FromList, ToList, sFromList, sToList)
 import VCard.Symbol.Private.Prefix
   ( IsPrefixOf,
     IsPrefixOfInsensitive,
