@@ -70,6 +70,7 @@ test_testXNameSymbol =
     assertIsNothing (testXNameSymbol (symbolSing @" x-a"))
     assertIsNothing (testXNameSymbol (symbolSing @"x-a "))
     assertIsNothing (testXNameSymbol (symbolSing @"x- a"))
+    assertIsNothing (testXNameSymbol (symbolSing @"x-é"))
 
 test_testXNameLowerSymbol :: TestTree
 test_testXNameLowerSymbol =
@@ -106,6 +107,7 @@ test_testXNameLowerSymbol =
     assertIsNothing (testXNameLowerSymbol (symbolSing @" x-a"))
     assertIsNothing (testXNameLowerSymbol (symbolSing @"x-a "))
     assertIsNothing (testXNameLowerSymbol (symbolSing @"x- a"))
+    assertIsNothing (testXNameLowerSymbol (symbolSing @"x-é"))
 
 test_testXNameUpperSymbol :: TestTree
 test_testXNameUpperSymbol =
@@ -142,3 +144,4 @@ test_testXNameUpperSymbol =
     assertIsNothing (testXNameUpperSymbol (symbolSing @" X-A"))
     assertIsNothing (testXNameUpperSymbol (symbolSing @"X-A "))
     assertIsNothing (testXNameUpperSymbol (symbolSing @"X- A"))
+    assertIsNothing (testXNameUpperSymbol (symbolSing @"X-É"))
