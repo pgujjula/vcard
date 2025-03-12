@@ -39,6 +39,10 @@ module VCard.Symbol.Private
     sToList,
     FromList,
     sFromList,
+    Take,
+    sTake,
+    Drop,
+    sDrop,
     Length,
     sLength,
   )
@@ -65,3 +69,4 @@ import VCard.Symbol.Private.Prefix
     sIsPrefixOf,
     sIsPrefixOfInsensitive,
   )
+import VCard.Symbol.Private.Slice (Drop, Take, sDrop, sTake)
