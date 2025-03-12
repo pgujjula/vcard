@@ -49,6 +49,12 @@ test_testXNameSymbol =
     assertIsJust (testXNameSymbol (symbolSing @"X-Foo"))
     assertIsJust (testXNameSymbol (symbolSing @"x-FOO"))
     assertIsJust (testXNameSymbol (symbolSing @"X-FOO"))
+    assertIsJust (testXNameSymbol (symbolSing @"x-123"))
+    assertIsJust (testXNameSymbol (symbolSing @"X-123"))
+    assertIsJust (testXNameSymbol (symbolSing @"x-a1"))
+    assertIsJust (testXNameSymbol (symbolSing @"X-a1"))
+    assertIsJust (testXNameSymbol (symbolSing @"x-A1"))
+    assertIsJust (testXNameSymbol (symbolSing @"X-A1"))
     --
     assertIsNothing (testXNameSymbol (symbolSing @""))
     assertIsNothing (testXNameSymbol (symbolSing @"a"))
@@ -66,6 +72,8 @@ test_testXNameLowerSymbol =
   testCase "testXNameLowerSymbol" $ do
     assertIsJust (testXNameLowerSymbol (symbolSing @"x-a"))
     assertIsJust (testXNameLowerSymbol (symbolSing @"x-foo"))
+    assertIsJust (testXNameLowerSymbol (symbolSing @"x-123"))
+    assertIsJust (testXNameLowerSymbol (symbolSing @"x-a1"))
     --
     assertIsNothing (testXNameLowerSymbol (symbolSing @"x-Foo"))
     assertIsNothing (testXNameLowerSymbol (symbolSing @"X-Foo"))
@@ -75,6 +83,10 @@ test_testXNameLowerSymbol =
     assertIsNothing (testXNameLowerSymbol (symbolSing @"X-a"))
     assertIsNothing (testXNameLowerSymbol (symbolSing @"X-A"))
     assertIsNothing (testXNameLowerSymbol (symbolSing @"X-foo"))
+    assertIsNothing (testXNameLowerSymbol (symbolSing @"X-123"))
+    assertIsNothing (testXNameLowerSymbol (symbolSing @"X-a1"))
+    assertIsNothing (testXNameLowerSymbol (symbolSing @"x-A1"))
+    assertIsNothing (testXNameLowerSymbol (symbolSing @"X-A1"))
     --
     assertIsNothing (testXNameLowerSymbol (symbolSing @""))
     assertIsNothing (testXNameLowerSymbol (symbolSing @"a"))
@@ -92,6 +104,8 @@ test_testXNameUpperSymbol =
   testCase "testXNameUpperSymbol" $ do
     assertIsJust (testXNameUpperSymbol (symbolSing @"X-A"))
     assertIsJust (testXNameUpperSymbol (symbolSing @"X-FOO"))
+    assertIsJust (testXNameUpperSymbol (symbolSing @"X-123"))
+    assertIsJust (testXNameUpperSymbol (symbolSing @"X-A1"))
     --
     assertIsNothing (testXNameUpperSymbol (symbolSing @"x-FOO"))
     assertIsNothing (testXNameUpperSymbol (symbolSing @"x-foo"))
@@ -101,6 +115,10 @@ test_testXNameUpperSymbol =
     assertIsNothing (testXNameUpperSymbol (symbolSing @"x-a"))
     assertIsNothing (testXNameUpperSymbol (symbolSing @"X-a"))
     assertIsNothing (testXNameUpperSymbol (symbolSing @"x-A"))
+    assertIsNothing (testXNameUpperSymbol (symbolSing @"x-123"))
+    assertIsNothing (testXNameUpperSymbol (symbolSing @"x-a1"))
+    assertIsNothing (testXNameUpperSymbol (symbolSing @"X-a1"))
+    assertIsNothing (testXNameUpperSymbol (symbolSing @"x-A1"))
     --
     assertIsNothing (testXNameUpperSymbol (symbolSing @""))
     assertIsNothing (testXNameUpperSymbol (symbolSing @"a"))
