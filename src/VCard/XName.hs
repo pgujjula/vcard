@@ -24,7 +24,6 @@ import Data.Constraint (Dict (..))
 import Data.Kind (Constraint)
 import Data.Ord.Singletons ((%>), type (>))
 import Data.Type.Bool (type (&&))
-import GHC.TypeError (Assert)
 import GHC.TypeLits (Symbol)
 import VCard.AlphaNumDash
   ( IsAlphaNumDashLowerSymbol,
@@ -45,7 +44,7 @@ import VCard.Symbol.Private
     sLength,
     symbolSing,
   )
-import VCard.Util (NoInstance)
+import VCard.Util (Assert, NoInstance)
 
 -- Writing XNameSymbol/XNameSymbolLower/XNameSymbolUpper as type synonyms does
 -- not work on GHC 9.2. Once we drop support for GHC 9.2 we can rewrite them as

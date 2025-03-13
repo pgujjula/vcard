@@ -29,7 +29,6 @@ import Data.List.Singletons (SList (SCons, SNil))
 import Data.Ord.Singletons ((%>), type (>))
 import Data.Type.Bool (type (&&), type (||))
 import Data.Type.Equality ((:~:) (Refl))
-import GHC.TypeError (Assert)
 import GHC.TypeLits (Symbol)
 import Unsafe.Coerce (unsafeCoerce)
 import VCard.Natural.Private (natSing)
@@ -43,7 +42,7 @@ import VCard.Symbol.Private
     sToList,
     testSCharEquality,
   )
-import VCard.Util (NoInstance)
+import VCard.Util (Assert, NoInstance)
 
 -- Writing AlphaNumDashSymbol/AlphaNumDashLowerSymbol/
 -- AlphaNumDashUpperSymbol as type synonyms does not work on GHC 9.2. Once we

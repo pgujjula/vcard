@@ -1,5 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -12,6 +13,7 @@ module VCard.Util
     intersperseCommaNE,
     Truth,
     NoInstance,
+    Assert,
   )
 where
 
@@ -25,6 +27,9 @@ import Data.Text qualified as Text
 import Data.Text.Lazy (toStrict)
 import Data.Text.Lazy.Builder (toLazyText)
 import Data.Text.Lazy.Builder.Int (decimal)
+#if MIN_VERSION_base(4,17,0)
+import GHC.TypeError (Assert)
+#endif
 import GHC.TypeLits (ErrorMessage (ShowType, (:<>:)), Symbol, TypeError)
 import GHC.TypeLits qualified as ErrorMessage (ErrorMessage (Text))
 import Text.Megaparsec (many)
@@ -60,3 +65,12 @@ type family NoInstance (c :: Symbol) (s :: Symbol) :: Constraint where
           :<>: ShowType s
           :<>: ErrorMessage.Text ")"
       )
+
+#if !MIN_VERSION_base(4,17,0)
+-- | When GHC < 9.4, `Assert` is not available from `base`, so we define
+--   our own.
+type Assert :: Bool -> Constraint -> Constraint
+type family Assert check errMsg where
+  Assert 'True _      = ()
+  Assert _     errMsg = errMsg
+#endif
