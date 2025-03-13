@@ -27,8 +27,9 @@ import Data.Eq.Singletons ((%==), type (==))
 import Data.Kind (Constraint)
 import Data.List.Singletons (SList (SCons, SNil))
 import Data.Ord.Singletons ((%>), type (>))
-import Data.Type.Bool (If, type (&&), type (||))
+import Data.Type.Bool (type (&&), type (||))
 import Data.Type.Equality ((:~:) (Refl))
+import GHC.TypeError (Assert)
 import GHC.TypeLits (Symbol)
 import Unsafe.Coerce (unsafeCoerce)
 import VCard.Natural.Private (natSing)
@@ -42,14 +43,14 @@ import VCard.Symbol.Private
     sToList,
     testSCharEquality,
   )
-import VCard.Util (NoInstance, Truth)
+import VCard.Util (NoInstance)
 
 -- Writing AlphaNumDashSymbol/AlphaNumDashLowerSymbol/
 -- AlphaNumDashUpperSymbol as type synonyms does not work on GHC 9.2. Once we
 -- drop support for GHC 9.2 we can rewrite them as type synonyms.
 type family AlphaNumDashSymbol (s :: Symbol) :: Constraint where
   AlphaNumDashSymbol s =
-    If (IsAlphaNumDashSymbol s) Truth (NoInstance "AlphaNumDashSymbol" s)
+    Assert (IsAlphaNumDashSymbol s) (NoInstance "AlphaNumDashSymbol" s)
 
 testAlphaNumDashSymbol :: SSymbol s -> Maybe (Dict (AlphaNumDashSymbol s))
 testAlphaNumDashSymbol ss =
@@ -65,9 +66,8 @@ sIsAlphaNumDashSymbol ss =
 
 type family AlphaNumDashLowerSymbol (s :: Symbol) :: Constraint where
   AlphaNumDashLowerSymbol s =
-    If
+    Assert
       (IsAlphaNumDashLowerSymbol s)
-      Truth
       (NoInstance "AlphaNumDashLowerSymbol" s)
 
 testAlphaNumDashLowerSymbol ::
@@ -87,9 +87,8 @@ sIsAlphaNumDashLowerSymbol ss =
 
 type family AlphaNumDashUpperSymbol (s :: Symbol) :: Constraint where
   AlphaNumDashUpperSymbol s =
-    If
+    Assert
       (IsAlphaNumDashUpperSymbol s)
-      Truth
       (NoInstance "AlphaNumDashUpperSymbol" s)
 
 testAlphaNumDashUpperSymbol ::

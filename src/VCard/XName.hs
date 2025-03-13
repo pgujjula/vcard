@@ -23,7 +23,8 @@ import Data.Bool.Singletons (SBool (SFalse, STrue), (%&&))
 import Data.Constraint (Dict (..))
 import Data.Kind (Constraint)
 import Data.Ord.Singletons ((%>), type (>))
-import Data.Type.Bool (If, type (&&))
+import Data.Type.Bool (type (&&))
+import GHC.TypeError (Assert)
 import GHC.TypeLits (Symbol)
 import VCard.AlphaNumDash
   ( IsAlphaNumDashLowerSymbol,
@@ -44,13 +45,13 @@ import VCard.Symbol.Private
     sLength,
     symbolSing,
   )
-import VCard.Util (NoInstance, Truth)
+import VCard.Util (NoInstance)
 
 -- Writing XNameSymbol/XNameSymbolLower/XNameSymbolUpper as type synonyms does
 -- not work on GHC 9.2. Once we drop support for GHC 9.2 we can rewrite them as
 -- type synonyms.
 type family XNameSymbol (s :: Symbol) :: Constraint where
-  XNameSymbol s = If (IsXNameSymbol s) Truth (NoInstance "XNameSymbol" s)
+  XNameSymbol s = Assert (IsXNameSymbol s) (NoInstance "XNameSymbol" s)
 
 testXNameSymbol :: SSymbol s -> Maybe (Dict (XNameSymbol s))
 testXNameSymbol ss =
@@ -69,7 +70,7 @@ sIsXNameSymbol ss =
 
 type family XNameLowerSymbol (s :: Symbol) :: Constraint where
   XNameLowerSymbol s =
-    If (IsXNameLowerSymbol s) Truth (NoInstance "XNameLowerSymbol" s)
+    Assert (IsXNameLowerSymbol s) (NoInstance "XNameLowerSymbol" s)
 
 testXNameLowerSymbol :: SSymbol s -> Maybe (Dict (XNameLowerSymbol s))
 testXNameLowerSymbol ss =
@@ -88,7 +89,7 @@ sIsXNameLowerSymbol ss =
 
 type family XNameUpperSymbol (s :: Symbol) :: Constraint where
   XNameUpperSymbol s =
-    If (IsXNameUpperSymbol s) Truth (NoInstance "XNameUpperSymbol" s)
+    Assert (IsXNameUpperSymbol s) (NoInstance "XNameUpperSymbol" s)
 
 testXNameUpperSymbol :: SSymbol s -> Maybe (Dict (XNameUpperSymbol s))
 testXNameUpperSymbol ss =
