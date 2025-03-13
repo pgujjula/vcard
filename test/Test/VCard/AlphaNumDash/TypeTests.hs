@@ -19,12 +19,12 @@ import Data.Type.Equality ((:~:) (Refl))
 import Test.ShouldNotTypecheck (shouldNotTypecheck)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, testCase)
+import Test.VCard.Util (Truth)
 import VCard.AlphaNumDash
   ( AlphaNumDashLowerSymbol,
     AlphaNumDashSymbol,
     AlphaNumDashUpperSymbol,
   )
-import VCard.Util (Truth)
 
 shouldTypecheck :: (c :: Constraint) :~: Truth -> Assertion
 shouldTypecheck r = deepseq r (pure ())

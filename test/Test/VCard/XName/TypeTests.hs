@@ -20,7 +20,7 @@ import Data.Type.Equality ((:~:) (Refl))
 import Test.ShouldNotTypecheck (shouldNotTypecheck)
 import Test.Tasty (TestTree)
 import Test.Tasty.HUnit (Assertion, testCase)
-import VCard.Util (Truth)
+import Test.VCard.Util (Truth)
 import VCard.XName
   ( XNameLowerSymbol,
     XNameSymbol,

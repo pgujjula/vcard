@@ -1,7 +1,9 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE CPP #-}
+#if !MIN_VERSION_base(4,17,0)
 {-# LANGUAGE StandaloneKindSignatures #-}
+#endif
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -11,7 +13,6 @@ module VCard.Util
     intToText,
     sepByNonEmpty,
     intersperseCommaNE,
-    Truth,
     NoInstance,
     Assert,
   )
@@ -52,9 +53,6 @@ sepByNonEmpty p sep = do
 intersperseCommaNE :: Serializer a -> Serializer (NonEmpty a)
 intersperseCommaNE s xs =
   Text.concat (List.intersperse (Text.pack ",") (map s (NonEmpty.toList xs)))
-
-type Truth :: Constraint
-type Truth = ()
 
 type family NoInstance (c :: Symbol) (s :: Symbol) :: Constraint where
   NoInstance c s =

@@ -180,6 +180,7 @@ tests:
     - Test.VCard.Types.Value.Text
     - Test.VCard.Types.Value.Time
     - Test.VCard.Types.Value.URI
+    - Test.VCard.Util
     - Test.VCard.XName
     - Test.VCard.XName.TypeTests
     - VCard
