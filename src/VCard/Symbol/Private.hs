@@ -34,6 +34,12 @@ module VCard.Symbol.Private
     IsPrefixOfInsensitive,
     sIsPrefixOfInsensitive,
 
+    -- * Cons and uncons
+    ConsSymbol,
+    sConsSymbol,
+    UnconsSymbol,
+    sUnconsSymbol,
+
     -- * Miscellaneous utilities
     ToList,
     sToList,
@@ -48,11 +54,14 @@ module VCard.Symbol.Private
   )
 where
 
+import GHC.TypeLits (ConsSymbol, UnconsSymbol)
 import VCard.Symbol.Private.Case (ToLower, ToUpper, sToLower, sToUpper)
 import VCard.Symbol.Private.Compat
   ( SChar,
     SSymbol,
     charSing,
+    sConsSymbol,
+    sUnconsSymbol,
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
