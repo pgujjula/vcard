@@ -19,7 +19,9 @@ module VCard.Util
 where
 
 import Control.Monad (MonadPlus)
+#if !MIN_VERSION_base(4,17,0)
 import Data.Kind (Constraint)
+#endif
 import Data.List qualified as List
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.List.NonEmpty qualified as NonEmpty
@@ -54,7 +56,7 @@ intersperseCommaNE :: Serializer a -> Serializer (NonEmpty a)
 intersperseCommaNE s xs =
   Text.concat (List.intersperse (Text.pack ",") (map s (NonEmpty.toList xs)))
 
-type family NoInstance (c :: Symbol) (s :: Symbol) :: Constraint where
+type family NoInstance (c :: Symbol) (s :: Symbol) :: k where
   NoInstance c s =
     TypeError
       ( ErrorMessage.Text "No instance for ("
