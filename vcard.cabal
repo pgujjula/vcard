@@ -62,6 +62,8 @@ library
       VCard.Types.Param.Generic
       VCard.Types.Param.Geo
       VCard.Types.Param.Language
+      VCard.Types.Param.ParamValue
+      VCard.Types.Param.ParamValue.Internal
       VCard.Types.Param.PID
       VCard.Types.Param.Pref
       VCard.Types.Param.Type
@@ -196,6 +198,8 @@ test-suite vcard-tests
       VCard.Types.Param.Generic
       VCard.Types.Param.Geo
       VCard.Types.Param.Language
+      VCard.Types.Param.ParamValue
+      VCard.Types.Param.ParamValue.Internal
       VCard.Types.Param.PID
       VCard.Types.Param.Pref
       VCard.Types.Param.Type
