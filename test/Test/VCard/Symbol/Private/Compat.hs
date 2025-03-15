@@ -33,8 +33,6 @@ import VCard.Symbol.Private.Compat
     symbolSing,
     testSCharEquality,
     testSSymbolEquality,
-    withKnownChar,
-    withKnownSymbol,
     withSomeSChar,
     withSomeSSymbol,
   )
@@ -100,9 +98,7 @@ test_withSomeSChar =
   testCase "withSomeSChar" $ do
     let bumpCharViaSingleton :: Char -> Char
         bumpCharViaSingleton c =
-          withSomeSChar c $ \(sc :: SChar c) ->
-            let sc' = sBumpChar sc
-             in withKnownChar sc' $ charVal sc'
+          withSomeSChar c $ \sc -> fromSChar (sBumpChar sc)
     bumpCharViaSingleton 'a' @?= 'b'
     bumpCharViaSingleton 'x' @?= 'y'
     bumpCharViaSingleton 'A' @?= 'B'
@@ -120,9 +116,7 @@ test_withSomeSSymbol =
   testCase "withSomeSSymbol" $ do
     let drop1ViaSingleton :: String -> String
         drop1ViaSingleton s =
-          withSomeSSymbol s $ \(ss :: SSymbol s) ->
-            let ss' = sDrop1 ss
-             in withKnownSymbol ss' $ symbolVal ss'
+          withSomeSSymbol s $ \ss -> fromSSymbol (sDrop1 ss)
     drop1ViaSingleton "" @?= ""
     drop1ViaSingleton "a" @?= ""
     drop1ViaSingleton "ab" @?= "b"

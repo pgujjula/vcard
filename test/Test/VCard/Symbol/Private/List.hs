@@ -7,10 +7,9 @@ import Data.Dynamic (Dynamic, toDyn)
 import Data.List.Singletons (SList)
 import Data.Singletons (fromSing, withSomeSing)
 import Data.Type.Equality ((:~:) (Refl))
-import GHC.TypeLits (symbolVal)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, testCase, (@?=))
-import VCard.Symbol.Private (SSymbol, symbolSing, withKnownSymbol)
+import VCard.Symbol.Private (SSymbol, fromSSymbol, symbolSing)
 import VCard.Symbol.Private.List (FromList, ToList, sFromList, sToList)
 
 tests :: TestTree
@@ -38,8 +37,7 @@ test_sToList :: TestTree
 test_sToList =
   testCase "sToList" $ do
     let testSing :: SSymbol s -> Assertion
-        testSing ss =
-          fromSing (sToList ss) @?= withKnownSymbol ss (symbolVal ss)
+        testSing ss = fromSing (sToList ss) @?= fromSSymbol ss
     testSing (symbolSing @"")
     testSing (symbolSing @"a")
     testSing (symbolSing @"ab")
@@ -63,8 +61,7 @@ test_sFromList =
     let testSing :: [Char] -> Assertion
         testSing xs =
           withSomeSing xs $ \(schars :: SList (xs :: [Char])) ->
-            let ss = sFromList schars
-             in withKnownSymbol ss (symbolVal ss) @?= xs
+            fromSSymbol (sFromList schars) @?= xs
     testSing ""
     testSing "a"
     testSing "ab"

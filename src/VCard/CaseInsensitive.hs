@@ -25,11 +25,11 @@ import VCard.Symbol.Private
   ( SSymbol,
     ToLower,
     ToUpper,
+    fromSSymbol,
     sToLower,
     sToUpper,
     symbolSing,
     testSSymbolEquality,
-    withKnownSymbol,
   )
 
 -- | Represents a 'Symbol' that, when lowercased, is @s@. For example,
@@ -62,9 +62,7 @@ instance forall s. (KnownSymbol s) => HasParser (CaseInsensitiveLower s) where
 
 instance HasSerializer (CaseInsensitiveLower s) where
   serializer :: Serializer (CaseInsensitiveLower s)
-  serializer = \case
-    CaseInsensitiveLower st ->
-      Text.pack (withKnownSymbol st (symbolVal st))
+  serializer (CaseInsensitiveLower st) = Text.pack (fromSSymbol st)
 
 -- | Represents a 'Symbol' that, when uppercased, is @s@. For example,
 --   @'CaseInsensitiveUpper' ('VCard.Symbol.Private.symbolSing' \@\"Foo\")@ has
@@ -96,6 +94,4 @@ instance forall s. (KnownSymbol s) => HasParser (CaseInsensitiveUpper s) where
 
 instance HasSerializer (CaseInsensitiveUpper s) where
   serializer :: Serializer (CaseInsensitiveUpper s)
-  serializer = \case
-    CaseInsensitiveUpper st ->
-      Text.pack (withKnownSymbol st (symbolVal st))
+  serializer (CaseInsensitiveUpper st) = Text.pack (fromSSymbol st)

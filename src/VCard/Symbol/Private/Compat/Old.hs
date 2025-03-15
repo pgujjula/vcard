@@ -105,8 +105,8 @@ fromSSymbol ss = withKnownSymbol ss (symbolVal ss)
 -- well.
 sConsSymbol :: forall c s. SChar c -> SSymbol s -> SSymbol (ConsSymbol c s)
 sConsSymbol sc ss =
-  let c = withKnownChar sc (charVal (Proxy :: Proxy c))
-      s = withKnownSymbol ss (symbolVal (Proxy :: Proxy s))
+  let c = fromSChar sc
+      s = fromSSymbol ss
    in case someSymbolVal (c : s) of
         SomeSymbol (Proxy :: Proxy s') ->
           unsafeCoerce (symbolSing :: SSymbol s')
@@ -117,7 +117,7 @@ sConsSymbol sc ss =
 -- GHC < 9.6, so we implement our own.
 sUnconsSymbol :: forall s. SSymbol s -> SMaybe (UnconsSymbol s)
 sUnconsSymbol ss =
-  case withKnownSymbol ss (symbolVal (Proxy :: Proxy s)) of
+  case fromSSymbol ss of
     [] -> unsafeCoerce SNothing
     (c : s') ->
       case someCharVal c of
