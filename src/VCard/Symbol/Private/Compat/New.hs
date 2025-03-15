@@ -12,6 +12,8 @@ module VCard.Symbol.Private.Compat.New
     withKnownSymbol,
     withSomeSChar,
     withSomeSSymbol,
+    fromSChar,
+    fromSSymbol,
     sConsSymbol,
     sUnconsSymbol,
   )
@@ -27,6 +29,8 @@ import GHC.TypeLits
     SSymbol,
     UnconsSymbol,
     charSing,
+    fromSChar,
+    fromSSymbol,
     symbolSing,
     withSomeSChar,
     withSomeSSymbol,

@@ -12,6 +12,8 @@ module VCard.Symbol.Private.Compat.Old
     withKnownSymbol,
     withSomeSChar,
     withSomeSSymbol,
+    fromSChar,
+    fromSSymbol,
     sConsSymbol,
     sUnconsSymbol,
   )
@@ -87,6 +89,14 @@ withSomeSSymbol :: String -> (forall (s :: Symbol). SSymbol s -> r) -> r
 withSomeSSymbol string f =
   case someSymbolVal string of
     SomeSymbol (Proxy :: Proxy s) -> f (symbolSing :: SSymbol s)
+
+-- | Return the 'Char' corresponding to @c@ in an @'SChar' c@ value.
+fromSChar :: SChar s -> Char
+fromSChar sc = withKnownChar sc (charVal sc)
+
+-- | Return the 'String' corresponding to @s@ in an @'SSymbol' s@ value.
+fromSSymbol :: SSymbol s -> String
+fromSSymbol ss = withKnownSymbol ss (symbolVal ss)
 
 -- | Singleton of 'ConsSymbol'.
 
