@@ -76,6 +76,7 @@ library:
   other-modules:
   - VCard.AlphaNumDash
   - VCard.CaseInsensitive
+  - VCard.Char
   - VCard.Internal.Closed
   - VCard.Natural.Private
   - VCard.Natural.Private.Compat
@@ -186,6 +187,7 @@ tests:
     - VCard
     - VCard.AlphaNumDash
     - VCard.CaseInsensitive
+    - VCard.Char
     - VCard.Internal.Closed
     - VCard.Natural.Private
     - VCard.Natural.Private.Compat
