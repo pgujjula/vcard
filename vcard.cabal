@@ -130,6 +130,7 @@ test-suite vcard-tests
       Test.VCard.AlphaNumDash
       Test.VCard.AlphaNumDash.TypeTests
       Test.VCard.CaseInsensitive
+      Test.VCard.Char
       Test.VCard.Natural.Private
       Test.VCard.Natural.Private.Compat
       Test.VCard.Symbol.Private

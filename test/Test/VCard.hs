@@ -7,6 +7,7 @@ module Test.VCard (tests) where
 import Test.Tasty (TestTree, testGroup)
 import Test.VCard.AlphaNumDash qualified
 import Test.VCard.CaseInsensitive qualified
+import Test.VCard.Char qualified
 import Test.VCard.Natural.Private qualified
 import Test.VCard.Symbol.Private qualified
 import Test.VCard.Types qualified
@@ -18,6 +19,7 @@ tests =
     "VCard"
     [ Test.VCard.AlphaNumDash.tests,
       Test.VCard.CaseInsensitive.tests,
+      Test.VCard.Char.tests,
       Test.VCard.Natural.Private.tests,
       Test.VCard.Symbol.Private.tests,
       Test.VCard.Types.tests,
