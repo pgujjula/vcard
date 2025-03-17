@@ -156,6 +156,7 @@ tests:
     - Test.VCard.Natural.Private
     - Test.VCard.Natural.Private.Compat
     - Test.VCard.Symbol.Private
+    - Test.VCard.Symbol.Private.Append
     - Test.VCard.Symbol.Private.Case
     - Test.VCard.Symbol.Private.Compat
     - Test.VCard.Symbol.Private.Length
