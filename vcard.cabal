@@ -48,6 +48,7 @@ library
       VCard.Parse
       VCard.Serialize
       VCard.Symbol.Private
+      VCard.Symbol.Private.Append
       VCard.Symbol.Private.Case
       VCard.Symbol.Private.Compat
       VCard.Symbol.Private.Length
@@ -177,6 +178,7 @@ test-suite vcard-tests
       VCard.Parse
       VCard.Serialize
       VCard.Symbol.Private
+      VCard.Symbol.Private.Append
       VCard.Symbol.Private.Case
       VCard.Symbol.Private.Compat
       VCard.Symbol.Private.Length
