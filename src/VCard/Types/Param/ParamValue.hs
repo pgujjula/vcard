@@ -25,6 +25,7 @@ import Text.Megaparsec (choice, takeWhileP)
 import Text.Megaparsec.Char (char)
 import VCard.Char (dQuote, isQSafeChar, isSafeChar)
 import VCard.Parse (HasParser, Parser, parser)
+import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Symbol.Private (SSymbol, withKnownSymbol, withSomeSSymbol)
 import VCard.Types.Param.ParamValue.Internal
   ( IsParamValueSymbol,
@@ -116,3 +117,19 @@ instance (KnownSymbol s) => HasParser (SParamValue s) where
 instance HasParser SomeParamValue where
   parser :: Parser SomeParamValue
   parser = someParamValueVal <$> (parser @ParamValue)
+
+--
+-- Serializers
+--
+
+instance HasSerializer ParamValue where
+  serializer :: Serializer ParamValue
+  serializer = unParamValue
+
+instance HasSerializer (SParamValue s) where
+  serializer :: Serializer (SParamValue s)
+  serializer (SParamValue ss) = serializer ss
+
+instance HasSerializer SomeParamValue where
+  serializer :: Serializer SomeParamValue
+  serializer (SomeParamValue spv) = serializer spv
