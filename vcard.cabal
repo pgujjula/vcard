@@ -140,6 +140,7 @@ test-suite vcard-tests
       Test.VCard.Symbol.Private.Length
       Test.VCard.Symbol.Private.List
       Test.VCard.Symbol.Private.Prefix
+      Test.VCard.Symbol.Private.Singleton
       Test.VCard.Symbol.Private.Slice
       Test.VCard.Types
       Test.VCard.Types.Param
