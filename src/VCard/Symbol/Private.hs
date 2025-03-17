@@ -36,11 +36,15 @@ module VCard.Symbol.Private
     IsPrefixOfInsensitive,
     sIsPrefixOfInsensitive,
 
-    -- * Cons and uncons
+    -- * Cons and Snoc
     ConsSymbol,
     sConsSymbol,
     UnconsSymbol,
     sUnconsSymbol,
+    SnocSymbol,
+    sSnocSymbol,
+    UnsnocSymbol,
+    sUnsnocSymbol,
 
     -- * Miscellaneous utilities
     ToList,
@@ -83,3 +87,9 @@ import VCard.Symbol.Private.Prefix
     sIsPrefixOfInsensitive,
   )
 import VCard.Symbol.Private.Slice (Drop, Take, sDrop, sTake)
+import VCard.Symbol.Private.Snoc
+  ( SnocSymbol,
+    UnsnocSymbol,
+    sSnocSymbol,
+    sUnsnocSymbol,
+  )

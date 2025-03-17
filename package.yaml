@@ -91,6 +91,7 @@ library:
   - VCard.Symbol.Private.Prefix
   - VCard.Symbol.Private.Singleton
   - VCard.Symbol.Private.Slice
+  - VCard.Symbol.Private.Snoc
   - VCard.Types.Param.Calscale
   - VCard.Types.Param.Calscale.CalscaleValueSymbol
   - VCard.Types.Param.Generic
@@ -207,6 +208,7 @@ tests:
     - VCard.Symbol.Private.Prefix
     - VCard.Symbol.Private.Singleton
     - VCard.Symbol.Private.Slice
+    - VCard.Symbol.Private.Snoc
     - VCard.Types.Param
     - VCard.Types.Param.Calscale
     - VCard.Types.Param.Calscale.CalscaleValueSymbol
