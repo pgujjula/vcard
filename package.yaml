@@ -90,6 +90,7 @@ library:
   - VCard.Symbol.Private.List
   - VCard.Symbol.Private.Parse
   - VCard.Symbol.Private.Prefix
+  - VCard.Symbol.Private.Serialize
   - VCard.Symbol.Private.Singleton
   - VCard.Symbol.Private.Slice
   - VCard.Symbol.Private.Snoc
@@ -212,6 +213,7 @@ tests:
     - VCard.Symbol.Private.List
     - VCard.Symbol.Private.Parse
     - VCard.Symbol.Private.Prefix
+    - VCard.Symbol.Private.Serialize
     - VCard.Symbol.Private.Singleton
     - VCard.Symbol.Private.Slice
     - VCard.Symbol.Private.Snoc

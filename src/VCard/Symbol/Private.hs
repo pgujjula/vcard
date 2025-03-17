@@ -87,6 +87,7 @@ import VCard.Symbol.Private.Prefix
     sIsPrefixOf,
     sIsPrefixOfInsensitive,
   )
+import VCard.Symbol.Private.Serialize ()
 import VCard.Symbol.Private.Slice (Drop, Take, sDrop, sTake)
 import VCard.Symbol.Private.Snoc
   ( SnocSymbol,
