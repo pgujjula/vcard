@@ -165,6 +165,7 @@ tests:
     - Test.VCard.Symbol.Private.Prefix
     - Test.VCard.Symbol.Private.Singleton
     - Test.VCard.Symbol.Private.Slice
+    - Test.VCard.Symbol.Private.Snoc
     - Test.VCard.Types
     - Test.VCard.Types.Param
     - Test.VCard.Types.Param.Calscale

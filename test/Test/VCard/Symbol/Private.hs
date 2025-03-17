@@ -12,6 +12,7 @@ import Test.VCard.Symbol.Private.List qualified
 import Test.VCard.Symbol.Private.Prefix qualified
 import Test.VCard.Symbol.Private.Singleton qualified
 import Test.VCard.Symbol.Private.Slice qualified
+import Test.VCard.Symbol.Private.Snoc qualified
 
 tests :: TestTree
 tests =
@@ -24,5 +25,6 @@ tests =
       Test.VCard.Symbol.Private.List.tests,
       Test.VCard.Symbol.Private.Prefix.tests,
       Test.VCard.Symbol.Private.Singleton.tests,
-      Test.VCard.Symbol.Private.Slice.tests
+      Test.VCard.Symbol.Private.Slice.tests,
+      Test.VCard.Symbol.Private.Snoc.tests
     ]
