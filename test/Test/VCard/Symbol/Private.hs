@@ -9,6 +9,7 @@ import Test.VCard.Symbol.Private.Case qualified
 import Test.VCard.Symbol.Private.Compat qualified
 import Test.VCard.Symbol.Private.Length qualified
 import Test.VCard.Symbol.Private.List qualified
+import Test.VCard.Symbol.Private.Parse qualified
 import Test.VCard.Symbol.Private.Prefix qualified
 import Test.VCard.Symbol.Private.Singleton qualified
 import Test.VCard.Symbol.Private.Slice qualified
@@ -23,6 +24,7 @@ tests =
       Test.VCard.Symbol.Private.Compat.tests,
       Test.VCard.Symbol.Private.Length.tests,
       Test.VCard.Symbol.Private.List.tests,
+      Test.VCard.Symbol.Private.Parse.tests,
       Test.VCard.Symbol.Private.Prefix.tests,
       Test.VCard.Symbol.Private.Singleton.tests,
       Test.VCard.Symbol.Private.Slice.tests,
