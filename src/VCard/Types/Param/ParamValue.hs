@@ -20,7 +20,11 @@ import Data.Bool.Singletons (SBool (SFalse, STrue))
 import Data.Constraint (Dict (..))
 import Data.Text (Text)
 import Data.Text qualified as Text
-import GHC.TypeLits (Symbol, symbolVal)
+import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
+import Text.Megaparsec (choice, takeWhileP)
+import Text.Megaparsec.Char (char)
+import VCard.Char (dQuote, isQSafeChar, isSafeChar)
+import VCard.Parse (HasParser, Parser, parser)
 import VCard.Symbol.Private (SSymbol, withKnownSymbol, withSomeSSymbol)
 import VCard.Types.Param.ParamValue.Internal
   ( IsParamValueSymbol,
@@ -84,3 +88,31 @@ someParamValueVal (ParamValue x) =
           "someParamValueVal: invalid ParamValue "
             <> "(the \"impossible\" happened)"
       Just Dict -> SomeParamValue (SParamValue ss)
+
+--
+-- Parsers
+--
+
+instance HasParser ParamValue where
+  parser :: Parser ParamValue
+  parser =
+    ParamValue <$> choice [qsafeP, safeP]
+    where
+      qsafeP = do
+        x <- Text.singleton <$> char dQuote
+        y <- takeWhileP (Just "QSAFE") isQSafeChar
+        z <- Text.singleton <$> char dQuote
+        pure (x <> y <> z)
+      safeP = takeWhileP (Just "SAFE") isSafeChar
+
+instance (KnownSymbol s) => HasParser (SParamValue s) where
+  parser :: Parser (SParamValue s)
+  parser = do
+    ss <- parser @(SSymbol s)
+    case testParamValueSymbol ss of
+      Nothing -> fail ("no SParamValueSymbol instance for " <> show ss)
+      Just Dict -> pure (SParamValue ss)
+
+instance HasParser SomeParamValue where
+  parser :: Parser SomeParamValue
+  parser = someParamValueVal <$> (parser @ParamValue)
