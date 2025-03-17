@@ -53,6 +53,7 @@ library
       VCard.Symbol.Private.Length
       VCard.Symbol.Private.List
       VCard.Symbol.Private.Prefix
+      VCard.Symbol.Private.Singleton
       VCard.Symbol.Private.Slice
       VCard.Types.Param.Calscale
       VCard.Types.Param.Calscale.CalscaleValueSymbol
@@ -180,6 +181,7 @@ test-suite vcard-tests
       VCard.Symbol.Private.Length
       VCard.Symbol.Private.List
       VCard.Symbol.Private.Prefix
+      VCard.Symbol.Private.Singleton
       VCard.Symbol.Private.Slice
       VCard.Types.Param
       VCard.Types.Param.Calscale
