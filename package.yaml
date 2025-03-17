@@ -168,6 +168,7 @@ tests:
     - Test.VCard.Symbol.Private.List
     - Test.VCard.Symbol.Private.Parse
     - Test.VCard.Symbol.Private.Prefix
+    - Test.VCard.Symbol.Private.Serialize
     - Test.VCard.Symbol.Private.Singleton
     - Test.VCard.Symbol.Private.Slice
     - Test.VCard.Symbol.Private.Snoc
