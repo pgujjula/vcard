@@ -88,6 +88,7 @@ library:
   - VCard.Symbol.Private.Compat
   - VCard.Symbol.Private.Length
   - VCard.Symbol.Private.List
+  - VCard.Symbol.Private.Parse
   - VCard.Symbol.Private.Prefix
   - VCard.Symbol.Private.Singleton
   - VCard.Symbol.Private.Slice
@@ -209,6 +210,7 @@ tests:
     - VCard.Symbol.Private.Compat
     - VCard.Symbol.Private.Length
     - VCard.Symbol.Private.List
+    - VCard.Symbol.Private.Parse
     - VCard.Symbol.Private.Prefix
     - VCard.Symbol.Private.Singleton
     - VCard.Symbol.Private.Slice

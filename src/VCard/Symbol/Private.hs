@@ -80,6 +80,7 @@ import VCard.Symbol.Private.Compat
   )
 import VCard.Symbol.Private.Length (Length, sLength)
 import VCard.Symbol.Private.List (FromList, ToList, sFromList, sToList)
+import VCard.Symbol.Private.Parse ()
 import VCard.Symbol.Private.Prefix
   ( IsPrefixOf,
     IsPrefixOfInsensitive,
