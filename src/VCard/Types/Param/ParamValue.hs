@@ -18,6 +18,7 @@ where
 
 import Data.Bool.Singletons (SBool (SFalse, STrue))
 import Data.Constraint (Dict (..))
+import Data.Maybe (isJust)
 import Data.Text (Text)
 import Data.Text qualified as Text
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
@@ -26,7 +27,12 @@ import Text.Megaparsec.Char (char)
 import VCard.Char (dQuote, isQSafeChar, isSafeChar)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Symbol.Private (SSymbol, withKnownSymbol, withSomeSSymbol)
+import VCard.Symbol.Private
+  ( SSymbol,
+    testSSymbolEquality,
+    withKnownSymbol,
+    withSomeSSymbol,
+  )
 import VCard.Types.Param.ParamValue.Internal
   ( IsParamValueSymbol,
     sIsParamValueSymbol,
@@ -70,9 +76,17 @@ testParamValueSymbol ss =
 data SParamValue (s :: Symbol) where
   SParamValue :: (ParamValueSymbol s) => SSymbol s -> SParamValue s
 
+deriving instance Show (SParamValue s)
+
 -- | Existential type for 'SParamValue'.
 data SomeParamValue where
   SomeParamValue :: SParamValue s -> SomeParamValue
+
+deriving instance Show SomeParamValue
+
+instance Eq SomeParamValue where
+  (==) (SomeParamValue (SParamValue ss1)) (SomeParamValue (SParamValue ss2)) =
+    isJust (testSSymbolEquality ss1 ss2)
 
 -- | Convert an @'SParamValue' s@ to a 'ParamValue'.
 paramValueVal :: SParamValue s -> ParamValue
