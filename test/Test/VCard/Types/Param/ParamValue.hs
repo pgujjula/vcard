@@ -8,9 +8,10 @@ import Control.Monad (forM_)
 import Data.Maybe (isJust, isNothing)
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
-import Test.Tasty (TestTree, testGroup)
+import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, assertFailure, testCase, (@?=))
 import VCard.Parse (HasParser, parse)
+import VCard.Serialize (HasSerializer, serialize)
 import VCard.Symbol.Private
   ( SSymbol,
     symbolSing,
@@ -36,7 +37,8 @@ tests =
     [ test_testParamValueSymbol,
       test_paramValueVal,
       test_someParamValueVal,
-      test_parse
+      test_parse,
+      test_serialize
     ]
 
 test_testParamValueSymbol :: TestTree
@@ -172,6 +174,30 @@ test_parse_SomeParamValue =
     [ testParseValid cases_SomeParamValue_valid,
       testParseInvalid (Proxy @SomeParamValue) cases_SomeParamValue_invalid
     ]
+
+test_serialize :: TestTree
+test_serialize =
+  testGroup
+    "serialize"
+    [ test_serialize_ParamValue,
+      test_serialize_SParamValue,
+      test_serialize_SomeParamValue
+    ]
+
+test_serialize_ParamValue :: TestTree
+test_serialize_ParamValue = testSerialize "ParamValue" cases_ParamValue_valid
+
+test_serialize_SParamValue :: TestTree
+test_serialize_SParamValue =
+  testCase "SParamValue" $ do
+    serialize (SParamValue (symbolSing @"")) @?= ""
+    serialize (SParamValue (symbolSing @"foo")) @?= "foo"
+    serialize (SParamValue (symbolSing @"\"foo\"")) @?= "\"foo\""
+    serialize (SParamValue (symbolSing @"\"foo;\"")) @?= "\"foo;\""
+
+test_serialize_SomeParamValue :: TestTree
+test_serialize_SomeParamValue =
+  testSerialize "SomeParamValue" cases_SomeParamValue_valid
 
 cases_ParamValue_valid :: [(Text, ParamValue)]
 cases_ParamValue_valid =
@@ -318,3 +344,9 @@ testParseInvalid _ cases =
   testCase "invalid" $
     forM_ cases $ \text ->
       parse text @?= (Nothing :: Maybe a)
+
+testSerialize :: (HasSerializer a) => TestName -> [(Text, a)] -> TestTree
+testSerialize name cases =
+  testCase name $
+    forM_ cases $ \(text, value) ->
+      serialize value @?= text
