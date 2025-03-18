@@ -1,5 +1,8 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
 
 module VCard.Types.Param.ParamValue
   ( -- * Types
@@ -13,6 +16,11 @@ module VCard.Types.Param.ParamValue
     unParamValue,
     paramValueVal,
     someParamValueVal,
+
+    -- * Unquoting
+    unquoteParamValue,
+    UnquoteParamValueSymbol,
+    sUnquoteSParamValue,
   )
 where
 
@@ -21,21 +29,34 @@ import Data.Constraint (Dict (..))
 import Data.Maybe (isJust)
 import Data.Text (Text)
 import Data.Text qualified as Text
+import Data.Type.Bool (If)
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 import Text.Megaparsec (choice, takeWhileP)
 import Text.Megaparsec.Char (char)
 import VCard.Char (dQuote, isQSafeChar, isSafeChar)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
+#if MIN_VERSION_GLASGOW_HASKELL(9,4,0,0)
 import VCard.Symbol.Private
   ( SSymbol,
     testSSymbolEquality,
     withKnownSymbol,
     withSomeSSymbol,
   )
+#else
+import VCard.Symbol.Private
+  ( SSymbol,
+    fromSSymbol,
+    testSSymbolEquality,
+    withKnownSymbol,
+    withSomeSSymbol,
+  )
+#endif
 import VCard.Types.Param.ParamValue.Internal
   ( IsParamValueSymbol,
+    UnsafeUnquoteParamValueSymbol,
     sIsParamValueSymbol,
+    sUnsafeUnquoteParamValueSymbol,
   )
 import VCard.Util (Assert, NoInstance)
 
@@ -147,3 +168,47 @@ instance HasSerializer (SParamValue s) where
 instance HasSerializer SomeParamValue where
   serializer :: Serializer SomeParamValue
   serializer (SomeParamValue spv) = serializer spv
+
+--
+-- Unquoting
+--
+
+-- | Remove quotes from a 'ParamValue', if it has them.
+--
+-- >>> quotedFoo = paramValueVal (SParamValue (symbolSing @"\"foo\""))
+-- >>> unquotedFoo = paramValueVal (SParamValue (symbolSing @"foo"))
+-- >>> Text.putStrLn (unParamValue quotedFoo)
+-- "foo"
+-- >>> Text.putStrLn (unquoteParamValue quotedFoo)
+-- foo
+-- >>> Text.putStrLn (unParamValue unquotedFoo)
+-- foo
+-- >>> Text.putStrLn (unquoteParamValue unquotedFoo)
+-- foo
+unquoteParamValue :: ParamValue -> Text
+unquoteParamValue (ParamValue t) =
+  if Text.take 1 t == "\""
+    then Text.drop 1 (Text.take (Text.length t - 1) t)
+    else t
+
+-- | Remove quotes from a 'Symbol' with a 'ParamValueSymbol' instance.
+--
+--   Like 'unquoteParamValue' on the type level.
+type UnquoteParamValueSymbol :: Symbol -> Symbol
+type UnquoteParamValueSymbol s =
+  If
+    (IsParamValueSymbol s)
+    (UnsafeUnquoteParamValueSymbol s)
+    (NoInstance "ParamValueSymbol" s)
+
+-- | Singleton of 'UnquoteParamValueSymbol'.
+sUnquoteSParamValue :: SParamValue s -> SSymbol (UnquoteParamValueSymbol s)
+sUnquoteSParamValue (SParamValue ss) =
+  case sIsParamValueSymbol ss of
+    STrue -> sUnsafeUnquoteParamValueSymbol ss
+#if !MIN_VERSION_GLASGOW_HASKELL(9,4,0,0)
+    -- GHC >= 9.4 is able to deduce that this branch is unreachable, but for GHC
+    -- 9.2 we need this error handling
+    SFalse ->
+      error $ "No instance for (ParamValueSymbol "  <> fromSSymbol ss <> ")"
+#endif

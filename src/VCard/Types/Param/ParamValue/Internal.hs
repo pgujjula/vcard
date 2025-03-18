@@ -1,5 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -20,6 +21,10 @@ module VCard.Types.Param.ParamValue.Internal
     sIsSafeSymbol,
     IsSafeList,
     sIsSafeList,
+
+    -- * Unquoting
+    UnsafeUnquoteParamValueSymbol,
+    sUnsafeUnquoteParamValueSymbol,
   )
 where
 
@@ -32,7 +37,9 @@ import Data.Bool.Singletons
   )
 import Data.Eq.Singletons ((%==), type (==))
 import Data.List.Singletons (SList (SCons, SNil))
-import GHC.TypeLits (Symbol)
+import Data.Type.Bool (If)
+import GHC.TypeLits (Symbol, type (-))
+import Prelude.Singletons ((%-))
 import VCard.Char
   ( DQuote,
     IsQSafeChar,
@@ -41,7 +48,19 @@ import VCard.Char
     sIsQSafeChar,
     sIsSafeChar,
   )
-import VCard.Symbol.Private (SSymbol, ToList, sToList)
+import VCard.Natural.Private (natSing)
+import VCard.Symbol.Private
+  ( Drop,
+    Length,
+    SSymbol,
+    Take,
+    ToList,
+    sDrop,
+    sLength,
+    sTake,
+    sToList,
+    symbolSing,
+  )
 
 type family IsParamValueSymbol (s :: Symbol) :: Bool where
   IsParamValueSymbol s = IsSafeSymbol s || IsQSafeSymbol s
@@ -102,3 +121,24 @@ type family IsSafeList (xs :: [Char]) where
 sIsSafeList :: SList (xs :: [Char]) -> SBool (IsSafeList xs)
 sIsSafeList SNil = STrue
 sIsSafeList (SCons sx sxs) = sIsSafeChar sx %&& sIsSafeList sxs
+
+--
+-- Unquoting
+--
+
+-- | Strip quotes from a quoted 'Symbol', or return an unquoted 'Symbol'
+--   unchanged. Undefined behavior when the input is improperly quoted.
+type UnsafeUnquoteParamValueSymbol :: Symbol -> Symbol
+type UnsafeUnquoteParamValueSymbol s =
+  If
+    (Take 1 s == "\"")
+    (Drop 1 (Take (Length s - 1) s))
+    s
+
+-- | Singleton of 'UnsafeUnquoteParamValueSymbol'.
+sUnsafeUnquoteParamValueSymbol ::
+  SSymbol s -> SSymbol (UnsafeUnquoteParamValueSymbol s)
+sUnsafeUnquoteParamValueSymbol ss =
+  case sTake (natSing @1) ss %== symbolSing @"\"" of
+    STrue -> sDrop (natSing @1) (sTake (sLength ss %- natSing @1) ss)
+    SFalse -> ss
