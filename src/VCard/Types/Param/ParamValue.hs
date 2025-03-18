@@ -97,6 +97,9 @@ testParamValueSymbol ss =
 data SParamValue (s :: Symbol) where
   SParamValue :: (ParamValueSymbol s) => SSymbol s -> SParamValue s
 
+instance Eq (SParamValue s) where
+  (==) _ _ = True
+
 deriving instance Show (SParamValue s)
 
 -- | Existential type for 'SParamValue'.
