@@ -4,6 +4,7 @@
 module Test.VCard.Types.Param (tests) where
 
 import Test.Tasty (TestTree, testGroup)
+import Test.VCard.Types.Param.AltID qualified
 import Test.VCard.Types.Param.Calscale qualified
 import Test.VCard.Types.Param.Generic qualified
 import Test.VCard.Types.Param.Geo qualified
@@ -19,7 +20,8 @@ tests :: TestTree
 tests =
   testGroup
     "Param"
-    [ Test.VCard.Types.Param.Calscale.tests,
+    [ Test.VCard.Types.Param.AltID.tests,
+      Test.VCard.Types.Param.Calscale.tests,
       Test.VCard.Types.Param.Generic.tests,
       Test.VCard.Types.Param.Geo.tests,
       Test.VCard.Types.Param.Language.tests,
