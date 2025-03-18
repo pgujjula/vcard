@@ -10,6 +10,9 @@ import VCard.Char
   ( crlf,
     dQuote,
     hTab,
+    isAlphaNumDashChar,
+    isAlphaNumDashLowerChar,
+    isAlphaNumDashUpperChar,
     isAscii,
     isAsciiAlpha,
     isAsciiLower,
@@ -24,6 +27,9 @@ import VCard.Char
     sCRLF,
     sDQuote,
     sHTab,
+    sIsAlphaNumDashChar,
+    sIsAlphaNumDashLowerChar,
+    sIsAlphaNumDashUpperChar,
     sIsAscii,
     sIsAsciiAlpha,
     sIsAsciiLower,
@@ -62,7 +68,10 @@ tests =
       test_isDigit,
       test_isQSafeChar,
       test_isSafeChar,
-      test_isValueChar
+      test_isValueChar,
+      test_isAlphaNumDashChar,
+      test_isAlphaNumDashLowerChar,
+      test_isAlphaNumDashUpperChar
     ]
 
 test_dQuote :: TestTree
@@ -597,3 +606,155 @@ test_isValueChar =
     assertSIsValueChar (charSing @'\129')
     assertSIsValueChar (charSing @'\1000')
     assertSIsValueChar (charSing @'\10000')
+
+test_isAlphaNumDashChar :: TestTree
+test_isAlphaNumDashChar =
+  testCase "isAlphaNumDashChar" $ do
+    let assertIsAlphaNumDashChar c =
+          assertBool (show c <> " should be AlphaNumDashChar") (isAlphaNumDashChar c)
+    let assertNotIsAlphaNumDashChar c =
+          assertBool
+            (show c <> " should not be AlphaNumDashChar")
+            (not (isAlphaNumDashChar c))
+
+    mapM_ assertIsAlphaNumDashChar $
+      ['a' .. 'z'] ++ ['A' .. 'Z'] ++ ['0' .. '9'] ++ ['-']
+    mapM_
+      assertNotIsAlphaNumDashChar
+      [' ', '\t', '\n', '\r', '!', '_', '+', '\"', '\'', '\'']
+
+    let assertSIsAlphaNumDashChar sc =
+          assertBool
+            (show sc <> " should be AlphaNumDashChar")
+            (fromSing (sIsAlphaNumDashChar sc))
+    let assertNotSIsAlphaNumDashChar sc =
+          assertBool
+            (show sc <> " should not be AlphaNumDashChar")
+            (not (fromSing (sIsAlphaNumDashChar sc)))
+    assertSIsAlphaNumDashChar (charSing @'a')
+    assertSIsAlphaNumDashChar (charSing @'b')
+    assertSIsAlphaNumDashChar (charSing @'y')
+    assertSIsAlphaNumDashChar (charSing @'z')
+
+    assertSIsAlphaNumDashChar (charSing @'A')
+    assertSIsAlphaNumDashChar (charSing @'B')
+    assertSIsAlphaNumDashChar (charSing @'Y')
+    assertSIsAlphaNumDashChar (charSing @'Z')
+
+    assertSIsAlphaNumDashChar (charSing @'0')
+    assertSIsAlphaNumDashChar (charSing @'1')
+    assertSIsAlphaNumDashChar (charSing @'8')
+    assertSIsAlphaNumDashChar (charSing @'9')
+
+    assertNotSIsAlphaNumDashChar (charSing @' ')
+    assertNotSIsAlphaNumDashChar (charSing @'\t')
+    assertNotSIsAlphaNumDashChar (charSing @'\n')
+    assertNotSIsAlphaNumDashChar (charSing @'\r')
+    assertNotSIsAlphaNumDashChar (charSing @'!')
+    assertNotSIsAlphaNumDashChar (charSing @'_')
+    assertNotSIsAlphaNumDashChar (charSing @'+')
+    assertNotSIsAlphaNumDashChar (charSing @'\"')
+    assertNotSIsAlphaNumDashChar (charSing @'\'')
+    assertNotSIsAlphaNumDashChar (charSing @'\'')
+
+test_isAlphaNumDashLowerChar :: TestTree
+test_isAlphaNumDashLowerChar =
+  testCase "isAlphaNumDashLowerChar" $ do
+    let assertIsAlphaNumDashLowerChar c =
+          assertBool
+            (show c <> " should be AlphaNumDashLowerChar")
+            (isAlphaNumDashLowerChar c)
+    let assertNotIsAlphaNumDashLowerChar c =
+          assertBool
+            (show c <> " should not be AlphaNumLowerDashChar")
+            (not (isAlphaNumDashLowerChar c))
+
+    mapM_ assertIsAlphaNumDashLowerChar $
+      ['a' .. 'z'] ++ ['0' .. '9'] ++ ['-']
+    mapM_ assertNotIsAlphaNumDashLowerChar $
+      ['A' .. 'Z'] ++ [' ', '\t', '\n', '\r', '!', '_', '+', '\"', '\'', '\'']
+
+    let assertSIsAlphaNumDashLowerChar sc =
+          assertBool
+            (show sc <> " should be AlphaNumDashLowerChar")
+            (fromSing (sIsAlphaNumDashLowerChar sc))
+    let assertNotSIsAlphaNumDashLowerChar sc =
+          assertBool
+            (show sc <> " should not be AlphaNumDashLowerChar")
+            (not (fromSing (sIsAlphaNumDashLowerChar sc)))
+    assertSIsAlphaNumDashLowerChar (charSing @'a')
+    assertSIsAlphaNumDashLowerChar (charSing @'b')
+    assertSIsAlphaNumDashLowerChar (charSing @'y')
+    assertSIsAlphaNumDashLowerChar (charSing @'z')
+
+    assertSIsAlphaNumDashLowerChar (charSing @'0')
+    assertSIsAlphaNumDashLowerChar (charSing @'1')
+    assertSIsAlphaNumDashLowerChar (charSing @'8')
+    assertSIsAlphaNumDashLowerChar (charSing @'9')
+
+    assertNotSIsAlphaNumDashLowerChar (charSing @'A')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'B')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'Y')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'Z')
+
+    assertNotSIsAlphaNumDashLowerChar (charSing @' ')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'\t')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'\n')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'\r')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'!')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'_')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'+')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'\"')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'\'')
+    assertNotSIsAlphaNumDashLowerChar (charSing @'\'')
+
+test_isAlphaNumDashUpperChar :: TestTree
+test_isAlphaNumDashUpperChar =
+  testCase "isAlphaNumDashUpperChar" $ do
+    let assertIsAlphaNumDashUpperChar c =
+          assertBool
+            (show c <> " should be AlphaNumDashUpperChar")
+            (isAlphaNumDashUpperChar c)
+    let assertNotIsAlphaNumDashUpperChar c =
+          assertBool
+            (show c <> " should not be AlphaNumUpperDashChar")
+            (not (isAlphaNumDashUpperChar c))
+
+    mapM_ assertIsAlphaNumDashUpperChar $
+      ['A' .. 'Z'] ++ ['0' .. '9'] ++ ['-']
+    mapM_ assertNotIsAlphaNumDashUpperChar $
+      ['a' .. 'z'] ++ [' ', '\t', '\n', '\r', '!', '_', '+', '\"', '\'', '\'']
+
+    let assertSIsAlphaNumDashUpperChar sc =
+          assertBool
+            (show sc <> " should be AlphaNumDashUpperChar")
+            (fromSing (sIsAlphaNumDashUpperChar sc))
+    let assertNotSIsAlphaNumDashUpperChar sc =
+          assertBool
+            (show sc <> " should not be AlphaNumDashUpperChar")
+            (not (fromSing (sIsAlphaNumDashUpperChar sc)))
+    assertSIsAlphaNumDashUpperChar (charSing @'A')
+    assertSIsAlphaNumDashUpperChar (charSing @'B')
+    assertSIsAlphaNumDashUpperChar (charSing @'Y')
+    assertSIsAlphaNumDashUpperChar (charSing @'Z')
+
+    assertSIsAlphaNumDashUpperChar (charSing @'0')
+    assertSIsAlphaNumDashUpperChar (charSing @'1')
+    assertSIsAlphaNumDashUpperChar (charSing @'8')
+    assertSIsAlphaNumDashUpperChar (charSing @'9')
+
+    assertNotSIsAlphaNumDashUpperChar (charSing @'a')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'b')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'y')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'z')
+
+    assertNotSIsAlphaNumDashUpperChar (charSing @' ')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'\t')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'\n')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'\r')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'!')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'_')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'+')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'\"')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'\'')
+    assertNotSIsAlphaNumDashUpperChar (charSing @'\'')
