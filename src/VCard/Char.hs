@@ -300,11 +300,22 @@ sIsQSafeChar sc =
 --
 
 -- | Selects characters matching SAFE-CHAR in Section 3.3 of RFC 6350.
+--
+--   Due to an apparent oversight, the ABNF for @SAFE-CHAR@ allows commas, but
+--   according to the front matter of Section 5,
+--
+--   > Property parameter value elements that contain the COLON (U+003A),
+--   > SEMICOLON (U+003B), or COMMA (U+002C) character separators MUST be
+--   > specified as quoted-string text values.
+--
+--   so commas actually should NOT be allowed in @SAFE-CHAR@, and that behavior
+--   is implemented here.
 isSafeChar :: Char -> Bool
 isSafeChar c =
   isWSP c
     || c == '!'
-    || '\x23' <= c && c <= '\x39'
+    || '\x23' <= c && c <= '\x2b'
+    || '\x2d' <= c && c <= '\x39'
     || '\x3c' <= c && c <= '\x7e'
     || isNonAscii c
 
@@ -313,7 +324,8 @@ type IsSafeChar :: Char -> Bool
 type IsSafeChar c =
   IsWSP c
     || c == '!'
-    || '\x23' <= c && c <= '\x39'
+    || '\x23' <= c && c <= '\x2b'
+    || '\x2d' <= c && c <= '\x39'
     || '\x3c' <= c && c <= '\x7e'
     || IsNonAscii c
 
@@ -322,7 +334,8 @@ sIsSafeChar :: SChar c -> SBool (IsSafeChar c)
 sIsSafeChar sc =
   sIsWSP sc
     %|| sc %== charSing @'!'
-    %|| charSing @'\x23' %<= sc %&& sc %<= charSing @'\x39'
+    %|| charSing @'\x23' %<= sc %&& sc %<= charSing @'\x2b'
+    %|| charSing @'\x2d' %<= sc %&& sc %<= charSing @'\x39'
     %|| charSing @'\x3c' %<= sc %&& sc %<= charSing @'\x7e'
     %|| sIsNonAscii sc
 
