@@ -184,6 +184,7 @@ tests:
     - Test.VCard.Types.Param.Pref
     - Test.VCard.Types.Param.Value
     - Test.VCard.Types.Param.Type
+    - Test.VCard.Types.Param.Tz
     - Test.VCard.Types.Property
     - Test.VCard.Types.Property.Version
     - Test.VCard.Types.VCard

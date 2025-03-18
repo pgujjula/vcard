@@ -12,6 +12,7 @@ import Test.VCard.Types.Param.PID qualified
 import Test.VCard.Types.Param.ParamValue qualified
 import Test.VCard.Types.Param.Pref qualified
 import Test.VCard.Types.Param.Type qualified
+import Test.VCard.Types.Param.Tz qualified
 import Test.VCard.Types.Param.Value qualified
 
 tests :: TestTree
@@ -25,6 +26,7 @@ tests =
       Test.VCard.Types.Param.ParamValue.tests,
       Test.VCard.Types.Param.PID.tests,
       Test.VCard.Types.Param.Pref.tests,
-      Test.VCard.Types.Param.Value.tests,
-      Test.VCard.Types.Param.Type.tests
+      Test.VCard.Types.Param.Type.tests,
+      Test.VCard.Types.Param.Tz.tests,
+      Test.VCard.Types.Param.Value.tests
     ]
