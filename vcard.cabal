@@ -60,6 +60,7 @@ library
       VCard.Symbol.Private.Slice
       VCard.Symbol.Private.Snoc
       VCard.Types.Param.AltID
+      VCard.Types.Param.Any
       VCard.Types.Param.Calscale
       VCard.Types.Param.Calscale.CalscaleValueSymbol
       VCard.Types.Param.Generic
@@ -207,6 +208,7 @@ test-suite vcard-tests
       VCard.Symbol.Private.Snoc
       VCard.Types.Param
       VCard.Types.Param.AltID
+      VCard.Types.Param.Any
       VCard.Types.Param.Calscale
       VCard.Types.Param.Calscale.CalscaleValueSymbol
       VCard.Types.Param.Generic
