@@ -12,6 +12,7 @@ import Test.VCard.Types.Param.Language qualified
 import Test.VCard.Types.Param.PID qualified
 import Test.VCard.Types.Param.ParamValue qualified
 import Test.VCard.Types.Param.Pref qualified
+import Test.VCard.Types.Param.SortAs qualified
 import Test.VCard.Types.Param.Type qualified
 import Test.VCard.Types.Param.Tz qualified
 import Test.VCard.Types.Param.Value qualified
@@ -28,6 +29,7 @@ tests =
       Test.VCard.Types.Param.ParamValue.tests,
       Test.VCard.Types.Param.PID.tests,
       Test.VCard.Types.Param.Pref.tests,
+      Test.VCard.Types.Param.SortAs.tests,
       Test.VCard.Types.Param.Type.tests,
       Test.VCard.Types.Param.Tz.tests,
       Test.VCard.Types.Param.Value.tests

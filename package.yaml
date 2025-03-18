@@ -185,6 +185,7 @@ tests:
     - Test.VCard.Types.Param.ParamValue
     - Test.VCard.Types.Param.PID
     - Test.VCard.Types.Param.Pref
+    - Test.VCard.Types.Param.SortAs
     - Test.VCard.Types.Param.Value
     - Test.VCard.Types.Param.Type
     - Test.VCard.Types.Param.Tz
