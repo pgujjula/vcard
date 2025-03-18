@@ -99,6 +99,7 @@ test_AltID_parse =
         )
 
     parse @AltID "ALTID=foo;" @?= Nothing
+    parse @AltID "ALTID=foo,bar" @?= Nothing
 
 test_AltID_serialize :: TestTree
 test_AltID_serialize =
@@ -212,6 +213,7 @@ test_SAltID_parse =
         )
 
     parse @(SAltID "foo;") "ALTID=foo;" @?= Nothing
+    parse @(SAltID "foo,bar") "ALTID=foo,bar" @?= Nothing
     parse @(SAltID "\"foo\"") "ALTID=\"foo\"" @?= Nothing
 
 test_SAltID_serialize :: TestTree
@@ -349,6 +351,7 @@ test_SomeAltID_parse =
         )
 
     parse @SomeAltID "ALTID=foo;" @?= Nothing
+    parse @SomeAltID "ALTID=foo,bar" @?= Nothing
 
 test_SomeAltID_serialize :: TestTree
 test_SomeAltID_serialize =

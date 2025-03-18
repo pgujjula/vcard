@@ -94,6 +94,7 @@ test_testParamValueSymbol =
 
     assertNoParamValueSymbol (symbolSing @"foo;bar")
     assertNoParamValueSymbol (symbolSing @"foo:bar")
+    assertNoParamValueSymbol (symbolSing @"foo,bar")
     assertNoParamValueSymbol (symbolSing @"foo\nbar")
     assertNoParamValueSymbol (symbolSing @"foo\"bar")
 
@@ -170,6 +171,8 @@ test_parse_SParamValue =
 
     -- Cannot parse symbol without ParamValueSymbol constraint
     assertEqualSParamValue (parse @(SParamValue "foo;") "foo;") Nothing
+    assertEqualSParamValue (parse @(SParamValue "foo:") "foo:") Nothing
+    assertEqualSParamValue (parse @(SParamValue "foo,bar") "foo,bar") Nothing
 
 test_parse_SomeParamValue :: TestTree
 test_parse_SomeParamValue =
@@ -309,6 +312,7 @@ cases_ParamValue_invalid =
     "foobar\"",
     "foo;bar",
     "foo:bar",
+    "foo,bar",
     "foo\nbar",
     "foo\"bar"
   ]

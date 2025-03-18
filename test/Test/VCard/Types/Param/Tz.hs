@@ -89,6 +89,7 @@ cases_invalid =
   [ "TZ=\"",
     "TZ=\"foo",
     "TZ=foo\"",
+    "TZ=foo,bar",
     "TZ=https://example.com"
   ]
 
