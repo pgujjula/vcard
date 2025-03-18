@@ -470,11 +470,17 @@ test_isSafeChar =
     assertIsSafeChar '\x23'
     assertIsSafeChar '\x24'
     assertIsSafeChar '\x25'
+    assertIsSafeChar '\x25'
+    assertIsSafeChar '\x2a'
+    assertIsSafeChar '\x2b'
+    assertNotIsSafeChar '\x2c' -- ','
+    assertIsSafeChar '\x2d'
+    assertIsSafeChar '\x2e'
     assertIsSafeChar '\x37'
     assertIsSafeChar '\x38'
     assertIsSafeChar '\x39'
-    assertNotIsSafeChar '\x3a'
-    assertNotIsSafeChar '\x3b'
+    assertNotIsSafeChar '\x3a' -- ':'
+    assertNotIsSafeChar '\x3b' -- ';'
     assertIsSafeChar '\x3c'
     assertIsSafeChar '\x3d'
     assertIsSafeChar '\x3e'
@@ -509,6 +515,12 @@ test_isSafeChar =
     assertSIsSafeChar (charSing @'\x23')
     assertSIsSafeChar (charSing @'\x24')
     assertSIsSafeChar (charSing @'\x25')
+    assertSIsSafeChar (charSing @'\x25')
+    assertSIsSafeChar (charSing @'\x2a')
+    assertSIsSafeChar (charSing @'\x2b')
+    assertNotSIsSafeChar (charSing @'\x2c') -- ','
+    assertSIsSafeChar (charSing @'\x2d')
+    assertSIsSafeChar (charSing @'\x2e')
     assertSIsSafeChar (charSing @'\x37')
     assertSIsSafeChar (charSing @'\x38')
     assertSIsSafeChar (charSing @'\x39')
