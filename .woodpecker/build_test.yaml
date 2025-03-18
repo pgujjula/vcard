@@ -20,7 +20,7 @@ matrix:
       SOURCE: haskell
     - GHC_VERSION: 9.10.1
       SOURCE: haskell
-    - GHC_VERSION: 9.12.1
+    - GHC_VERSION: 9.12.2
       SOURCE: benz0li/ghc-musl
 
 steps:
