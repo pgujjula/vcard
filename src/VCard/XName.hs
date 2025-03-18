@@ -4,14 +4,26 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module VCard.XName
-  ( XNameSymbol,
+  ( -- * XName
+    XNameSymbol,
     IsXNameSymbol,
     sIsXNameSymbol,
     testXNameSymbol,
+
+    -- ** Data types
+    XName (unXName),
+    SXName (..),
+    SomeXName (..),
+    xNameVal,
+    someXNameVal,
+
+    -- * XNameLower
     XNameLowerSymbol,
     IsXNameLowerSymbol,
     sIsXNameLowerSymbol,
     testXNameLowerSymbol,
+
+    -- * XNameUpper
     XNameUpperSymbol,
     IsXNameUpperSymbol,
     sIsXNameUpperSymbol,
@@ -22,9 +34,14 @@ where
 import Data.Bool.Singletons (SBool (SFalse, STrue), (%&&))
 import Data.Constraint (Dict (..))
 import Data.Kind (Constraint)
+import Data.Maybe (isJust)
 import Data.Ord.Singletons ((%>), type (>))
+import Data.Text (Text)
+import Data.Text qualified as Text
 import Data.Type.Bool (type (&&))
-import GHC.TypeLits (Symbol)
+import GHC.TypeLits (KnownSymbol, Symbol)
+import Text.Megaparsec (oneOf, takeWhile1P)
+import Text.Megaparsec.Char (char)
 import VCard.AlphaNumDash
   ( IsAlphaNumDashLowerSymbol,
     IsAlphaNumDashSymbol,
@@ -33,18 +50,87 @@ import VCard.AlphaNumDash
     sIsAlphaNumDashSymbol,
     sIsAlphaNumDashUpperSymbol,
   )
+import VCard.Char (isAlphaNumDashChar)
 import VCard.Natural.Private (natSing)
+import VCard.Parse (HasParser, Parser, parser)
+import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Symbol.Private
   ( IsPrefixOf,
     IsPrefixOfInsensitive,
     Length,
     SSymbol,
+    fromSSymbol,
     sIsPrefixOf,
     sIsPrefixOfInsensitive,
     sLength,
     symbolSing,
+    testSSymbolEquality,
+    withSomeSSymbol,
   )
 import VCard.Util (Assert, NoInstance)
+
+newtype XName = XName {unXName :: Text}
+  deriving (Eq, Show, Ord)
+
+instance HasParser XName where
+  parser :: Parser XName
+  parser = do
+    x1 <- Text.singleton <$> oneOf ['x', 'X']
+    x2 <- Text.singleton <$> char '-'
+    x3 <- takeWhile1P (Just "AlphaNumDash") isAlphaNumDashChar
+
+    pure $ XName $ Text.concat [x1, x2, x3]
+
+instance HasSerializer XName where
+  serializer :: Serializer XName
+  serializer = unXName
+
+data SXName s where
+  SXName :: (XNameSymbol s) => SSymbol s -> SXName s
+
+deriving instance Show (SXName s)
+
+instance Eq (SXName s) where
+  (==) _ _ = True
+
+instance (KnownSymbol s) => HasParser (SXName s) where
+  parser :: Parser (SXName s)
+  parser = do
+    ss <- parser @(SSymbol s)
+    case testXNameSymbol ss of
+      Nothing -> fail $ "No instance for (XNameSymbol " <> fromSSymbol ss <> ")"
+      Just Dict -> pure (SXName ss)
+
+instance HasSerializer (SXName s) where
+  serializer :: Serializer (SXName s)
+  serializer (SXName ss) = serializer ss
+
+data SomeXName where
+  SomeXName :: SXName s -> SomeXName
+
+deriving instance Show SomeXName
+
+instance Eq SomeXName where
+  (SomeXName (SXName ss1)) == (SomeXName (SXName ss2)) =
+    isJust (testSSymbolEquality ss1 ss2)
+
+instance HasParser SomeXName where
+  parser :: Parser SomeXName
+  parser = someXNameVal <$> parser @XName
+
+instance HasSerializer SomeXName where
+  serializer :: Serializer SomeXName
+  serializer (SomeXName sxname) = serializer sxname
+
+xNameVal :: SXName s -> XName
+xNameVal (SXName ss) = XName (serializer ss)
+
+someXNameVal :: XName -> SomeXName
+someXNameVal (XName t) =
+  withSomeSSymbol (Text.unpack t) $ \ss ->
+    case testXNameSymbol ss of
+      Nothing -> error "panic: someXNameVal: invalid XName"
+      Just Dict -> SomeXName (SXName ss)
 
 -- Writing XNameSymbol/XNameSymbolLower/XNameSymbolUpper as type synonyms does
 -- not work on GHC 9.2. Once we drop support for GHC 9.2 we can rewrite them as
