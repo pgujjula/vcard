@@ -87,6 +87,21 @@ module VCard.Char
     isValueChar,
     IsValueChar,
     sIsValueChar,
+
+    -- * Alpha / Digit / Dash
+    isAlphaNumDashChar,
+    IsAlphaNumDashChar,
+    sIsAlphaNumDashChar,
+
+    -- * Lowercase Alpha / Digit / Dash
+    isAlphaNumDashLowerChar,
+    IsAlphaNumDashLowerChar,
+    sIsAlphaNumDashLowerChar,
+
+    -- * Uppercase Alpha / Digit / Dash
+    isAlphaNumDashUpperChar,
+    IsAlphaNumDashUpperChar,
+    sIsAlphaNumDashUpperChar,
   )
 where
 
@@ -354,3 +369,39 @@ type IsValueChar c = IsWSP c || IsVChar c || IsNonAscii c
 -- | Singleton for 'IsValueChar'.
 sIsValueChar :: SChar c -> SBool (IsValueChar c)
 sIsValueChar sc = sIsWSP sc %|| sIsVChar sc %|| sIsNonAscii sc
+
+--
+-- Alpha / Digit / Dash
+--
+isAlphaNumDashChar :: Char -> Bool
+isAlphaNumDashChar c = isAsciiAlpha c || isDigit c || c == '-'
+
+type IsAlphaNumDashChar c = IsAsciiAlpha c || IsDigit c || c == '-'
+
+sIsAlphaNumDashChar :: SChar c -> SBool (IsAlphaNumDashChar c)
+sIsAlphaNumDashChar sc =
+  sIsAsciiAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
+
+--
+-- Lowercase Alpha / Digit / Dash
+--
+isAlphaNumDashLowerChar :: Char -> Bool
+isAlphaNumDashLowerChar c = isAsciiLower c || isDigit c || c == '-'
+
+type IsAlphaNumDashLowerChar c = IsAsciiLower c || IsDigit c || c == '-'
+
+sIsAlphaNumDashLowerChar :: SChar c -> SBool (IsAlphaNumDashLowerChar c)
+sIsAlphaNumDashLowerChar sc =
+  sIsAsciiLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
+
+--
+-- Uppercase Alpha / Digit / Dash
+--
+isAlphaNumDashUpperChar :: Char -> Bool
+isAlphaNumDashUpperChar c = isAsciiUpper c || isDigit c || c == '-'
+
+type IsAlphaNumDashUpperChar c = IsAsciiUpper c || IsDigit c || c == '-'
+
+sIsAlphaNumDashUpperChar :: SChar c -> SBool (IsAlphaNumDashUpperChar c)
+sIsAlphaNumDashUpperChar sc =
+  sIsAsciiUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'

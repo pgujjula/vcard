@@ -21,31 +21,26 @@ module VCard.AlphaNumDash
   )
 where
 
-import Data.Bool.Singletons (SBool (SFalse, STrue), (%&&), (%||))
+import Data.Bool.Singletons (SBool (SFalse, STrue), (%&&))
 import Data.Constraint (Dict (..))
-import Data.Eq.Singletons ((%==), type (==))
 import Data.Kind (Constraint)
 import Data.List.Singletons (SList (SCons, SNil))
 import Data.Ord.Singletons ((%>), type (>))
-import Data.Type.Bool (type (&&), type (||))
+import Data.Type.Bool (type (&&))
 import GHC.TypeLits (Symbol)
 import VCard.Char
-  ( IsAsciiAlpha,
-    IsAsciiLower,
-    IsAsciiUpper,
-    IsDigit,
-    sIsAsciiAlpha,
-    sIsAsciiLower,
-    sIsAsciiUpper,
-    sIsDigit,
+  ( IsAlphaNumDashChar,
+    IsAlphaNumDashLowerChar,
+    IsAlphaNumDashUpperChar,
+    sIsAlphaNumDashChar,
+    sIsAlphaNumDashLowerChar,
+    sIsAlphaNumDashUpperChar,
   )
 import VCard.Natural.Private (natSing)
 import VCard.Symbol.Private
   ( Length,
-    SChar,
     SSymbol,
     ToList,
-    charSing,
     sLength,
     sToList,
   )
@@ -143,21 +138,3 @@ sIsAlphaNumDashUpperList ::
 sIsAlphaNumDashUpperList SNil = STrue
 sIsAlphaNumDashUpperList (SCons sx sxs) =
   sIsAlphaNumDashUpperChar sx %&& sIsAlphaNumDashUpperList sxs
-
-type IsAlphaNumDashChar c = IsAsciiAlpha c || IsDigit c || c == '-'
-
-sIsAlphaNumDashChar :: SChar c -> SBool (IsAlphaNumDashChar c)
-sIsAlphaNumDashChar sc =
-  sIsAsciiAlpha sc %|| sIsDigit sc %|| sc %== charSing @'-'
-
-type IsAlphaNumDashLowerChar c = IsAsciiLower c || IsDigit c || c == '-'
-
-sIsAlphaNumDashLowerChar :: SChar c -> SBool (IsAlphaNumDashLowerChar c)
-sIsAlphaNumDashLowerChar sc =
-  sIsAsciiLower sc %|| sIsDigit sc %|| sc %== charSing @'-'
-
-type IsAlphaNumDashUpperChar c = IsAsciiUpper c || IsDigit c || c == '-'
-
-sIsAlphaNumDashUpperChar :: SChar c -> SBool (IsAlphaNumDashUpperChar c)
-sIsAlphaNumDashUpperChar sc =
-  sIsAsciiUpper sc %|| sIsDigit sc %|| sc %== charSing @'-'
