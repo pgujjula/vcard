@@ -104,6 +104,7 @@ library:
   - VCard.Types.Param.ParamValue.Internal
   - VCard.Types.Param.PID
   - VCard.Types.Param.Pref
+  - VCard.Types.Param.SortAs
   - VCard.Types.Param.Type
   - VCard.Types.Param.Type.TypeValueSymbol
   - VCard.Types.Param.Tz
@@ -234,6 +235,7 @@ tests:
     - VCard.Types.Param.ParamValue.Internal
     - VCard.Types.Param.PID
     - VCard.Types.Param.Pref
+    - VCard.Types.Param.SortAs
     - VCard.Types.Param.Type
     - VCard.Types.Param.Type.TypeValueSymbol
     - VCard.Types.Param.Value
