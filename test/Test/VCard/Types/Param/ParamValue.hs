@@ -23,9 +23,11 @@ import VCard.Types.Param.ParamValue
     SParamValue (..),
     SomeParamValue (..),
     paramValueVal,
+    sUnquoteSParamValue,
     someParamValueVal,
     testParamValueSymbol,
     unParamValue,
+    unquoteParamValue,
   )
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -38,7 +40,9 @@ tests =
       test_paramValueVal,
       test_someParamValueVal,
       test_parse,
-      test_serialize
+      test_serialize,
+      test_unquoteParamValue,
+      test_sUnquoteParamValue
     ]
 
 test_testParamValueSymbol :: TestTree
@@ -311,6 +315,33 @@ cases_ParamValue_invalid =
 
 cases_SomeParamValue_invalid :: [Text]
 cases_SomeParamValue_invalid = cases_ParamValue_invalid
+
+--
+-- Unquoting
+--
+test_unquoteParamValue :: TestTree
+test_unquoteParamValue =
+  testCase "unquoteParamValue" $ do
+    unquoteParamValue (paramValueVal (SParamValue (symbolSing @""))) @?= ""
+    unquoteParamValue (paramValueVal (SParamValue (symbolSing @"foo")))
+      @?= "foo"
+    unquoteParamValue (paramValueVal (SParamValue (symbolSing @"\"foo\"")))
+      @?= "foo"
+    unquoteParamValue (paramValueVal (SParamValue (symbolSing @"\"foo;\"")))
+      @?= "foo;"
+
+test_sUnquoteParamValue :: TestTree
+test_sUnquoteParamValue =
+  testCase "sUnquoteParmaValue" $ do
+    assertEqualSSymbol
+      (sUnquoteSParamValue (SParamValue (symbolSing @"")))
+      (symbolSing @"")
+    assertEqualSSymbol
+      (sUnquoteSParamValue (SParamValue (symbolSing @"foo")))
+      (symbolSing @"foo")
+    assertEqualSSymbol
+      (sUnquoteSParamValue (SParamValue (symbolSing @"\"foo\"")))
+      (symbolSing @"foo")
 
 -- Utilities
 assertEqualSSymbol :: SSymbol a -> SSymbol b -> Assertion
