@@ -159,6 +159,7 @@ test-suite vcard-tests
       Test.VCard.Types
       Test.VCard.Types.Param
       Test.VCard.Types.Param.AltID
+      Test.VCard.Types.Param.Any
       Test.VCard.Types.Param.Calscale
       Test.VCard.Types.Param.Generic
       Test.VCard.Types.Param.Geo
