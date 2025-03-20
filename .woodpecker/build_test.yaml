@@ -36,5 +36,5 @@ steps:
           --test-options='-p "$0 !~ /exhaustive/"'
           --disable-optimization
       - cabal outdated --exit-code --ignore=base
-      - cabal build -j1
+      - cabal build -j4
       - cabal test
