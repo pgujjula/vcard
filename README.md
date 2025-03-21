@@ -9,9 +9,12 @@ SPDX-License-Identifier: BSD-3-Clause
 [![CI](https://ci.codeberg.org/api/badges/14199/status.svg)](https://ci.codeberg.org/repos/14199)
 
 
-🚧 _Under construction. No guarantees, even commit history may be overwritten._
+🚧 _Under construction._
 
-An implementation of the vCard specification, as defined in [RFC 6350].
+An implementation of the vCard specification for virtual contact cards, as
+defined in [RFC 6350].
+
+Documentation is available here: https://pgujjula.codeberg.page/vcard-docs
 
 This repository is hosted on [Codeberg] and mirrored on [GitHub].
 
