@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Natural.Private
-  ( -- * 'Nat' singleton
+  ( -- * 'GHC.TypeLits.Nat' singleton
     SNat,
     natSing,
     withKnownNat,

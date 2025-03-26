@@ -24,79 +24,79 @@ module VCard.Types.Value
 
     -- * Section 4.3.1 @DATE@
 
-    -- ** 'Date'
+    -- ** @Date@
     Date (..),
     DateList,
 
-    -- ** 'DateNoReduc'
+    -- ** @DateNoReduc@
     DateNoReduc (..),
 
-    -- ** 'DateComplete
+    -- ** @DateComplete@
     DateComplete (..),
 
-    -- ** 'Year'
+    -- ** @Year@
     Year (..),
     HasYear (..),
 
-    -- ** 'Month'
+    -- ** @Month@
     Month (..),
     HasMonth (..),
 
-    -- ** 'Day'
+    -- ** @Day@
     Day (..),
     HasDay (..),
 
-    -- ** 'YearMonthDay'
+    -- ** @YearMonthDay@
     YearMonthDay,
     mkYearMonthDay,
 
-    -- ** 'YearMonth'
+    -- ** @YearMonth@
     YearMonth (..),
 
-    -- ** 'MonthDay'
+    -- ** @MonthDay@
     MonthDay,
     mkMonthDay,
 
     -- * Section 4.3.2 @TIME@
 
-    -- ** 'Time'
+    -- ** @Time@
     LocalTime (..),
 
-    -- ** 'Hour'
+    -- ** @Hour@
     Hour (..),
     HasHour (..),
 
-    -- ** 'Minute'
+    -- ** @Minute@
     Minute (..),
     HasMinute (..),
 
-    -- ** 'Second'
+    -- ** @Second@
     Second (..),
     HasSecond (..),
 
-    -- ** 'HourMinuteSecond'
+    -- ** @HourMinuteSecond@
     HourMinuteSecond (..),
 
-    -- ** 'HourMinute'
+    -- ** @HourMinute@
     HourMinute (..),
 
-    -- ** 'MinuteSecond'
+    -- ** @MinuteSecond@
     MinuteSecond (..),
 
-    -- ** 'Zone'
+    -- ** @Zone@
     Zone (..),
 
-    -- ** 'TimeNoTrunc'
+    -- ** @TimeNoTrunc@
     TimeNoTrunc (..),
 
-    -- ** 'TimeComplete'
+    -- ** @TimeComplete@
     TimeComplete (..),
 
-    -- ** 'DateTime'
+    -- ** @DateTime@
     DateTime (..),
     DateTimeList,
 
-    -- ** 'Timestamp'
+    -- ** @Timestamp@
     Timestamp (..),
     TimestampList,
 
