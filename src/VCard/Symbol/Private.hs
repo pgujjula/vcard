@@ -9,7 +9,7 @@ module VCard.Symbol.Private
     withSomeSChar,
     fromSChar,
 
-    -- * 'Symbol' singleton
+    -- * 'GHC.TypeLits.Symbol' singleton
     SSymbol,
     symbolSing,
     withKnownSymbol,
@@ -20,7 +20,7 @@ module VCard.Symbol.Private
     testSCharEquality,
     testSSymbolEquality,
 
-    -- * Change case of 'Symbol'
+    -- * Change case of 'GHC.TypeLits.Symbol'
 
     -- ** Lower case
     ToLower,
