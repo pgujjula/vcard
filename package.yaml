@@ -158,6 +158,7 @@ tests:
     - src
     - test
     other-modules:
+    - Test.Util
     - Test.VCard
     - Test.VCard.Char
     - Test.VCard.Natural.Private
@@ -207,7 +208,6 @@ tests:
     - Test.VCard.Types.Value.Text
     - Test.VCard.Types.Value.Time
     - Test.VCard.Types.Value.URI
-    - Test.VCard.Util
     - VCard
     - VCard.Char
     - VCard.Internal.Closed
