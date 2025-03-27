@@ -16,10 +16,7 @@ import Data.Type.Equality ((:~:) (Refl))
 import GHC.TypeLits (Symbol)
 import VCard.Internal.Closed (Closed)
 import VCard.Symbol.Private (SSymbol, symbolSing, testSSymbolEquality)
-import VCard.Types.Textual.Private.XName
-  ( XNameLowerSymbol,
-    testXNameLowerSymbol,
-  )
+import VCard.Types.Textual (XNameLowerSymbol, testXNameLowerSymbol)
 
 -- | 'ValueValueSymbol' is a closed class, attempting to define a new instance
 --   will result in a compiler error.

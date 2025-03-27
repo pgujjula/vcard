@@ -25,10 +25,7 @@ import Data.Type.Bool (type (||))
 import GHC.TypeLits (ErrorMessage (ShowType, Text, (:<>:)), Symbol, TypeError)
 import VCard.Internal.Closed (Closed)
 import VCard.Symbol.Private (SSymbol, symbolSing)
-import VCard.Types.Textual.Private.XName
-  ( IsXNameLowerSymbol,
-    sIsXNameLowerSymbol,
-  )
+import VCard.Types.Textual (IsXNameLowerSymbol, sIsXNameLowerSymbol)
 
 class TypeGeneralSymbol (s :: Symbol) where
   default _privateTypeGeneralSymbol :: (Closed TypeGeneralSymbol) => Proxy s

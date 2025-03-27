@@ -17,7 +17,7 @@ import VCard.Types.Param.Value.ValueValueSymbol
   ( ValueValueSymbol,
     testValueValueSymbol,
   )
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveLower)
+import VCard.Types.Textual (CaseInsensitiveLower)
 
 type Value s = Param "VALUE" (ValueValue s)
 

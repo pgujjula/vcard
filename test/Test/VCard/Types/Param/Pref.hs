@@ -12,7 +12,7 @@ import VCard.Serialize (serialize)
 import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.Pref (Pref, PrefValue (..))
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
+import VCard.Types.Textual (CaseInsensitiveUpper (..))
 
 tests :: TestTree
 tests =

@@ -18,7 +18,7 @@ import VCard.Types.Param.Type
     TypeTel,
     TypeValue (..),
   )
-import VCard.Types.Textual.Private.CaseInsensitive
+import VCard.Types.Textual
   ( CaseInsensitiveLower (..),
     CaseInsensitiveUpper (..),
   )

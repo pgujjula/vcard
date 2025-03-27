@@ -36,6 +36,7 @@ library
       VCard
       VCard.Types.Param
       VCard.Types.Property
+      VCard.Types.Textual
       VCard.Types.VCard
       VCard.Types.Value
   other-modules:
@@ -226,6 +227,7 @@ test-suite vcard-tests
       VCard.Types.Param.Tz
       VCard.Types.Property
       VCard.Types.Property.Version
+      VCard.Types.Textual
       VCard.Types.Textual.Private.AlphaNumDash
       VCard.Types.Textual.Private.CaseInsensitive
       VCard.Types.Textual.Private.XName
