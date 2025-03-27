@@ -11,7 +11,6 @@ import Data.Constraint (Dict (..))
 import Data.List.NonEmpty (NonEmpty)
 import Data.Type.Equality ((:~:) (Refl))
 import Text.Megaparsec.Char (char)
-import VCard.CaseInsensitive (CaseInsensitiveUpper (..))
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Symbol.Private
@@ -25,6 +24,7 @@ import VCard.Types.Param.Generic (Param (..), mkParamSerializer)
 import VCard.Types.Param.ParamValue
   ( ParamValue,
   )
+import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
 import VCard.Types.Textual.Private.XName
   ( SXName (..),
     SomeXName (..),

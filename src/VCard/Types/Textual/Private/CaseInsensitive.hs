@@ -1,7 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 
-module VCard.CaseInsensitive
+module VCard.Types.Textual.Private.CaseInsensitive
   ( CaseInsensitiveLower (..),
     CaseInsensitiveUpper (..),
   )

@@ -7,12 +7,12 @@ module Test.VCard.Types.Param.Pref (tests) where
 import Data.Finite (finite)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import VCard.CaseInsensitive (CaseInsensitiveUpper (..))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.Pref (Pref, PrefValue (..))
+import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
 
 tests :: TestTree
 tests =

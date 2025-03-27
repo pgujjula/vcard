@@ -6,7 +6,6 @@ module Test.VCard.Types.Param.AltID (tests) where
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase, (@?=))
-import VCard.CaseInsensitive (CaseInsensitiveUpper (..))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Symbol.Private (symbolSing)
@@ -19,6 +18,7 @@ import VCard.Types.Param.AltID
   )
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
+import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
 
 tests :: TestTree
 tests =

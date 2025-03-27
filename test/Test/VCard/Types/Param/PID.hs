@@ -11,12 +11,12 @@ import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import VCard.CaseInsensitive (CaseInsensitiveUpper (..))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.PID (PID, PIDValue (..))
+import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
 
