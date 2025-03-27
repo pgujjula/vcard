@@ -25,8 +25,7 @@ import VCard.Types.Param.Generic (Param (..), mkParamSerializer)
 import VCard.Types.Param.ParamValue
   ( ParamValue,
   )
-import VCard.Util (intersperseCommaNE, sepByNonEmpty)
-import VCard.XName
+import VCard.Types.Textual.Private.XName
   ( SXName (..),
     SomeXName (..),
     XName,
@@ -34,6 +33,7 @@ import VCard.XName
     someXNameVal,
     testXNameUpperSymbol,
   )
+import VCard.Util (intersperseCommaNE, sepByNonEmpty)
 
 data Any where
   Any :: (XNameUpperSymbol xname) => Param xname (NonEmpty ParamValue) -> Any

@@ -2,12 +2,12 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE OverloadedStrings #-}
 
-module Test.VCard.XName (tests) where
+module Test.VCard.Types.Textual.Private.XName (tests) where
 
 import Data.Maybe (isJust, isNothing)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase, (@?=))
-import Test.VCard.XName.TypeTests
+import Test.VCard.Types.Textual.Private.XName.TypeTests
   ( test_XNameLowerSymbol,
     test_XNameSymbol,
     test_XNameUpperSymbol,
@@ -15,7 +15,7 @@ import Test.VCard.XName.TypeTests
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Symbol.Private (symbolSing)
-import VCard.XName
+import VCard.Types.Textual.Private.XName
   ( SXName (..),
     SomeXName (..),
     XName (..),

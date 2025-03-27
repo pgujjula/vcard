@@ -7,7 +7,7 @@
 -- We define the type tests in a separate module so we can enable
 -- -fdefer-type-errors for just these tests, without affecting the singleton
 -- tests.
-module Test.VCard.XName.TypeTests
+module Test.VCard.Types.Textual.Private.XName.TypeTests
   ( test_XNameSymbol,
     test_XNameLowerSymbol,
     test_XNameUpperSymbol,
@@ -21,7 +21,7 @@ import Test.ShouldNotTypecheck (shouldNotTypecheck)
 import Test.Tasty (TestTree)
 import Test.Tasty.HUnit (Assertion, testCase)
 import Test.VCard.Util (Truth)
-import VCard.XName
+import VCard.Types.Textual.Private.XName
   ( XNameLowerSymbol,
     XNameSymbol,
     XNameUpperSymbol,
