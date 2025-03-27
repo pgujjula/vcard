@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE StandaloneKindSignatures #-}
 
-module Test.VCard.Util (Truth) where
+module Test.Util (Truth) where
 
 import Data.Kind (Constraint)
 
