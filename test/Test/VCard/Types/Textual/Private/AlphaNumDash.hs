@@ -1,22 +1,22 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 
-module Test.VCard.AlphaNumDash (tests) where
+module Test.VCard.Types.Textual.Private.AlphaNumDash (tests) where
 
 import Data.Maybe (isJust, isNothing)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase)
-import Test.VCard.AlphaNumDash.TypeTests
+import Test.VCard.Types.Textual.Private.AlphaNumDash.TypeTests
   ( test_AlphaNumDashLowerSymbol,
     test_AlphaNumDashSymbol,
     test_AlphaNumDashUpperSymbol,
   )
-import VCard.AlphaNumDash
+import VCard.Symbol.Private (symbolSing)
+import VCard.Types.Textual.Private.AlphaNumDash
   ( testAlphaNumDashLowerSymbol,
     testAlphaNumDashSymbol,
     testAlphaNumDashUpperSymbol,
   )
-import VCard.Symbol.Private (symbolSing)
 
 tests :: TestTree
 tests =

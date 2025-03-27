@@ -39,7 +39,6 @@ library
       VCard.Types.VCard
       VCard.Types.Value
   other-modules:
-      VCard.AlphaNumDash
       VCard.CaseInsensitive
       VCard.Char
       VCard.Internal.Closed
@@ -77,6 +76,7 @@ library
       VCard.Types.Param.Value
       VCard.Types.Param.Value.ValueValueSymbol
       VCard.Types.Property.Version
+      VCard.Types.Textual.Private.AlphaNumDash
       VCard.Types.Textual.Private.XName
       VCard.Types.VCard.Internal
       VCard.Types.Value.Boolean
@@ -138,8 +138,6 @@ test-suite vcard-tests
   main-is: Main.hs
   other-modules:
       Test.VCard
-      Test.VCard.AlphaNumDash
-      Test.VCard.AlphaNumDash.TypeTests
       Test.VCard.CaseInsensitive
       Test.VCard.Char
       Test.VCard.Natural.Private
@@ -174,6 +172,8 @@ test-suite vcard-tests
       Test.VCard.Types.Property
       Test.VCard.Types.Property.Version
       Test.VCard.Types.Textual
+      Test.VCard.Types.Textual.Private.AlphaNumDash
+      Test.VCard.Types.Textual.Private.AlphaNumDash.TypeTests
       Test.VCard.Types.Textual.Private.XName
       Test.VCard.Types.Textual.Private.XName.TypeTests
       Test.VCard.Types.VCard
@@ -188,7 +188,6 @@ test-suite vcard-tests
       Test.VCard.Types.Value.URI
       Test.VCard.Util
       VCard
-      VCard.AlphaNumDash
       VCard.CaseInsensitive
       VCard.Char
       VCard.Internal.Closed
@@ -228,6 +227,7 @@ test-suite vcard-tests
       VCard.Types.Param.Tz
       VCard.Types.Property
       VCard.Types.Property.Version
+      VCard.Types.Textual.Private.AlphaNumDash
       VCard.Types.Textual.Private.XName
       VCard.Types.VCard
       VCard.Types.VCard.Internal
