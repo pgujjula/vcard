@@ -9,7 +9,6 @@ where
 
 import Data.Constraint (Dict (..))
 import GHC.TypeLits (KnownSymbol, Symbol)
-import VCard.CaseInsensitive (CaseInsensitiveLower)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Symbol.Private (symbolSing)
@@ -18,6 +17,7 @@ import VCard.Types.Param.Calscale.CalscaleValueSymbol
     testCalscaleValueSymbol,
   )
 import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveLower)
 
 type Calscale s = Param "CALSCALE" (CalscaleValue s)
 

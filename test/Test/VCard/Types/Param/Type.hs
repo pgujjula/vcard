@@ -8,10 +8,6 @@ import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.List.NonEmpty qualified as NonEmpty
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import VCard.CaseInsensitive
-  ( CaseInsensitiveLower (..),
-    CaseInsensitiveUpper (..),
-  )
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Symbol.Private (symbolSing)
@@ -21,6 +17,10 @@ import VCard.Types.Param.Type
     TypeRelated,
     TypeTel,
     TypeValue (..),
+  )
+import VCard.Types.Textual.Private.CaseInsensitive
+  ( CaseInsensitiveLower (..),
+    CaseInsensitiveUpper (..),
   )
 
 tests :: TestTree

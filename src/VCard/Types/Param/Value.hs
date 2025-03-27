@@ -9,7 +9,6 @@ where
 
 import Data.Constraint (Dict (..))
 import GHC.TypeLits (KnownSymbol, Symbol)
-import VCard.CaseInsensitive (CaseInsensitiveLower)
 import VCard.Parse (HasParser (..), Parser)
 import VCard.Serialize (HasSerializer (..), Serializer)
 import VCard.Symbol.Private (symbolSing)
@@ -18,6 +17,7 @@ import VCard.Types.Param.Value.ValueValueSymbol
   ( ValueValueSymbol,
     testValueValueSymbol,
   )
+import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveLower)
 
 type Value s = Param "VALUE" (ValueValue s)
 

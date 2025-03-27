@@ -6,15 +6,15 @@ module Test.VCard.Types.Param.Value (tests) where
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import VCard.CaseInsensitive
-  ( CaseInsensitiveLower (..),
-    CaseInsensitiveUpper (..),
-  )
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.Value (Value, ValueValue (..))
+import VCard.Types.Textual.Private.CaseInsensitive
+  ( CaseInsensitiveLower (..),
+    CaseInsensitiveUpper (..),
+  )
 
 tests :: TestTree
 tests =

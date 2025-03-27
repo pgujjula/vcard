@@ -23,7 +23,6 @@ import Data.Text qualified as Text
 import GHC.TypeLits (Symbol)
 import Text.Megaparsec (takeWhile1P)
 import Text.Megaparsec.Char (char)
-import VCard.CaseInsensitive (CaseInsensitiveLower (..))
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Symbol.Private
@@ -41,6 +40,7 @@ import VCard.Types.Param.Type.TypeValueSymbol
     testTypeRelatedSymbol,
     testTypeTelSymbol,
   )
+import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveLower (..))
 import VCard.Util (intersperseCommaNE, sepByNonEmpty)
 
 type Type symbol_class = Param "TYPE" (NonEmpty (TypeValue symbol_class))
