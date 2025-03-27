@@ -15,8 +15,8 @@ import Data.Proxy (Proxy (..))
 import Data.Type.Equality ((:~:) (Refl))
 import GHC.TypeLits (Symbol)
 import VCard.Internal.Closed (Closed)
-import VCard.Symbol.Private (SSymbol, symbolSing, testSSymbolEquality)
 import VCard.Types.Textual (XNameLowerSymbol, testXNameLowerSymbol)
+import VCard.Util.Symbol (SSymbol, symbolSing, testSSymbolEquality)
 
 -- | 'CalscaleValueSymbol' is a closed class, attempting to define a new
 --   instance will result in a compilation error.

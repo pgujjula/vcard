@@ -39,6 +39,7 @@ library
       VCard.Types.Textual
       VCard.Types.VCard
       VCard.Types.Value
+      VCard.Util.Symbol
   other-modules:
       VCard.Char
       VCard.Internal.Closed
@@ -46,18 +47,6 @@ library
       VCard.Natural.Private.Compat
       VCard.Parse
       VCard.Serialize
-      VCard.Symbol.Private
-      VCard.Symbol.Private.Append
-      VCard.Symbol.Private.Case
-      VCard.Symbol.Private.Compat
-      VCard.Symbol.Private.Length
-      VCard.Symbol.Private.List
-      VCard.Symbol.Private.Parse
-      VCard.Symbol.Private.Prefix
-      VCard.Symbol.Private.Serialize
-      VCard.Symbol.Private.Singleton
-      VCard.Symbol.Private.Slice
-      VCard.Symbol.Private.Snoc
       VCard.Types.Param.AltID
       VCard.Types.Param.Any
       VCard.Types.Param.Calscale
@@ -90,6 +79,17 @@ library
       VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Util
+      VCard.Util.Symbol.Private.Append
+      VCard.Util.Symbol.Private.Case
+      VCard.Util.Symbol.Private.Compat
+      VCard.Util.Symbol.Private.Length
+      VCard.Util.Symbol.Private.List
+      VCard.Util.Symbol.Private.Parse
+      VCard.Util.Symbol.Private.Prefix
+      VCard.Util.Symbol.Private.Serialize
+      VCard.Util.Symbol.Private.Singleton
+      VCard.Util.Symbol.Private.Slice
+      VCard.Util.Symbol.Private.Snoc
   hs-source-dirs:
       src
   default-extensions:
@@ -128,11 +128,11 @@ library
   if impl(ghc >= 9.6)
     other-modules:
         VCard.Natural.Private.Compat.New
-        VCard.Symbol.Private.Compat.New
+        VCard.Util.Symbol.Private.Compat.New
   if impl(ghc < 9.6)
     other-modules:
         VCard.Natural.Private.Compat.Old
-        VCard.Symbol.Private.Compat.Old
+        VCard.Util.Symbol.Private.Compat.Old
 
 test-suite vcard-tests
   type: exitcode-stdio-1.0
@@ -143,18 +143,6 @@ test-suite vcard-tests
       Test.VCard.Char
       Test.VCard.Natural.Private
       Test.VCard.Natural.Private.Compat
-      Test.VCard.Symbol.Private
-      Test.VCard.Symbol.Private.Append
-      Test.VCard.Symbol.Private.Case
-      Test.VCard.Symbol.Private.Compat
-      Test.VCard.Symbol.Private.Length
-      Test.VCard.Symbol.Private.List
-      Test.VCard.Symbol.Private.Parse
-      Test.VCard.Symbol.Private.Prefix
-      Test.VCard.Symbol.Private.Serialize
-      Test.VCard.Symbol.Private.Singleton
-      Test.VCard.Symbol.Private.Slice
-      Test.VCard.Symbol.Private.Snoc
       Test.VCard.Types
       Test.VCard.Types.Param
       Test.VCard.Types.Param.AltID
@@ -188,6 +176,19 @@ test-suite vcard-tests
       Test.VCard.Types.Value.Text
       Test.VCard.Types.Value.Time
       Test.VCard.Types.Value.URI
+      Test.VCard.Util
+      Test.VCard.Util.Symbol
+      Test.VCard.Util.Symbol.Private.Append
+      Test.VCard.Util.Symbol.Private.Case
+      Test.VCard.Util.Symbol.Private.Compat
+      Test.VCard.Util.Symbol.Private.Length
+      Test.VCard.Util.Symbol.Private.List
+      Test.VCard.Util.Symbol.Private.Parse
+      Test.VCard.Util.Symbol.Private.Prefix
+      Test.VCard.Util.Symbol.Private.Serialize
+      Test.VCard.Util.Symbol.Private.Singleton
+      Test.VCard.Util.Symbol.Private.Slice
+      Test.VCard.Util.Symbol.Private.Snoc
       VCard
       VCard.Char
       VCard.Internal.Closed
@@ -195,18 +196,6 @@ test-suite vcard-tests
       VCard.Natural.Private.Compat
       VCard.Parse
       VCard.Serialize
-      VCard.Symbol.Private
-      VCard.Symbol.Private.Append
-      VCard.Symbol.Private.Case
-      VCard.Symbol.Private.Compat
-      VCard.Symbol.Private.Length
-      VCard.Symbol.Private.List
-      VCard.Symbol.Private.Parse
-      VCard.Symbol.Private.Prefix
-      VCard.Symbol.Private.Serialize
-      VCard.Symbol.Private.Singleton
-      VCard.Symbol.Private.Slice
-      VCard.Symbol.Private.Snoc
       VCard.Types.Param
       VCard.Types.Param.AltID
       VCard.Types.Param.Any
@@ -244,6 +233,18 @@ test-suite vcard-tests
       VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Util
+      VCard.Util.Symbol
+      VCard.Util.Symbol.Private.Append
+      VCard.Util.Symbol.Private.Case
+      VCard.Util.Symbol.Private.Compat
+      VCard.Util.Symbol.Private.Length
+      VCard.Util.Symbol.Private.List
+      VCard.Util.Symbol.Private.Parse
+      VCard.Util.Symbol.Private.Prefix
+      VCard.Util.Symbol.Private.Serialize
+      VCard.Util.Symbol.Private.Singleton
+      VCard.Util.Symbol.Private.Slice
+      VCard.Util.Symbol.Private.Snoc
   hs-source-dirs:
       src
       test
@@ -291,8 +292,8 @@ test-suite vcard-tests
   if impl(ghc >= 9.6)
     other-modules:
         VCard.Natural.Private.Compat.New
-        VCard.Symbol.Private.Compat.New
+        VCard.Util.Symbol.Private.Compat.New
   if impl(ghc < 9.6)
     other-modules:
         VCard.Natural.Private.Compat.Old
-        VCard.Symbol.Private.Compat.Old
+        VCard.Util.Symbol.Private.Compat.Old

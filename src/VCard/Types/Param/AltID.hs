@@ -18,7 +18,6 @@ import Data.Type.Equality ((:~:) (Refl))
 import GHC.TypeLits (KnownSymbol)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Symbol.Private (SSymbol, symbolSing, testSSymbolEquality)
 import VCard.Types.Param.Generic (Param (..), mkParamParser, mkParamSerializer)
 import VCard.Types.Param.ParamValue
   ( ParamValue,
@@ -29,6 +28,7 @@ import VCard.Types.Param.ParamValue
     sUnquoteSParamValue,
     someParamValueVal,
   )
+import VCard.Util.Symbol (SSymbol, symbolSing, testSSymbolEquality)
 
 type AltID = Param "ALTID" ParamValue
 

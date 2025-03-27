@@ -10,11 +10,11 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (HasParser, Parser, parse, parser)
 import VCard.Serialize (HasSerializer, Serializer, serialize, serializer)
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param (Param (..))
 import VCard.Types.Param.Generic (mkParamParser, mkParamSerializer)
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Types.Value.Integer (Integer (..), IntegerValue (..))
+import VCard.Util.Symbol (symbolSing)
 import Prelude hiding (Integer)
 
 tests :: TestTree

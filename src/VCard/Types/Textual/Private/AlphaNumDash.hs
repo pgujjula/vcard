@@ -37,14 +37,14 @@ import VCard.Char
     sIsAlphaNumDashUpperChar,
   )
 import VCard.Natural.Private (natSing)
-import VCard.Symbol.Private
+import VCard.Util (Assert, NoInstance)
+import VCard.Util.Symbol
   ( Length,
     SSymbol,
     ToList,
     sLength,
     sToList,
   )
-import VCard.Util (Assert, NoInstance)
 
 -- Writing AlphaNumDashSymbol/AlphaNumDashLowerSymbol/
 -- AlphaNumDashUpperSymbol as type synonyms does not work on GHC 9.2. Once we

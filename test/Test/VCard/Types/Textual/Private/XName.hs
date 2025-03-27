@@ -14,7 +14,6 @@ import Test.VCard.Types.Textual.Private.XName.TypeTests
   )
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Textual.Private.XName
   ( SXName (..),
     SomeXName (..),
@@ -25,6 +24,7 @@ import VCard.Types.Textual.Private.XName
     testXNameUpperSymbol,
     xNameVal,
   )
+import VCard.Util.Symbol (symbolSing)
 
 tests :: TestTree
 tests =

@@ -11,13 +11,13 @@ import Data.Constraint (Dict (..))
 import GHC.TypeLits (KnownSymbol, Symbol)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Calscale.CalscaleValueSymbol
   ( CalscaleValueSymbol,
     testCalscaleValueSymbol,
   )
 import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
 import VCard.Types.Textual (CaseInsensitiveLower)
+import VCard.Util.Symbol (symbolSing)
 
 type Calscale s = Param "CALSCALE" (CalscaleValue s)
 

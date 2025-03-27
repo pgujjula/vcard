@@ -21,7 +21,7 @@ import GHC.TypeLits
 import Text.Megaparsec.Char qualified as Megaparsec
 import VCard.Parse (HasParser (..), Parser)
 import VCard.Serialize (HasSerializer (..), Serializer)
-import VCard.Symbol.Private
+import VCard.Util.Symbol
   ( SSymbol,
     ToLower,
     ToUpper,

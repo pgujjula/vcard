@@ -12,11 +12,6 @@ import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, assertFailure, testCase, (@?=))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Symbol.Private
-  ( SSymbol,
-    symbolSing,
-    testSSymbolEquality,
-  )
 import VCard.Types.Param.ParamValue
   ( ParamValue,
     ParamValueSymbol,
@@ -28,6 +23,11 @@ import VCard.Types.Param.ParamValue
     testParamValueSymbol,
     unParamValue,
     unquoteParamValue,
+  )
+import VCard.Util.Symbol
+  ( SSymbol,
+    symbolSing,
+    testSSymbolEquality,
   )
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}

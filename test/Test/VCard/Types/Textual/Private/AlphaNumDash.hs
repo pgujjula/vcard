@@ -11,12 +11,12 @@ import Test.VCard.Types.Textual.Private.AlphaNumDash.TypeTests
     test_AlphaNumDashSymbol,
     test_AlphaNumDashUpperSymbol,
   )
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Textual.Private.AlphaNumDash
   ( testAlphaNumDashLowerSymbol,
     testAlphaNumDashSymbol,
     testAlphaNumDashUpperSymbol,
   )
+import VCard.Util.Symbol (symbolSing)
 
 tests :: TestTree
 tests =

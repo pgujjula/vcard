@@ -13,13 +13,6 @@ import Data.Type.Equality ((:~:) (Refl))
 import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Symbol.Private
-  ( SSymbol,
-    ToUpper,
-    fromSSymbol,
-    sToUpper,
-    testSSymbolEquality,
-  )
 import VCard.Types.Param.Generic (Param (..), mkParamSerializer)
 import VCard.Types.Param.ParamValue
   ( ParamValue,
@@ -34,6 +27,13 @@ import VCard.Types.Textual
     testXNameUpperSymbol,
   )
 import VCard.Util (intersperseCommaNE, sepByNonEmpty)
+import VCard.Util.Symbol
+  ( SSymbol,
+    ToUpper,
+    fromSSymbol,
+    sToUpper,
+    testSSymbolEquality,
+  )
 
 data Any where
   Any :: (XNameUpperSymbol xname) => Param xname (NonEmpty ParamValue) -> Any
