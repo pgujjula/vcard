@@ -11,7 +11,6 @@ import Test.VCard.Char qualified
 import Test.VCard.Natural.Private qualified
 import Test.VCard.Symbol.Private qualified
 import Test.VCard.Types qualified
-import Test.VCard.XName qualified
 
 tests :: TestTree
 tests =
@@ -22,6 +21,5 @@ tests =
       Test.VCard.Char.tests,
       Test.VCard.Natural.Private.tests,
       Test.VCard.Symbol.Private.tests,
-      Test.VCard.Types.tests,
-      Test.VCard.XName.tests
+      Test.VCard.Types.tests
     ]

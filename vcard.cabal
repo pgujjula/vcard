@@ -77,6 +77,7 @@ library
       VCard.Types.Param.Value
       VCard.Types.Param.Value.ValueValueSymbol
       VCard.Types.Property.Version
+      VCard.Types.Textual.Private.XName
       VCard.Types.VCard.Internal
       VCard.Types.Value.Boolean
       VCard.Types.Value.Date
@@ -88,7 +89,6 @@ library
       VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Util
-      VCard.XName
   hs-source-dirs:
       src
   default-extensions:
@@ -173,6 +173,9 @@ test-suite vcard-tests
       Test.VCard.Types.Param.Tz
       Test.VCard.Types.Property
       Test.VCard.Types.Property.Version
+      Test.VCard.Types.Textual
+      Test.VCard.Types.Textual.Private.XName
+      Test.VCard.Types.Textual.Private.XName.TypeTests
       Test.VCard.Types.VCard
       Test.VCard.Types.Value
       Test.VCard.Types.Value.Boolean
@@ -184,8 +187,6 @@ test-suite vcard-tests
       Test.VCard.Types.Value.Time
       Test.VCard.Types.Value.URI
       Test.VCard.Util
-      Test.VCard.XName
-      Test.VCard.XName.TypeTests
       VCard
       VCard.AlphaNumDash
       VCard.CaseInsensitive
@@ -227,6 +228,7 @@ test-suite vcard-tests
       VCard.Types.Param.Tz
       VCard.Types.Property
       VCard.Types.Property.Version
+      VCard.Types.Textual.Private.XName
       VCard.Types.VCard
       VCard.Types.VCard.Internal
       VCard.Types.Value
@@ -240,7 +242,6 @@ test-suite vcard-tests
       VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Util
-      VCard.XName
   hs-source-dirs:
       src
       test

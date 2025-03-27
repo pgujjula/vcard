@@ -3,7 +3,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module VCard.XName
+module VCard.Types.Textual.Private.XName
   ( -- * XName
     XNameSymbol,
     IsXNameSymbol,
