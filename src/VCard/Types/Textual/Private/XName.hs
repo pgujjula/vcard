@@ -46,7 +46,16 @@ import VCard.Char (isAlphaNumDashChar)
 import VCard.Natural.Private (natSing)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Symbol.Private
+import VCard.Types.Textual.Private.AlphaNumDash
+  ( IsAlphaNumDashLowerSymbol,
+    IsAlphaNumDashSymbol,
+    IsAlphaNumDashUpperSymbol,
+    sIsAlphaNumDashLowerSymbol,
+    sIsAlphaNumDashSymbol,
+    sIsAlphaNumDashUpperSymbol,
+  )
+import VCard.Util (Assert, NoInstance)
+import VCard.Util.Symbol
   ( IsPrefixOf,
     IsPrefixOfInsensitive,
     Length,
@@ -59,15 +68,6 @@ import VCard.Symbol.Private
     testSSymbolEquality,
     withSomeSSymbol,
   )
-import VCard.Types.Textual.Private.AlphaNumDash
-  ( IsAlphaNumDashLowerSymbol,
-    IsAlphaNumDashSymbol,
-    IsAlphaNumDashUpperSymbol,
-    sIsAlphaNumDashLowerSymbol,
-    sIsAlphaNumDashSymbol,
-    sIsAlphaNumDashUpperSymbol,
-  )
-import VCard.Util (Assert, NoInstance)
 
 newtype XName = XName {unXName :: Text}
   deriving (Eq, Show, Ord)

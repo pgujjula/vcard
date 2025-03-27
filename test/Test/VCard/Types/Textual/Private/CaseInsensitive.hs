@@ -9,11 +9,11 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Textual.Private.CaseInsensitive
   ( CaseInsensitiveLower (..),
     CaseInsensitiveUpper (..),
   )
+import VCard.Util.Symbol (symbolSing)
 
 tests :: TestTree
 tests =

@@ -118,7 +118,7 @@ import Data.Char (isAscii, isAsciiLower, isAsciiUpper, isDigit)
 import Data.Eq.Singletons ((%==), type (==))
 import Data.Ord.Singletons ((%<), (%<=), type (<), type (<=))
 import GHC.TypeLits (Symbol)
-import VCard.Symbol.Private (SChar, SSymbol, charSing, symbolSing)
+import VCard.Util.Symbol (SChar, SSymbol, charSing, symbolSing)
 
 --
 -- DQuote

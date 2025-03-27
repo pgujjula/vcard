@@ -49,7 +49,7 @@ import VCard.Char
     sIsSafeChar,
   )
 import VCard.Natural.Private (natSing)
-import VCard.Symbol.Private
+import VCard.Util.Symbol
   ( Drop,
     Length,
     SSymbol,

@@ -11,11 +11,11 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.Geo (Geo, GeoValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Types.Value.URI (URI)
+import VCard.Util.Symbol (symbolSing)
 
 tests :: TestTree
 tests =

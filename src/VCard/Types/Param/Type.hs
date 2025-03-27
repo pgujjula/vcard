@@ -25,12 +25,6 @@ import Text.Megaparsec (takeWhile1P)
 import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Symbol.Private
-  ( SSymbol,
-    sToLower,
-    testSSymbolEquality,
-    withSomeSSymbol,
-  )
 import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
 import VCard.Types.Param.Type.TypeValueSymbol
   ( TypeGeneralSymbol,
@@ -42,6 +36,12 @@ import VCard.Types.Param.Type.TypeValueSymbol
   )
 import VCard.Types.Textual (CaseInsensitiveLower (..))
 import VCard.Util (intersperseCommaNE, sepByNonEmpty)
+import VCard.Util.Symbol
+  ( SSymbol,
+    sToLower,
+    testSSymbolEquality,
+    withSomeSSymbol,
+  )
 
 type Type symbol_class = Param "TYPE" (NonEmpty (TypeValue symbol_class))
 

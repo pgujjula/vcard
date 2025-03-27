@@ -44,7 +44,7 @@ import VCard.Char
     sSpace,
     space,
   )
-import VCard.Symbol.Private
+import VCard.Util.Symbol
   ( charSing,
     fromSChar,
     fromSSymbol,

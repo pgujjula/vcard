@@ -14,11 +14,11 @@ import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
 import VCard.Types.Param.Tz (Tz, TzValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
+import VCard.Util.Symbol (symbolSing)
 import Vary qualified (from)
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}

@@ -37,14 +37,14 @@ import VCard.Char (dQuote, isQSafeChar, isSafeChar)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 #if MIN_VERSION_GLASGOW_HASKELL(9,4,0,0)
-import VCard.Symbol.Private
+import VCard.Util.Symbol
   ( SSymbol,
     testSSymbolEquality,
     withKnownSymbol,
     withSomeSSymbol,
   )
 #else
-import VCard.Symbol.Private
+import VCard.Util.Symbol
   ( SSymbol,
     fromSSymbol,
     testSSymbolEquality,

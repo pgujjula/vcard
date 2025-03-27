@@ -11,13 +11,13 @@ import Data.Constraint (Dict (..))
 import GHC.TypeLits (KnownSymbol, Symbol)
 import VCard.Parse (HasParser (..), Parser)
 import VCard.Serialize (HasSerializer (..), Serializer)
-import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
 import VCard.Types.Param.Value.ValueValueSymbol
   ( ValueValueSymbol,
     testValueValueSymbol,
   )
 import VCard.Types.Textual (CaseInsensitiveLower)
+import VCard.Util.Symbol (symbolSing)
 
 type Value s = Param "VALUE" (ValueValue s)
 
