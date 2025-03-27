@@ -42,14 +42,6 @@ import Data.Type.Bool (type (&&))
 import GHC.TypeLits (KnownSymbol, Symbol)
 import Text.Megaparsec (oneOf, takeWhile1P)
 import Text.Megaparsec.Char (char)
-import VCard.AlphaNumDash
-  ( IsAlphaNumDashLowerSymbol,
-    IsAlphaNumDashSymbol,
-    IsAlphaNumDashUpperSymbol,
-    sIsAlphaNumDashLowerSymbol,
-    sIsAlphaNumDashSymbol,
-    sIsAlphaNumDashUpperSymbol,
-  )
 import VCard.Char (isAlphaNumDashChar)
 import VCard.Natural.Private (natSing)
 import VCard.Parse (HasParser, Parser, parser)
@@ -66,6 +58,14 @@ import VCard.Symbol.Private
     symbolSing,
     testSSymbolEquality,
     withSomeSSymbol,
+  )
+import VCard.Types.Textual.Private.AlphaNumDash
+  ( IsAlphaNumDashLowerSymbol,
+    IsAlphaNumDashSymbol,
+    IsAlphaNumDashUpperSymbol,
+    sIsAlphaNumDashLowerSymbol,
+    sIsAlphaNumDashSymbol,
+    sIsAlphaNumDashUpperSymbol,
   )
 import VCard.Util (Assert, NoInstance)
 

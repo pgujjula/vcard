@@ -6,7 +6,7 @@
 -- We define the type tests in a separate module so we can enable
 -- -fdefer-type-errors for just these tests, without affecting the singleton
 -- tests.
-module Test.VCard.AlphaNumDash.TypeTests
+module Test.VCard.Types.Textual.Private.AlphaNumDash.TypeTests
   ( test_AlphaNumDashSymbol,
     test_AlphaNumDashLowerSymbol,
     test_AlphaNumDashUpperSymbol,
@@ -20,7 +20,7 @@ import Test.ShouldNotTypecheck (shouldNotTypecheck)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, testCase)
 import Test.VCard.Util (Truth)
-import VCard.AlphaNumDash
+import VCard.Types.Textual.Private.AlphaNumDash
   ( AlphaNumDashLowerSymbol,
     AlphaNumDashSymbol,
     AlphaNumDashUpperSymbol,

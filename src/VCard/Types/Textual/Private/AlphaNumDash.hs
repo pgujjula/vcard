@@ -3,7 +3,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module VCard.AlphaNumDash
+module VCard.Types.Textual.Private.AlphaNumDash
   ( AlphaNumDashSymbol,
     testAlphaNumDashSymbol,
     IsAlphaNumDashSymbol,

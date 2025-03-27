@@ -4,10 +4,13 @@
 module Test.VCard.Types.Textual (tests) where
 
 import Test.Tasty (TestTree, testGroup)
+import Test.VCard.Types.Textual.Private.AlphaNumDash qualified
 import Test.VCard.Types.Textual.Private.XName qualified
 
 tests :: TestTree
 tests =
   testGroup
     "Textual"
-    [Test.VCard.Types.Textual.Private.XName.tests]
+    [ Test.VCard.Types.Textual.Private.AlphaNumDash.tests,
+      Test.VCard.Types.Textual.Private.XName.tests
+    ]
