@@ -11,7 +11,7 @@ import VCard.Serialize (serialize)
 import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.Value (Value, ValueValue (..))
-import VCard.Types.Textual.Private.CaseInsensitive
+import VCard.Types.Textual
   ( CaseInsensitiveLower (..),
     CaseInsensitiveUpper (..),
   )

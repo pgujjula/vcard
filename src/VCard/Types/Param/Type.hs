@@ -40,7 +40,7 @@ import VCard.Types.Param.Type.TypeValueSymbol
     testTypeRelatedSymbol,
     testTypeTelSymbol,
   )
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveLower (..))
+import VCard.Types.Textual (CaseInsensitiveLower (..))
 import VCard.Util (intersperseCommaNE, sepByNonEmpty)
 
 type Type symbol_class = Param "TYPE" (NonEmpty (TypeValue symbol_class))

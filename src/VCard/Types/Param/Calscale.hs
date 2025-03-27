@@ -17,7 +17,7 @@ import VCard.Types.Param.Calscale.CalscaleValueSymbol
     testCalscaleValueSymbol,
   )
 import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveLower)
+import VCard.Types.Textual (CaseInsensitiveLower)
 
 type Calscale s = Param "CALSCALE" (CalscaleValue s)
 

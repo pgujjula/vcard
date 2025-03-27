@@ -16,7 +16,7 @@ import GHC.TypeLits (KnownSymbol, Symbol)
 import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser (..), Parser)
 import VCard.Serialize (HasSerializer (..), Serializer)
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
+import VCard.Types.Textual (CaseInsensitiveUpper (..))
 
 -- | A generic type for parameters. The different vCard parameters are type
 --   synonyms of this type.

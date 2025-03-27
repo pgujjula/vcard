@@ -24,9 +24,9 @@ import VCard.Types.Param.Generic (Param (..), mkParamSerializer)
 import VCard.Types.Param.ParamValue
   ( ParamValue,
   )
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
-import VCard.Types.Textual.Private.XName
-  ( SXName (..),
+import VCard.Types.Textual
+  ( CaseInsensitiveUpper (..),
+    SXName (..),
     SomeXName (..),
     XName,
     XNameUpperSymbol,

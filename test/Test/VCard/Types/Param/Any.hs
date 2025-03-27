@@ -14,7 +14,7 @@ import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param.Any (Any (..))
 import VCard.Types.Param.Generic (Param (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
+import VCard.Types.Textual (CaseInsensitiveUpper (..))
 
 tests :: TestTree
 tests =

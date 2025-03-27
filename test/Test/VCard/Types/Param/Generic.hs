@@ -13,7 +13,7 @@ import VCard.Serialize (HasSerializer, Serializer, serialize, serializer)
 import VCard.Symbol.Private (symbolSing)
 import VCard.Types.Param (Param (..))
 import VCard.Types.Param.Generic (mkParamParser, mkParamSerializer)
-import VCard.Types.Textual.Private.CaseInsensitive (CaseInsensitiveUpper (..))
+import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Types.Value.Integer (Integer (..), IntegerValue (..))
 import Prelude hiding (Integer)
 
