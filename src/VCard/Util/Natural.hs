@@ -1,7 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 
-module VCard.Natural.Private
+module VCard.Util.Natural
   ( -- * 'GHC.TypeLits.Nat' singleton
     SNat,
     natSing,
@@ -9,4 +9,4 @@ module VCard.Natural.Private
   )
 where
 
-import VCard.Natural.Private.Compat (SNat, natSing, withKnownNat)
+import VCard.Util.Natural.Private.Compat (SNat, natSing, withKnownNat)

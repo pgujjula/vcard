@@ -48,7 +48,7 @@ import VCard.Char
     sIsQSafeChar,
     sIsSafeChar,
   )
-import VCard.Natural.Private (natSing)
+import VCard.Util.Natural (natSing)
 import VCard.Util.Symbol
   ( Drop,
     Length,

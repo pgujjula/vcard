@@ -8,7 +8,7 @@ import Data.Maybe (isJust)
 import Data.Type.Equality ((:~:) (Refl))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase)
-import VCard.Natural.Private (SNat, natSing)
+import VCard.Util.Natural (SNat, natSing)
 import VCard.Util.Symbol.Private.Compat
   ( SSymbol,
     symbolSing,

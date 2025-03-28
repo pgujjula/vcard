@@ -1,12 +1,12 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 
-module Test.VCard.Natural.Private.Compat (tests) where
+module Test.VCard.Util.Natural.Private.Compat (tests) where
 
 import GHC.TypeLits (natVal)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import VCard.Natural.Private.Compat (natSing)
+import VCard.Util.Natural.Private.Compat (natSing)
 
 tests :: TestTree
 tests =
