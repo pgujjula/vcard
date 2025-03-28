@@ -43,7 +43,6 @@ import GHC.TypeLits (KnownSymbol, Symbol)
 import Text.Megaparsec (oneOf, takeWhile1P)
 import Text.Megaparsec.Char (char)
 import VCard.Char (isAlphaNumDashChar)
-import VCard.Natural.Private (natSing)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Types.Textual.Private.AlphaNumDash
@@ -55,6 +54,7 @@ import VCard.Types.Textual.Private.AlphaNumDash
     sIsAlphaNumDashUpperSymbol,
   )
 import VCard.Util (Assert, NoInstance)
+import VCard.Util.Natural (natSing)
 import VCard.Util.Symbol
   ( IsPrefixOf,
     IsPrefixOfInsensitive,

@@ -9,7 +9,7 @@ import Data.Type.Equality ((:~:) (Refl))
 import GHC.TypeLits (SomeSymbol (..), natVal, someSymbolVal)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, testCase, (@?=))
-import VCard.Natural.Private.Compat (withKnownNat)
+import VCard.Util.Natural.Private.Compat (withKnownNat)
 import VCard.Util.Symbol.Private.Compat (symbolSing)
 import VCard.Util.Symbol.Private.Length (Length, sLength)
 

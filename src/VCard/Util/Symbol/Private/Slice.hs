@@ -11,7 +11,7 @@ where
 
 import Data.List.Singletons qualified as List
 import GHC.TypeLits (Nat, Symbol)
-import VCard.Natural.Private (SNat)
+import VCard.Util.Natural (SNat)
 import VCard.Util.Symbol.Private.Compat (SSymbol)
 import VCard.Util.Symbol.Private.List (FromList, ToList, sFromList, sToList)
 

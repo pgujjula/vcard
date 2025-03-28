@@ -36,8 +36,8 @@ import VCard.Char
     sIsAlphaNumDashLowerChar,
     sIsAlphaNumDashUpperChar,
   )
-import VCard.Natural.Private (natSing)
 import VCard.Util (Assert, NoInstance)
+import VCard.Util.Natural (natSing)
 import VCard.Util.Symbol
   ( Length,
     SSymbol,

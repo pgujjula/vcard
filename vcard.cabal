@@ -39,12 +39,11 @@ library
       VCard.Types.Textual
       VCard.Types.VCard
       VCard.Types.Value
+      VCard.Util.Natural
       VCard.Util.Symbol
   other-modules:
       VCard.Char
       VCard.Internal.Closed
-      VCard.Natural.Private
-      VCard.Natural.Private.Compat
       VCard.Parse
       VCard.Serialize
       VCard.Types.Param.AltID
@@ -79,6 +78,7 @@ library
       VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Util
+      VCard.Util.Natural.Private.Compat
       VCard.Util.Symbol.Private.Append
       VCard.Util.Symbol.Private.Case
       VCard.Util.Symbol.Private.Compat
@@ -127,11 +127,11 @@ library
     ghc-options: -Wno-unticked-promoted-constructors
   if impl(ghc >= 9.6)
     other-modules:
-        VCard.Natural.Private.Compat.New
+        VCard.Util.Natural.Private.Compat.New
         VCard.Util.Symbol.Private.Compat.New
   if impl(ghc < 9.6)
     other-modules:
-        VCard.Natural.Private.Compat.Old
+        VCard.Util.Natural.Private.Compat.Old
         VCard.Util.Symbol.Private.Compat.Old
 
 test-suite vcard-tests
@@ -141,8 +141,6 @@ test-suite vcard-tests
       Test.Util
       Test.VCard
       Test.VCard.Char
-      Test.VCard.Natural.Private
-      Test.VCard.Natural.Private.Compat
       Test.VCard.Types
       Test.VCard.Types.Param
       Test.VCard.Types.Param.AltID
@@ -177,6 +175,8 @@ test-suite vcard-tests
       Test.VCard.Types.Value.Time
       Test.VCard.Types.Value.URI
       Test.VCard.Util
+      Test.VCard.Util.Natural
+      Test.VCard.Util.Natural.Private.Compat
       Test.VCard.Util.Symbol
       Test.VCard.Util.Symbol.Private.Append
       Test.VCard.Util.Symbol.Private.Case
@@ -192,8 +192,6 @@ test-suite vcard-tests
       VCard
       VCard.Char
       VCard.Internal.Closed
-      VCard.Natural.Private
-      VCard.Natural.Private.Compat
       VCard.Parse
       VCard.Serialize
       VCard.Types.Param
@@ -233,6 +231,8 @@ test-suite vcard-tests
       VCard.Types.Value.Time
       VCard.Types.Value.URI
       VCard.Util
+      VCard.Util.Natural
+      VCard.Util.Natural.Private.Compat
       VCard.Util.Symbol
       VCard.Util.Symbol.Private.Append
       VCard.Util.Symbol.Private.Case
@@ -291,9 +291,9 @@ test-suite vcard-tests
     ghc-options: -Wno-unticked-promoted-constructors
   if impl(ghc >= 9.6)
     other-modules:
-        VCard.Natural.Private.Compat.New
+        VCard.Util.Natural.Private.Compat.New
         VCard.Util.Symbol.Private.Compat.New
   if impl(ghc < 9.6)
     other-modules:
-        VCard.Natural.Private.Compat.Old
+        VCard.Util.Natural.Private.Compat.Old
         VCard.Util.Symbol.Private.Compat.Old

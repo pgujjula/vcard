@@ -13,7 +13,7 @@ import Data.List.Singletons (SList (SCons, SNil))
 import GHC.TypeLits (Symbol, type (+))
 import Numeric.Natural (Natural)
 import Prelude.Singletons ((%+))
-import VCard.Natural.Private (SNat, natSing)
+import VCard.Util.Natural (SNat, natSing)
 import VCard.Util.Symbol.Private.Compat (SSymbol)
 import VCard.Util.Symbol.Private.List (ToList, sToList)
 

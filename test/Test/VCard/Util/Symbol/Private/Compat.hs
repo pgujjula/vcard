@@ -21,7 +21,7 @@ import GHC.TypeLits.Singletons (sCharToNat, sNatToChar)
 import Prelude.Singletons ((%+))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase, (@?=))
-import VCard.Natural.Private (natSing)
+import VCard.Util.Natural (natSing)
 import VCard.Util.Symbol.Private.Compat
   ( SChar,
     SSymbol,
