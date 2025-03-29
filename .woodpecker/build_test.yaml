@@ -14,8 +14,8 @@ matrix:
       SOURCE: haskell
     - GHC_VERSION: 9.4.8
       SOURCE: haskell
-    - GHC_VERSION: 9.6.6
-      SOURCE: haskell
+    - GHC_VERSION: 9.6.7
+      SOURCE: benz0li/ghc-musl
     - GHC_VERSION: 9.8.4
       SOURCE: haskell
     - GHC_VERSION: 9.10.1
