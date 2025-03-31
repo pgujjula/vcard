@@ -35,6 +35,8 @@ import VCard.Util (intToText)
 import Prelude hiding (Float, Integer)
 import Prelude qualified (Integer)
 
+-- | /Reference:/ [@float@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L542)
 data Float = Float
   { floatSign :: !(Maybe Sign),
     floatWholePart :: !NaturalLeadingZeros,
@@ -147,6 +149,8 @@ fromScientific s =
                     }
         }
 
+-- | /Reference:/ [@float-list@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L538)
 type FloatList = List Float
 
 -- Utilities

@@ -8,110 +8,142 @@
 -- Maintainer : Preetham Gujjula <libraries@mail.preetham.io>
 -- Stability  : experimental
 --
--- Types for the property value data types described in Section 4 of RFC 6350.
+-- Property value data types.
+--
+-- /Reference:/ [/RFC 6350 Section 4/]
+--    (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L494)
 module VCard.Types.Value
   ( -- * Section 4.1 @TEXT@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.1/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L592)
     Text,
     TextList,
 
     -- * Section 4.2 @URI@
 
     -- | The 'URI' type here is re-exported from "Network.URI". This works well
-    -- because Network.URI implements RFC 3986, which is also the basis of the
-    -- URI type in the vCard spec.
+    --   because Network.URI implements RFC 3986, which is also the basis of the
+    --   URI type in the vCard spec.
+    --
+    --   /Reference:/ [/RFC 6350 Section 4.2/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L633)
     URI (..),
-    List,
 
-    -- * Section 4.3.1 @DATE@
+    -- * Section 4.3 @DATE@, @TIME@, @DATE-TIME@, @DATE-AND-OR-TIME@, and @TIMESTAMP@
 
-    -- ** @Date@
+    -- | /Reference:/ [/RFC 6350 Section 4.3/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L648)
+
+    -- ** Section 4.3.1 @DATE@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.3.1/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L657)
     Date (..),
     DateList,
 
-    -- ** @DateNoReduc@
+    -- ** Section 4.3.2 @TIME@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.3.2/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L694)
+    Time (..),
+    TimeList,
+    LocalTime (..),
+
+    -- ** Section 4.3.3 @DATE-TIME@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.3.3/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L720)
+    DateTime (..),
+    DateTimeList,
     DateNoReduc (..),
+    TimeNoTrunc (..),
+    LocalTimeNoTrunc (..),
 
-    -- ** @DateComplete@
+    -- ** Section 4.3.4 @DATE-AND-OR-TIME@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.3.4/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L745)
+    DateAndOrTime (..),
+    DateAndOrTimeList,
+
+    -- ** Section 4.3.5 @TIMESTAMP@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.3.5/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L768)
+    Timestamp (..),
+    TimestampList,
     DateComplete (..),
+    TimeComplete (..),
+    LocalTimeComplete (..),
 
-    -- ** @Year@
+    -- ** Date components
     Year (..),
     HasYear (..),
-
-    -- ** @Month@
     Month (..),
     HasMonth (..),
-
-    -- ** @Day@
     Day (..),
     HasDay (..),
-
-    -- ** @YearMonthDay@
     YearMonthDay,
     mkYearMonthDay,
-
-    -- ** @YearMonth@
     YearMonth (..),
-
-    -- ** @MonthDay@
     MonthDay,
     mkMonthDay,
 
-    -- * Section 4.3.2 @TIME@
-
-    -- ** @Time@
-    LocalTime (..),
-
-    -- ** @Hour@
+    -- ** Time components
     Hour (..),
     HasHour (..),
-
-    -- ** @Minute@
     Minute (..),
     HasMinute (..),
-
-    -- ** @Second@
     Second (..),
     HasSecond (..),
-
-    -- ** @HourMinuteSecond@
     HourMinuteSecond (..),
-
-    -- ** @HourMinute@
     HourMinute (..),
-
-    -- ** @MinuteSecond@
     MinuteSecond (..),
-
-    -- ** @Zone@
     Zone (..),
-
-    -- ** @TimeNoTrunc@
-    TimeNoTrunc (..),
-
-    -- ** @TimeComplete@
-    TimeComplete (..),
-
-    -- ** @DateTime@
-    DateTime (..),
-    DateTimeList,
-
-    -- ** @Timestamp@
-    Timestamp (..),
-    TimestampList,
+    UTCDesignator (..),
 
     -- * Section 4.4 @BOOLEAN@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.4/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L780)
     Boolean (..),
 
     -- * Section 4.5 @INTEGER@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.5/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L801)
     Integer (..),
     IntegerList,
+    IntegerValue (..),
+
+    -- * Section 4.6 @FLOAT@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.6/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L817)
+    Float (..),
+    FloatList,
+    NaturalLeadingZeros (..),
+    toScientific,
+    fromScientific,
 
     -- * Section 4.7 @UTC-OFFSET@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.7/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L834)
     UTCOffset (..),
 
-    -- * Section 4.7 @LANGUAGE-TAG@
+    -- * Section 4.8 @LANGUAGE-TAG@
+
+    -- | /Reference:/ [/RFC 6350 Section 4.8/]
+    --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L857)
     LanguageTag (..),
+
+    -- * Generic @List@ type
+    List (..),
+
+    -- * Miscellaneous
+    Sign (..),
   )
 where
 
@@ -133,12 +165,21 @@ import VCard.Types.Value.Date
     mkMonthDay,
     mkYearMonthDay,
   )
-import VCard.Types.Value.Integer (Integer (..), IntegerList)
+import VCard.Types.Value.Float
+  ( Float (..),
+    FloatList,
+    NaturalLeadingZeros (..),
+    fromScientific,
+    toScientific,
+  )
+import VCard.Types.Value.Integer (Integer (..), IntegerList, IntegerValue (..))
 import VCard.Types.Value.LanguageTag (LanguageTag (..))
 import VCard.Types.Value.List (List (..))
 import VCard.Types.Value.Text (Text (..), TextList)
 import VCard.Types.Value.Time
-  ( DateTime (..),
+  ( DateAndOrTime (..),
+    DateAndOrTimeList,
+    DateTime (..),
     DateTimeList,
     HasHour (..),
     HasMinute (..),
@@ -147,15 +188,21 @@ import VCard.Types.Value.Time
     HourMinute (..),
     HourMinuteSecond (..),
     LocalTime (..),
+    LocalTimeComplete (..),
+    LocalTimeNoTrunc (..),
     Minute (..),
     MinuteSecond (..),
     Second (..),
+    Sign (..),
+    Time (..),
     TimeComplete (..),
+    TimeList,
     TimeNoTrunc (..),
     Timestamp (..),
     TimestampList,
+    UTCDesignator (..),
     UTCOffset (..),
     Zone (..),
   )
 import VCard.Types.Value.URI (URI (..))
-import Prelude hiding (Integer)
+import Prelude hiding (Float, Integer)

@@ -20,9 +20,12 @@ import VCard.Serialize (HasSerializer, serializer)
 import VCard.Types.Value.List (List)
 
 -- | Not to be confused with 'Data.Text.Text' from "Data.Text".
+--
+--   /Reference:/ [@text@](https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L521)
 newtype Text = Text {unText :: Data.Text.Text}
   deriving (Eq, Show, Ord)
 
+-- | /Reference:/ [@text-list@](https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L531)
 type TextList = List Text
 
 instance HasParser Text where

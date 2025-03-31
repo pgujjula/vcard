@@ -13,6 +13,8 @@ import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
 import Prelude hiding (Integer)
 
+-- | /Reference:/ [@Language-Tag@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L585)
 newtype LanguageTag = LanguageTag
   { unLanguageTag :: Text
   }

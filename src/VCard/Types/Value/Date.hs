@@ -40,7 +40,10 @@ import Vary (Vary, exhaustiveCase, from, on)
 --
 
 -- | A year between 0000 and 9999. @'Year' ('Data.Finite.finite' 0)@ is year
--- 0000 and @'Year' ('Data.Finite.finite' 9999)@ is year 9999.
+--   0000 and @'Year' ('Data.Finite.finite' 9999)@ is year 9999.
+--
+--   /Reference:/ [@year@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L546)
 newtype Year = Year {unYear :: Finite 10000}
   deriving (Eq, Show, Ord, Bounded)
 
@@ -74,7 +77,10 @@ instance HasSerializer Year where
 --
 
 -- | A month of the year. @'Month' ('Data.Finite.finite' 0)@ is January and
--- @'Month' ('Data.Finite.finite' 11)@ is December.
+--   @'Month' ('Data.Finite.finite' 11)@ is December.
+--
+--   /Reference:/ [@month@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L547)
 newtype Month = Month {unMonth :: Finite 12}
   deriving (Eq, Show, Ord, Bounded)
 
@@ -102,6 +108,9 @@ instance HasSerializer Month where
 
 -- | A day of the month. @'Day' ('Data.Finite.finite' 0)@ is the 1st of the month
 --   and @'Day' ('Data.Finite.finite' 30)@ is the 31st.
+--
+--   /Reference:/ [@day@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L548)
 newtype Day = Day {unDay :: Finite 31}
   deriving (Eq, Show, Ord, Bounded)
 
@@ -190,6 +199,7 @@ data YearMonth = YearMonth !Year !Month
 -- MonthDay
 --
 
+-- | A 'Month' and 'Day' together.
 data MonthDay = MonthDay !Month !Day
   deriving (Eq, Show, Ord, Bounded)
 
@@ -241,6 +251,8 @@ mkMonthDay month day =
 -- Date
 --
 
+-- | /Reference:/ [@date@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L555-L558)
 newtype Date = Date
   {unDate :: Vary '[Year, Month, Day, YearMonthDay, YearMonth, MonthDay]}
   deriving (Eq, Show, Ord)
@@ -281,12 +293,16 @@ dateS (Date vary) =
           $ exhaustiveCase
       )
 
+-- | /Reference:/ [@date-list@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L532)
 type DateList = List Date
 
 --
 -- DateNoReduc
 --
 
+-- | /Reference:/ [@date-noreduc@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L559-L561)
 newtype DateNoReduc = DateNoReduc
   {unDateNoReduc :: Vary '[YearMonthDay, MonthDay, Day]}
   deriving (Eq, Show, Ord)
@@ -315,6 +331,8 @@ instance HasSerializer DateNoReduc where
 -- DateComplete
 --
 
+-- | /Reference:/ [@date-complete@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L562)
 newtype DateComplete = DateComplete
   {unDateComplete :: YearMonthDay}
   deriving (Eq, Show, Ord)

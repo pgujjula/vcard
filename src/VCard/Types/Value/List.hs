@@ -15,9 +15,12 @@ import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, serializer)
 
--- | Lists of values, separated by a comma. Defined in the front matter of
--- Section 4 of RFC 6350. Not to be confused with 'Data.List.List' from
--- "Data.List".
+-- | Non-empty list of values, separated by a comma. Used to implement
+--   @text-list@, @date-list@, etc. Not to be confused with 'Data.List.List'
+--   from "Data.List".
+--
+--   /Reference:/ [RFC 6350 Section 4 front matter]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L531-L538)
 newtype List a = List {unList :: NonEmpty a}
   deriving (Eq, Show, Ord)
 

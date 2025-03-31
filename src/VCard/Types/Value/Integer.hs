@@ -33,6 +33,8 @@ import VCard.Types.Value.List (List (..))
 import VCard.Util (intToText)
 import Prelude hiding (Integer)
 
+-- | /Reference:/ [@integer@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L541)
 data Integer = Integer
   { integerNumLeadingZeros :: !Word,
     integerIntegerValue :: !IntegerValue
@@ -118,6 +120,8 @@ instance HasSerializer Integer where
         Positive x -> getFinite x
         Negative x -> getFinite x
 
+-- | /Reference:/ [@integer-list@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L537)
 type IntegerList = List Integer
 
 -- | Convert an 'Integer' to an 'Int64'.

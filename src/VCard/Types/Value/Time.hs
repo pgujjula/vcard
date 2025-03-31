@@ -57,6 +57,9 @@ import Vary (Vary, exhaustiveCase, from, on)
 --
 
 -- | An hour of the day, between 0 and 23.
+--
+--   /Reference:/ [@hour@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L549)
 newtype Hour = Hour {unHour :: Finite 24}
   deriving (Eq, Ord, Show, Bounded)
 
@@ -97,6 +100,9 @@ instance HasHour HourMinute where
 --
 
 -- | A minute of an hour, between 00 and 59.
+--
+--   /Reference:/ [@minute@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L550)
 newtype Minute = Minute {unMinute :: Finite 60}
   deriving (Eq, Show, Ord, Bounded)
 
@@ -137,6 +143,9 @@ instance HasMinute HourMinute where
 --
 
 -- | A second of an minute, usually between 00 and 59, and 60 for leap seconds.
+--
+--   /Reference:/ [@second@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L551)
 newtype Second = Second {unSecond :: Finite 61}
   deriving (Eq, Show, Ord, Bounded)
 
@@ -197,6 +206,10 @@ data MinuteSecond = MinuteSecond !Minute !Second
 -- LocalTime
 --
 
+-- | The local part of a @time@, without the @zone@.
+--
+--   /Reference:/ [@time@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L564-L566)
 newtype LocalTime = LocalTime
   { unLocalTime ::
       Vary '[Hour, Minute, Second, HourMinuteSecond, HourMinute, MinuteSecond]
@@ -236,6 +249,10 @@ instance HasSerializer LocalTime where
 -- LocalTimeNoTrunc
 --
 
+-- | The local part of a @time-notrunc@, without the @zone@.
+--
+--   /Reference:/ [@time-notrunc@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L567)
 newtype LocalTimeNoTrunc = LocalTimeNoTrunc
   { unLocalTimeNoTrunc ::
       Vary '[Hour, HourMinute, HourMinuteSecond]
@@ -264,6 +281,10 @@ instance HasSerializer LocalTimeNoTrunc where
 -- LocalTimeComplete
 --
 
+-- | The local part of a @time-complete@, without the @zone@.
+--
+--   /Reference:/ [@time-complete@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L568)
 newtype LocalTimeComplete = LocalTimeComplete
   { unLocalTimeComplete :: HourMinuteSecond
   }
@@ -340,12 +361,16 @@ minuteSecondTimeS (MinuteSecond minute second) =
 -- Time
 --
 
+-- | /Reference:/ [@time@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L564-L566)
 data Time = Time
   { timeLocalTime :: !LocalTime,
     timeZone :: !(Maybe Zone)
   }
   deriving (Eq, Show, Ord)
 
+-- | /Reference:/ [@time-list@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L533)
 type TimeList = List Time
 
 instance HasParser Time where
@@ -361,6 +386,8 @@ instance HasSerializer Time where
 -- TimeNoTrunc
 --
 
+-- | /Reference:/ [@time-notrunc@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L567)
 data TimeNoTrunc = TimeNoTrunc
   { timeNoTruncLocalTimeNoTrunc :: !LocalTimeNoTrunc,
     timeNoTruncZone :: !(Maybe Zone)
@@ -380,6 +407,8 @@ instance HasSerializer TimeNoTrunc where
 -- TimeComplete
 --
 
+-- | /Reference:/ [@time-complete@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L568)
 data TimeComplete = TimeComplete
   { timeCompleteLocalTimeComplete :: !LocalTimeComplete,
     timeCompleteZone :: !(Maybe Zone)
@@ -398,6 +427,9 @@ instance HasSerializer TimeComplete where
 --
 -- Sign
 --
+
+-- | /Reference:/ [@sign@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L544)
 data Sign = Minus | Plus
   deriving (Eq, Show, Ord, Bounded)
 
@@ -418,6 +450,9 @@ instance HasSerializer Sign where
 --
 -- UTCDesignator
 --
+
+-- | /Reference:/ [@utc-designator@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L553)
 data UTCDesignator = UTCDesignator
   deriving (Eq, Show, Ord)
 
@@ -432,6 +467,9 @@ instance HasSerializer UTCDesignator where
 --
 -- UTCOffset
 --
+
+-- | /Reference:/ [@utc-offset@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L583)
 data UTCOffset = UTCOffset !Sign !Hour !(Maybe Minute)
   deriving (Eq, Show, Ord)
 
@@ -454,6 +492,9 @@ instance HasSerializer UTCOffset where
 --
 -- Zone
 --
+
+-- | /Reference:/ [@zone@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L552)
 newtype Zone = Zone {unZone :: Vary '[UTCDesignator, UTCOffset]}
   deriving (Eq, Show, Ord)
 
@@ -479,6 +520,8 @@ instance HasSerializer Zone where
 -- DateTime
 --
 
+-- | /Reference:/ [@date-time@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L578)
 data DateTime = DateTime
   { dateTimeDateNoReduc :: DateNoReduc,
     dateTimeTimeNoTrunc :: TimeNoTrunc
@@ -504,12 +547,16 @@ instance HasSerializer DateTime where
       <> "T"
       <> serializer (dateTimeTimeNoTrunc dateTime)
 
+-- | /Reference:/ [@date-time-list@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L534)
 type DateTimeList = List DateTime
 
 --
 -- DateAndOrTime
 --
 
+-- | /Reference:/ [@date-and-or-time@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L581)
 newtype DateAndOrTime = DateAndOrTime
   { unDateAndOrTime :: Vary '[DateTime, Date, Time]
   }
@@ -536,12 +583,16 @@ instance HasSerializer DateAndOrTime where
             $ exhaustiveCase
         )
 
+-- | /Reference:/ [@date-and-or-time-list@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L535)
 type DateAndOrTimeList = List DateAndOrTime
 
 --
 -- Timestamp
 --
 
+-- | /Reference:/ [@timestamp@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L579)
 data Timestamp = Timestamp
   { timestampDateComplete :: DateComplete,
     timestampTimeComplete :: TimeComplete
@@ -567,6 +618,8 @@ instance HasSerializer Timestamp where
       <> "T"
       <> serializer (timestampTimeComplete timestamp)
 
+-- | /Reference:/ [@timestamp-list@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L536)
 type TimestampList = List Timestamp
 
 -- Utilities
