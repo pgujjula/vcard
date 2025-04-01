@@ -6,6 +6,7 @@
 module VCard.Types.Param.PID
   ( PID,
     PIDValue (..),
+    Digit,
   )
 where
 

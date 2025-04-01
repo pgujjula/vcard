@@ -60,8 +60,9 @@ import VCard.Types.Param.ParamValue.Internal
   )
 import VCard.Util (Assert, NoInstance)
 
--- | A general data type for the value of a parameter. Corresponds to
---   @param-value@ in the ABNF in Section 3.3 of RFC 6350.
+-- | A general data type for the value of a parameter.
+--
+--   /Reference:/ [@param-value@](https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L386)
 newtype ParamValue = ParamValue
   { -- | Unwrap a 'ParamValue'.
     unParamValue :: Text

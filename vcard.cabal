@@ -35,6 +35,7 @@ library
   exposed-modules:
       VCard
       VCard.Types.Param
+      VCard.Types.Param.Mediatype
       VCard.Types.Property
       VCard.Types.Textual
       VCard.Types.VCard
@@ -53,7 +54,6 @@ library
       VCard.Types.Param.Generic
       VCard.Types.Param.Geo
       VCard.Types.Param.Language
-      VCard.Types.Param.Mediatype
       VCard.Types.Param.ParamValue
       VCard.Types.Param.ParamValue.Internal
       VCard.Types.Param.PID
