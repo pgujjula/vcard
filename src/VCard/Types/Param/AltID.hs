@@ -18,7 +18,7 @@ import Data.Type.Equality ((:~:) (Refl))
 import GHC.TypeLits (KnownSymbol)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param (..), mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam (..), mkParamParser, mkParamSerializer)
 import VCard.Types.Param.ParamValue
   ( ParamValue,
     SParamValue (..),
@@ -30,19 +30,19 @@ import VCard.Types.Param.ParamValue
   )
 import VCard.Util.Symbol (SSymbol, symbolSing, testSSymbolEquality)
 
-type AltID = Param "ALTID" ParamValue
+type AltID = GenericParam "ALTID" ParamValue
 
 data SAltID s where
-  SAltID :: Param "ALTID" (SParamValue s) -> SAltID (UnquoteParamValueSymbol s)
+  SAltID :: GenericParam "ALTID" (SParamValue s) -> SAltID (UnquoteParamValueSymbol s)
 
 instance Eq (SAltID s) where
-  SAltID (param1 :: Param "ALTID" (SParamValue a))
-    == SAltID (param2 :: Param "ALTID" (SParamValue b)) =
+  SAltID (param1 :: GenericParam "ALTID" (SParamValue a))
+    == SAltID (param2 :: GenericParam "ALTID" (SParamValue b)) =
       let sa :: SSymbol a
-          sa = case paramValue param1 of SParamValue ss -> ss
+          sa = case genericParamValue param1 of SParamValue ss -> ss
 
           sb :: SSymbol b
-          sb = case paramValue param2 of SParamValue ss -> ss
+          sb = case genericParamValue param2 of SParamValue ss -> ss
        in case testSSymbolEquality sa sb of
             Nothing -> False
             Just Refl -> param1 == param2
@@ -55,13 +55,13 @@ data SomeAltID where
 instance Eq SomeAltID where
   (SomeAltID saltid1) == (SomeAltID saltid2) =
     case (saltid1, saltid2) of
-      ( SAltID (param1 :: Param "ALTID" (SParamValue x)),
-        SAltID (param2 :: Param "ALTID" (SParamValue y))
+      ( SAltID (param1 :: GenericParam "ALTID" (SParamValue x)),
+        SAltID (param2 :: GenericParam "ALTID" (SParamValue y))
         ) ->
           let sx :: SSymbol x
-              sx = case paramValue param1 of SParamValue ss -> ss
+              sx = case genericParamValue param1 of SParamValue ss -> ss
               sy :: SSymbol y
-              sy = case paramValue param2 of SParamValue ss -> ss
+              sy = case genericParamValue param2 of SParamValue ss -> ss
            in case testSSymbolEquality sx sy of
                 Nothing -> False
                 Just Refl -> param1 == param2
@@ -70,19 +70,19 @@ deriving instance Show SomeAltID
 
 altIDVal :: SAltID s -> AltID
 altIDVal (SAltID altID) =
-  Param
-    { paramName = paramName altID,
-      paramValue = paramValueVal (paramValue altID)
+  GenericParam
+    { genericParamName = genericParamName altID,
+      genericParamValue = paramValueVal (genericParamValue altID)
     }
 
 someAltIDVal :: AltID -> SomeAltID
 someAltIDVal altID =
-  case someParamValueVal (paramValue altID) of
+  case someParamValueVal (genericParamValue altID) of
     SomeParamValue spv ->
       SomeAltID . SAltID $
-        Param
-          { paramName = paramName altID,
-            paramValue = spv
+        GenericParam
+          { genericParamName = genericParamName altID,
+            genericParamValue = spv
           }
 
 instance HasParser AltID where
@@ -96,7 +96,7 @@ instance (KnownSymbol s) => HasParser (SAltID s) where
       SomeAltID sAltID@(SAltID param) ->
         let validAltID =
               testSSymbolEquality
-                (sUnquoteSParamValue (paramValue param))
+                (sUnquoteSParamValue (genericParamValue param))
                 (symbolSing @s)
          in case validAltID of
               Just Refl -> pure sAltID

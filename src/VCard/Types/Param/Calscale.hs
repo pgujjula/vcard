@@ -15,11 +15,11 @@ import VCard.Types.Param.Calscale.CalscaleValueSymbol
   ( CalscaleValueSymbol,
     testCalscaleValueSymbol,
   )
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Textual (CaseInsensitiveLower)
 import VCard.Util.Symbol (symbolSing)
 
-type Calscale s = Param "CALSCALE" (CalscaleValue s)
+type Calscale s = GenericParam "CALSCALE" (CalscaleValue s)
 
 data CalscaleValue (s :: Symbol) where
   CalscaleValue ::
@@ -31,10 +31,10 @@ deriving instance Eq (CalscaleValue s)
 
 deriving instance Show (CalscaleValue s)
 
-instance (KnownSymbol s) => HasParser (Param "CALSCALE" (CalscaleValue s)) where
+instance (KnownSymbol s) => HasParser (GenericParam "CALSCALE" (CalscaleValue s)) where
   parser = mkParamParser (parser @(CalscaleValue s))
 
-instance HasSerializer (Param "CALSCALE" (CalscaleValue s)) where
+instance HasSerializer (GenericParam "CALSCALE" (CalscaleValue s)) where
   serializer = mkParamSerializer (serializer @(CalscaleValue s))
 
 instance (KnownSymbol s) => HasParser (CalscaleValue s) where

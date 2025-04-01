@@ -20,10 +20,10 @@ import Text.Megaparsec (choice, optional)
 import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Util (intToText, intersperseCommaNE, sepByNonEmpty)
 
-type PID = Param "PID" (NonEmpty PIDValue)
+type PID = GenericParam "PID" (NonEmpty PIDValue)
 
 type Digit = Finite 10
 

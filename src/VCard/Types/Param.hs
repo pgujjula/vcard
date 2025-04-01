@@ -11,7 +11,7 @@
 -- Types for the property parameters described in Section 5 of RFC 6350.
 module VCard.Types.Param
   ( -- * Generic Param
-    Param (..),
+    GenericParam (..),
 
     -- * Generic Param value
 
@@ -121,7 +121,7 @@ import VCard.Types.Param.AltID
     someAltIDVal,
   )
 import VCard.Types.Param.Calscale (Calscale, CalscaleValue (..))
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.Geo (Geo, GeoValue (..))
 import VCard.Types.Param.Language (Language)
 import VCard.Types.Param.Mediatype (Mediatype (..), MediatypeParam)

@@ -15,7 +15,7 @@ import VCard.Types.Param.AltID
     altIDVal,
     someAltIDVal,
   )
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
@@ -35,15 +35,15 @@ test_altIDVal :: TestTree
 test_altIDVal =
   testCase "altIDVal" $
     let param =
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"foo")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"foo")
             }
         saltid = SAltID param
         altID =
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = paramValueVal (SParamValue (symbolSing @"foo"))
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = paramValueVal (SParamValue (symbolSing @"foo"))
             }
      in altIDVal saltid @?= altID
 
@@ -51,15 +51,15 @@ test_someAltIDVal :: TestTree
 test_someAltIDVal =
   testCase "someAltIDVal" $ do
     let altID =
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = paramValueVal (SParamValue (symbolSing @"foo"))
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = paramValueVal (SParamValue (symbolSing @"foo"))
             }
         someAltID =
           SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"foo")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"foo")
               }
      in someAltIDVal altID @?= someAltID
 
@@ -76,25 +76,25 @@ test_AltID_parse =
   testCase "parse" $ do
     parse @AltID "ALTID="
       @?= Just
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = paramValueVal (SParamValue (symbolSing @""))
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = paramValueVal (SParamValue (symbolSing @""))
             }
         )
 
     parse @AltID "ALTID=foo"
       @?= Just
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = paramValueVal (SParamValue (symbolSing @"foo"))
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = paramValueVal (SParamValue (symbolSing @"foo"))
             }
         )
 
     parse @AltID "ALTID=\"foo\""
       @?= Just
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = paramValueVal (SParamValue (symbolSing @"\"foo\""))
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = paramValueVal (SParamValue (symbolSing @"\"foo\""))
             }
         )
 
@@ -105,25 +105,25 @@ test_AltID_serialize :: TestTree
 test_AltID_serialize =
   testCase "serialize" $ do
     serialize @AltID
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-            paramValue = paramValueVal (SParamValue (symbolSing @""))
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+            genericParamValue = paramValueVal (SParamValue (symbolSing @""))
           }
       )
       @?= "ALTID="
 
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-            paramValue = paramValueVal (SParamValue (symbolSing @"foo"))
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+            genericParamValue = paramValueVal (SParamValue (symbolSing @"foo"))
           }
       )
       @?= "ALTID=foo"
 
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-            paramValue = paramValueVal (SParamValue (symbolSing @"\"foo\""))
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+            genericParamValue = paramValueVal (SParamValue (symbolSing @"\"foo\""))
           }
       )
       @?= "ALTID=\"foo\""
@@ -148,25 +148,25 @@ test_SAltID_Eq =
     let a :: SAltID "foo"
         a =
           SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"foo")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"foo")
               }
 
         b :: SAltID "foo"
         b =
           SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"AltID"),
-                paramValue = SParamValue (symbolSing @"foo")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"AltID"),
+                genericParamValue = SParamValue (symbolSing @"foo")
               }
 
         c :: SAltID "foo"
         c =
           SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"\"foo\"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"\"foo\"")
               }
 
     assertNotEqual a b
@@ -179,36 +179,36 @@ test_SAltID_parse =
     parse @(SAltID "") "ALTID="
       @?= Just
         ( SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"")
               }
         )
 
     parse @(SAltID "foo") "ALTID=foo"
       @?= Just
         ( SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"foo")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"foo")
               }
         )
 
     parse @(SAltID "foo") "ALTID=\"foo\""
       @?= Just
         ( SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"\"foo\"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"\"foo\"")
               }
         )
 
     parse @(SAltID "foo;") "ALTID=\"foo;\""
       @?= Just
         ( SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"\"foo;\"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"\"foo;\"")
               }
         )
 
@@ -221,36 +221,36 @@ test_SAltID_serialize =
   testCase "serialize" $ do
     serialize @(SAltID "")
       ( SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"")
             }
       )
       @?= "ALTID="
 
     serialize @(SAltID "foo")
       ( SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"foo")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"foo")
             }
       )
       @?= "ALTID=foo"
 
     serialize @(SAltID "foo")
       ( SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"\"foo\"")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"\"foo\"")
             }
       )
       @?= "ALTID=\"foo\""
 
     serialize @(SAltID "foo;")
       ( SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"\"foo;\"")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"\"foo;\"")
             }
       )
       @?= "ALTID=\"foo;\""
@@ -275,33 +275,33 @@ test_SomeAltID_eq =
     let a :: SomeAltID
         a =
           SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"foo")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"foo")
               }
 
         b :: SomeAltID
         b =
           SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"AltID"),
-                paramValue = SParamValue (symbolSing @"foo")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"AltID"),
+                genericParamValue = SParamValue (symbolSing @"foo")
               }
 
         c :: SomeAltID
         c =
           SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"\"foo\"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"\"foo\"")
               }
 
         d :: SomeAltID
         d =
           SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"\"foo;\"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"\"foo;\"")
               }
 
     assertNotEqual a b
@@ -317,36 +317,36 @@ test_SomeAltID_parse =
     parse @SomeAltID "ALTID="
       @?= Just
         ( SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"")
               }
         )
 
     parse @SomeAltID "ALTID=foo"
       @?= Just
         ( SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"foo")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"foo")
               }
         )
 
     parse @SomeAltID "ALTID=\"foo\""
       @?= Just
         ( SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"\"foo\"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"\"foo\"")
               }
         )
 
     parse @SomeAltID "ALTID=\"foo;\""
       @?= Just
         ( SomeAltID . SAltID $
-            Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-                paramValue = SParamValue (symbolSing @"\"foo;\"")
+            GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+                genericParamValue = SParamValue (symbolSing @"\"foo;\"")
               }
         )
 
@@ -358,36 +358,36 @@ test_SomeAltID_serialize =
   testCase "serialize" $ do
     serialize
       ( SomeAltID . SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"")
             }
       )
       @?= "ALTID="
 
     serialize
       ( SomeAltID . SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"foo")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"foo")
             }
       )
       @?= "ALTID=foo"
 
     serialize
       ( SomeAltID . SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"\"foo\"")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"\"foo\"")
             }
       )
       @?= "ALTID=\"foo\""
 
     serialize
       ( SomeAltID . SAltID $
-          Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"ALTID"),
-              paramValue = SParamValue (symbolSing @"\"foo;\"")
+          GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"ALTID"),
+              genericParamValue = SParamValue (symbolSing @"\"foo;\"")
             }
       )
       @?= "ALTID=\"foo;\""

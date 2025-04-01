@@ -11,21 +11,21 @@ import Control.Monad (when)
 import Data.Finite (Finite, getFinite, packFinite)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Value.Integer (naturalP)
 import VCard.Util (intToText)
 
-type Pref = Param "PREF" PrefValue
+type Pref = GenericParam "PREF" PrefValue
 
 -- | 'PrefValue' is 0-indexed, so in this context `finite 0` represents 1 and
 --   `finite 99` represents 100
 newtype PrefValue = PrefValue {unPrefValue :: Finite 100}
   deriving (Eq, Show, Ord)
 
-instance HasParser (Param "PREF" PrefValue) where
+instance HasParser (GenericParam "PREF" PrefValue) where
   parser = mkParamParser (parser @PrefValue)
 
-instance HasSerializer (Param "PREF" PrefValue) where
+instance HasSerializer (GenericParam "PREF" PrefValue) where
   serializer = mkParamSerializer (serializer @PrefValue)
 
 instance HasParser PrefValue where

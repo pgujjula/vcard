@@ -11,7 +11,7 @@ import Data.Constraint (Dict (..))
 import GHC.TypeLits (KnownSymbol, Symbol)
 import VCard.Parse (HasParser (..), Parser)
 import VCard.Serialize (HasSerializer (..), Serializer)
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Param.Value.ValueValueSymbol
   ( ValueValueSymbol,
     testValueValueSymbol,
@@ -19,7 +19,7 @@ import VCard.Types.Param.Value.ValueValueSymbol
 import VCard.Types.Textual (CaseInsensitiveLower)
 import VCard.Util.Symbol (symbolSing)
 
-type Value s = Param "VALUE" (ValueValue s)
+type Value s = GenericParam "VALUE" (ValueValue s)
 
 data ValueValue (s :: Symbol) where
   ValueValue :: (ValueValueSymbol s) => CaseInsensitiveLower s -> ValueValue s
@@ -28,10 +28,10 @@ deriving instance Eq (ValueValue s)
 
 deriving instance Show (ValueValue s)
 
-instance (KnownSymbol s) => HasParser (Param "VALUE" (ValueValue s)) where
+instance (KnownSymbol s) => HasParser (GenericParam "VALUE" (ValueValue s)) where
   parser = mkParamParser (parser @(ValueValue s))
 
-instance HasSerializer (Param "VALUE" (ValueValue s)) where
+instance HasSerializer (GenericParam "VALUE" (ValueValue s)) where
   serializer = mkParamSerializer (serializer @(ValueValue s))
 
 instance (KnownSymbol s) => HasParser (ValueValue s) where

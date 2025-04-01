@@ -4,7 +4,7 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module VCard.Types.Param.Generic
-  ( Param (..),
+  ( GenericParam (..),
     mkParamParser,
     mkParamSerializer,
   )
@@ -20,9 +20,9 @@ import VCard.Types.Textual (CaseInsensitiveUpper (..))
 
 -- | A generic type for parameters. The different vCard parameters are type
 --   synonyms of this type.
-data Param (name :: Symbol) (value :: Type) = Param
-  { paramName :: CaseInsensitiveUpper name,
-    paramValue :: value
+data GenericParam (name :: Symbol) (value :: Type) = GenericParam
+  { genericParamName :: CaseInsensitiveUpper name,
+    genericParamValue :: value
   }
   deriving (Eq, Show)
 
@@ -30,13 +30,13 @@ mkParamParser ::
   forall name value.
   (KnownSymbol name) =>
   Parser value ->
-  Parser (Param name value)
+  Parser (GenericParam name value)
 mkParamParser valueParser = do
-  paramName <- parser @(CaseInsensitiveUpper name)
+  genericParamName <- parser @(CaseInsensitiveUpper name)
   void (char '=')
-  paramValue <- valueParser
-  pure $ Param {..}
+  genericParamValue <- valueParser
+  pure $ GenericParam {..}
 
-mkParamSerializer :: Serializer value -> Serializer (Param name value)
-mkParamSerializer valueSerializer (Param {..}) =
-  serializer paramName <> "=" <> valueSerializer paramValue
+mkParamSerializer :: Serializer value -> Serializer (GenericParam name value)
+mkParamSerializer valueSerializer (GenericParam {..}) =
+  serializer genericParamName <> "=" <> valueSerializer genericParamValue

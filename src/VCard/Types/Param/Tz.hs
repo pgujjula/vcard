@@ -13,13 +13,13 @@ import Text.Megaparsec.Char (char)
 import VCard.Char (dQuote)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Param.ParamValue (ParamValue)
 import VCard.Types.Value.URI (URI)
 import Vary (Vary)
 import Vary qualified (exhaustiveCase, from, on)
 
-type Tz = Param "TZ" TzValue
+type Tz = GenericParam "TZ" TzValue
 
 newtype TzValue = TzValue {unTzValue :: Vary '[ParamValue, URI]}
   deriving (Eq, Show)

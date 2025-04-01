@@ -13,7 +13,7 @@ import Data.Type.Equality ((:~:) (Refl))
 import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param (..), mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam (..), mkParamSerializer)
 import VCard.Types.Param.ParamValue
   ( ParamValue,
   )
@@ -36,13 +36,13 @@ import VCard.Util.Symbol
   )
 
 data Any where
-  Any :: (XNameUpperSymbol xname) => Param xname (NonEmpty ParamValue) -> Any
+  Any :: (XNameUpperSymbol xname) => GenericParam xname (NonEmpty ParamValue) -> Any
 
 instance Eq Any where
   (==)
-    (Any (xparam1 :: Param xname1 (NonEmpty ParamValue)))
-    (Any (xparam2 :: Param xname2 (NonEmpty ParamValue))) =
-      case (paramName xparam1, paramName xparam2) of
+    (Any (xparam1 :: GenericParam xname1 (NonEmpty ParamValue)))
+    (Any (xparam2 :: GenericParam xname2 (NonEmpty ParamValue))) =
+      case (genericParamName xparam1, genericParamName xparam2) of
         (CaseInsensitiveUpper ss1, CaseInsensitiveUpper ss2) ->
           case testSSymbolEquality ss1 ss2 of
             Nothing -> False
@@ -68,9 +68,9 @@ instance HasParser Any where
                 void (char '=')
                 values <- sepByNonEmpty (parser @ParamValue) (char ',')
                 pure . Any $
-                  Param
-                    { paramName = CaseInsensitiveUpper st,
-                      paramValue = values
+                  GenericParam
+                    { genericParamName = CaseInsensitiveUpper st,
+                      genericParamValue = values
                     }
 
 instance HasSerializer Any where

@@ -11,11 +11,11 @@ import Data.List.NonEmpty (NonEmpty)
 import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Param.ParamValue (ParamValue)
 import VCard.Util (intersperseCommaNE, sepByNonEmpty)
 
-type SortAs = Param "SORT-AS" (NonEmpty ParamValue)
+type SortAs = GenericParam "SORT-AS" (NonEmpty ParamValue)
 
 instance HasParser SortAs where
   parser :: Parser SortAs

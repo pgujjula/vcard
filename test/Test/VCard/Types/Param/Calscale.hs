@@ -9,7 +9,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Types.Param.Calscale (Calscale, CalscaleValue (..))
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Textual
   ( CaseInsensitiveLower (..),
     CaseInsensitiveUpper (..),
@@ -29,38 +29,38 @@ test_parse =
   testCase "parse" $ do
     (parse "CALSCALE=gregorian" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"gregorian"))
           }
     (parse "calscale=GREGORIAN" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"calscale"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"calscale"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"GREGORIAN"))
           }
     (parse "CalScale=gregOrian" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CalScale"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CalScale"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"gregOrian"))
           }
     --
     (parse "CALSCALE=x-abc" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"x-abc"))
           }
     (parse "CalScale=X-ABC" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CalScale"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CalScale"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"X-ABC"))
           }
 
@@ -78,42 +78,42 @@ test_serialize :: TestTree
 test_serialize =
   testCase "serialize" $ do
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"gregorian"))
           }
       )
       @?= "CALSCALE=gregorian"
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"calscale"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"calscale"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"GREGORIAN"))
           }
       )
       @?= "calscale=GREGORIAN"
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CalScale"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CalScale"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"gregOrian"))
           }
       )
       @?= "CalScale=gregOrian"
     --
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CALSCALE"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"x-abc"))
           }
       )
       @?= "CALSCALE=x-abc"
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"CalScale"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"CalScale"),
+            genericParamValue =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"X-ABC"))
           }
       )

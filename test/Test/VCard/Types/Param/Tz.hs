@@ -14,7 +14,7 @@ import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
 import VCard.Types.Param.Tz (Tz, TzValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
@@ -45,40 +45,40 @@ test_serialize = testSerialize "serialize" cases_valid
 cases_valid :: [(Text, Tz)]
 cases_valid =
   [ ( "TZ=",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"TZ"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"TZ"),
+          genericParamValue =
             TzValue (Vary.from (paramValueVal (SParamValue (symbolSing @""))))
         }
     ),
     ( "TZ=\"\"",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"TZ"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"TZ"),
+          genericParamValue =
             TzValue
               (Vary.from (paramValueVal (SParamValue (symbolSing @"\"\""))))
         }
     ),
     ( "TZ=foo",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"TZ"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"TZ"),
+          genericParamValue =
             TzValue
               (Vary.from (paramValueVal (SParamValue (symbolSing @"foo"))))
         }
     ),
     ( "TZ=\"foo\"",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"TZ"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"TZ"),
+          genericParamValue =
             TzValue
               (Vary.from (paramValueVal (SParamValue (symbolSing @"\"foo\""))))
         }
     ),
     ( "TZ=\"https://example.com/\"",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"TZ"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"TZ"),
+          genericParamValue =
             TzValue (Vary.from $$(staticURI "https://example.com/"))
         }
     )

@@ -11,7 +11,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Types.Param.Any (Any (..))
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
@@ -30,9 +30,9 @@ test_parse =
     parse @Any "x-foo="
       @?= Just
         ( Any
-            ( Param
-                { paramName = CaseInsensitiveUpper (symbolSing @"x-foo"),
-                  paramValue =
+            ( GenericParam
+                { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo"),
+                  genericParamValue =
                     NonEmpty.singleton $
                       paramValueVal (SParamValue (symbolSing @""))
                 }
@@ -41,9 +41,9 @@ test_parse =
     parse "X-FOO=bar"
       @?= Just
         ( Any
-            ( Param
-                { paramName = CaseInsensitiveUpper (symbolSing @"X-FOO"),
-                  paramValue =
+            ( GenericParam
+                { genericParamName = CaseInsensitiveUpper (symbolSing @"X-FOO"),
+                  genericParamValue =
                     NonEmpty.singleton
                       (paramValueVal (SParamValue (symbolSing @"bar")))
                 }
@@ -52,9 +52,9 @@ test_parse =
     parse "x-foo-12bar= alice,,\"\",\"bob,carter;\",dave"
       @?= Just
         ( Any
-            ( Param
-                { paramName = CaseInsensitiveUpper (symbolSing @"x-foo-12bar"),
-                  paramValue =
+            ( GenericParam
+                { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo-12bar"),
+                  genericParamValue =
                     paramValueVal (SParamValue (symbolSing @" alice"))
                       :| [ paramValueVal (SParamValue (symbolSing @"")),
                            paramValueVal (SParamValue (symbolSing @"\"\"")),
@@ -76,9 +76,9 @@ test_serialize =
   testCase "serialize" $ do
     serialize
       ( Any
-          ( Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"x-foo"),
-                paramValue =
+          ( GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo"),
+                genericParamValue =
                   NonEmpty.singleton $
                     paramValueVal (SParamValue (symbolSing @""))
               }
@@ -88,9 +88,9 @@ test_serialize =
 
     serialize
       ( Any
-          ( Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"X-FOO"),
-                paramValue =
+          ( GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"X-FOO"),
+                genericParamValue =
                   NonEmpty.singleton
                     (paramValueVal (SParamValue (symbolSing @"bar")))
               }
@@ -100,9 +100,9 @@ test_serialize =
 
     serialize
       ( Any
-          ( Param
-              { paramName = CaseInsensitiveUpper (symbolSing @"x-foo-12bar"),
-                paramValue =
+          ( GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo-12bar"),
+                genericParamValue =
                   paramValueVal (SParamValue (symbolSing @" alice"))
                     :| [ paramValueVal (SParamValue (symbolSing @"")),
                          paramValueVal (SParamValue (symbolSing @"\"\"")),

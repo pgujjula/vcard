@@ -79,7 +79,7 @@ import VCard.Char
   )
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param)
+import VCard.Types.Param.Generic (GenericParam)
 import VCard.Util (Assert, NoInstance)
 import VCard.Util.Natural (natSing)
 import VCard.Util.Symbol
@@ -94,7 +94,7 @@ import VCard.Util.Symbol
     withSomeSSymbol,
   )
 
-type MediatypeParam = Param "MEDIATYPE" Mediatype
+type MediatypeParam = GenericParam "MEDIATYPE" Mediatype
 
 data Mediatype = Mediatype
   { mTypeName :: TypeName,

@@ -9,7 +9,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.Pref (Pref, PrefValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
@@ -27,27 +27,27 @@ test_parse =
   testCase "parse" $ do
     (parse "PREF=1" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"PREF"),
-            paramValue = PrefValue (finite 0)
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"PREF"),
+            genericParamValue = PrefValue (finite 0)
           }
     (parse "pref=2" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"pref"),
-            paramValue = PrefValue (finite 1)
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"pref"),
+            genericParamValue = PrefValue (finite 1)
           }
     (parse "Pref=99" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"Pref"),
-            paramValue = PrefValue (finite 98)
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"Pref"),
+            genericParamValue = PrefValue (finite 98)
           }
     (parse "prEf=100" @?=) $
       Just $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"prEf"),
-            paramValue = PrefValue (finite 99)
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"prEf"),
+            genericParamValue = PrefValue (finite 99)
           }
     --
     parse "PREF=0" @?= (Nothing :: Maybe Pref)
@@ -67,30 +67,30 @@ test_serialize :: TestTree
 test_serialize =
   testCase "serialize" $ do
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"PREF"),
-            paramValue = PrefValue (finite 0)
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"PREF"),
+            genericParamValue = PrefValue (finite 0)
           }
       )
       @?= "PREF=1"
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"pref"),
-            paramValue = PrefValue (finite 1)
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"pref"),
+            genericParamValue = PrefValue (finite 1)
           }
       )
       @?= "pref=2"
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"Pref"),
-            paramValue = PrefValue (finite 98)
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"Pref"),
+            genericParamValue = PrefValue (finite 98)
           }
       )
       @?= "Pref=99"
     serialize
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"prEf"),
-            paramValue = PrefValue (finite 99)
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"prEf"),
+            genericParamValue = PrefValue (finite 99)
           }
       )
       @?= "prEf=100"

@@ -13,7 +13,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
 import VCard.Types.Param.SortAs (SortAs)
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
@@ -43,15 +43,15 @@ test_serialize = testSerialize cases_valid
 cases_valid :: [(Text, SortAs)]
 cases_valid =
   [ ( "SORT-AS=foo",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"SORT-AS"),
-          paramValue = NonEmpty.singleton (paramValueVal (SParamValue (symbolSing @"foo")))
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"SORT-AS"),
+          genericParamValue = NonEmpty.singleton (paramValueVal (SParamValue (symbolSing @"foo")))
         }
     ),
     ( "SORT-AS= foo,,,\"bar,baz;\",qux",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"SORT-AS"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"SORT-AS"),
+          genericParamValue =
             paramValueVal (SParamValue (symbolSing @" foo"))
               :| [ paramValueVal (SParamValue (symbolSing @"")),
                    paramValueVal (SParamValue (symbolSing @"")),

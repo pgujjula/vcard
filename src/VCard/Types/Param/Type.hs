@@ -25,7 +25,7 @@ import Text.Megaparsec (takeWhile1P)
 import Text.Megaparsec.Char (char)
 import VCard.Parse (HasParser, Parser, parser)
 import VCard.Serialize (HasSerializer, Serializer, serializer)
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Param.Type.TypeValueSymbol
   ( TypeGeneralSymbol,
     TypeRelatedSymbol,
@@ -43,7 +43,7 @@ import VCard.Util.Symbol
     withSomeSSymbol,
   )
 
-type Type symbol_class = Param "TYPE" (NonEmpty (TypeValue symbol_class))
+type Type symbol_class = GenericParam "TYPE" (NonEmpty (TypeValue symbol_class))
 
 type TypeGeneral = Type TypeGeneralSymbol
 
@@ -72,46 +72,46 @@ mkTypeValueParser tester = do
       Nothing -> fail "TypeValue TypeGeneralSymbol: no parse"
       Just Dict -> pure $ TypeValue (CaseInsensitiveLower sname)
 
-instance HasParser (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol))) where
-  parser :: Parser (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
+instance HasParser (GenericParam "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol))) where
+  parser :: Parser (GenericParam "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
   parser =
     mkParamParser
       (sepByNonEmpty (parser @(TypeValue TypeGeneralSymbol)) (char ','))
 
 instance
   HasSerializer
-    (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
+    (GenericParam "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
   where
   serializer ::
-    Serializer (Param "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
+    Serializer (GenericParam "TYPE" (NonEmpty (TypeValue TypeGeneralSymbol)))
   serializer =
     mkParamSerializer $
       intersperseCommaNE (serializer @(TypeValue TypeGeneralSymbol))
 
-instance HasParser (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol))) where
-  parser :: Parser (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol)))
+instance HasParser (GenericParam "TYPE" (NonEmpty (TypeValue TypeTelSymbol))) where
+  parser :: Parser (GenericParam "TYPE" (NonEmpty (TypeValue TypeTelSymbol)))
   parser =
     mkParamParser
       (sepByNonEmpty (parser @(TypeValue TypeTelSymbol)) (char ','))
 
-instance HasSerializer (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol))) where
-  serializer :: Serializer (Param "TYPE" (NonEmpty (TypeValue TypeTelSymbol)))
+instance HasSerializer (GenericParam "TYPE" (NonEmpty (TypeValue TypeTelSymbol))) where
+  serializer :: Serializer (GenericParam "TYPE" (NonEmpty (TypeValue TypeTelSymbol)))
   serializer =
     mkParamSerializer $
       intersperseCommaNE (serializer @(TypeValue TypeTelSymbol))
 
-instance HasParser (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol))) where
-  parser :: Parser (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
+instance HasParser (GenericParam "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol))) where
+  parser :: Parser (GenericParam "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
   parser =
     mkParamParser
       (sepByNonEmpty (parser @(TypeValue TypeRelatedSymbol)) (char ','))
 
 instance
   HasSerializer
-    (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
+    (GenericParam "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
   where
   serializer ::
-    Serializer (Param "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
+    Serializer (GenericParam "TYPE" (NonEmpty (TypeValue TypeRelatedSymbol)))
   serializer =
     mkParamSerializer $
       intersperseCommaNE (serializer @(TypeValue TypeRelatedSymbol))

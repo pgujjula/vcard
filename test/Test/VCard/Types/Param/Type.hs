@@ -10,7 +10,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.Type
   ( TypeGeneral,
     TypeRelated,
@@ -61,9 +61,9 @@ test_TypeGeneral_parse =
   testCase "parse" $ do
     (parse "TYPE=home" @?=) $
       Just @TypeGeneral
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-              paramValue =
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+              genericParamValue =
                 NonEmpty.singleton $
                   TypeValue (CaseInsensitiveLower (symbolSing @"home"))
             }
@@ -71,9 +71,9 @@ test_TypeGeneral_parse =
 
     (parse "type=work,X-ab1-c" @?=) $
       Just @TypeGeneral
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"type"),
-              paramValue =
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
+              genericParamValue =
                 TypeValue (CaseInsensitiveLower (symbolSing @"work"))
                   :| [ TypeValue (CaseInsensitiveLower (symbolSing @"X-ab1-c"))
                      ]
@@ -101,9 +101,9 @@ test_TypeGeneral_serialize :: TestTree
 test_TypeGeneral_serialize =
   testCase "serialize" $ do
     serialize @TypeGeneral
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+            genericParamValue =
               NonEmpty.singleton $
                 TypeValue (CaseInsensitiveLower (symbolSing @"home"))
           }
@@ -111,9 +111,9 @@ test_TypeGeneral_serialize =
       @?= "TYPE=home"
 
     serialize @TypeGeneral
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"type"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"work"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"X-ab1-c"))
                    ]
@@ -126,9 +126,9 @@ test_TypeTel_parse =
   testCase "TypeTel" $ do
     (parse "TYPE=home" @?=) $
       Just @TypeTel
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-              paramValue =
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+              genericParamValue =
                 NonEmpty.singleton $
                   TypeValue (CaseInsensitiveLower (symbolSing @"home"))
             }
@@ -136,9 +136,9 @@ test_TypeTel_parse =
 
     (parse "Type=work,text,voice" @?=) $
       Just @TypeTel
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"Type"),
-              paramValue =
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
+              genericParamValue =
                 TypeValue (CaseInsensitiveLower (symbolSing @"work"))
                   :| [ TypeValue (CaseInsensitiveLower (symbolSing @"text")),
                        TypeValue (CaseInsensitiveLower (symbolSing @"voice"))
@@ -148,9 +148,9 @@ test_TypeTel_parse =
 
     (parse "type=fax,CELL,Video,pAger,textphone,x-ab1-c" @?=) $
       Just @TypeTel $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"type"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"fax"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"CELL")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"Video")),
@@ -181,9 +181,9 @@ test_TypeTel_serialize :: TestTree
 test_TypeTel_serialize =
   testCase "serialize" $ do
     serialize @TypeTel
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+            genericParamValue =
               NonEmpty.singleton $
                 TypeValue (CaseInsensitiveLower (symbolSing @"home"))
           }
@@ -191,9 +191,9 @@ test_TypeTel_serialize =
       @?= "TYPE=home"
 
     serialize @TypeTel
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"Type"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"work"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"text")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"voice"))
@@ -204,9 +204,9 @@ test_TypeTel_serialize =
 
     serialize
       @TypeTel
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"type"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"fax"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"CELL")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"Video")),
@@ -223,9 +223,9 @@ test_TypeRelated_parse =
   testCase "TypeRelated" $ do
     (parse "TYPE=home" @?=) $
       Just @TypeRelated
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-              paramValue =
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+              genericParamValue =
                 NonEmpty.singleton $
                   TypeValue (CaseInsensitiveLower (symbolSing @"home"))
             }
@@ -233,9 +233,9 @@ test_TypeRelated_parse =
 
     (parse "Type=work,contact,acquaintance" @?=) $
       Just @TypeRelated
-        ( Param
-            { paramName = CaseInsensitiveUpper (symbolSing @"Type"),
-              paramValue =
+        ( GenericParam
+            { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
+              genericParamValue =
                 TypeValue (CaseInsensitiveLower (symbolSing @"work"))
                   :| [ TypeValue (CaseInsensitiveLower (symbolSing @"contact")),
                        TypeValue
@@ -246,9 +246,9 @@ test_TypeRelated_parse =
 
     (parse "type=friend,MET,Co-Worker,cOlleague,co-residenT,neighbor" @?=) $
       Just @TypeRelated $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"type"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"friend"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"MET")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"Co-Worker")),
@@ -261,9 +261,9 @@ test_TypeRelated_parse =
 
     (parse "TYPE=child,parent,sibling,spouse,kin,muse,crush,date" @?=) $
       Just @TypeRelated $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"child"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"parent")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"sibling")),
@@ -277,9 +277,9 @@ test_TypeRelated_parse =
 
     (parse "TYPE=me,agent,emergency,x-ab1-c" @?=) $
       Just @TypeRelated $
-        Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-            paramValue =
+        GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"me"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"agent")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"emergency")),
@@ -308,9 +308,9 @@ test_TypeRelated_serialize :: TestTree
 test_TypeRelated_serialize =
   testCase "serialize" $ do
     serialize @TypeRelated
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+            genericParamValue =
               NonEmpty.singleton $
                 TypeValue (CaseInsensitiveLower (symbolSing @"home"))
           }
@@ -318,9 +318,9 @@ test_TypeRelated_serialize =
       @?= "TYPE=home"
 
     serialize @TypeRelated
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"Type"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"work"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"contact")),
                      TypeValue
@@ -331,9 +331,9 @@ test_TypeRelated_serialize =
       @?= "Type=work,contact,acquaintance"
 
     serialize @TypeRelated
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"type"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"friend"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"MET")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"Co-Worker")),
@@ -347,9 +347,9 @@ test_TypeRelated_serialize =
       @?= "type=friend,MET,Co-Worker,cOlleague,co-residenT,neighbor"
 
     serialize @TypeRelated
-      ( Param
-          { paramName = CaseInsensitiveUpper (symbolSing @"TYPE"),
-            paramValue =
+      ( GenericParam
+          { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
+            genericParamValue =
               TypeValue (CaseInsensitiveLower (symbolSing @"child"))
                 :| [ TypeValue (CaseInsensitiveLower (symbolSing @"parent")),
                      TypeValue (CaseInsensitiveLower (symbolSing @"sibling")),

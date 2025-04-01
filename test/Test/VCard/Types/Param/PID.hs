@@ -13,7 +13,7 @@ import Test.Tasty (TestName, TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
-import VCard.Types.Param.Generic (Param (..))
+import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.PID (PID, PIDValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
@@ -42,9 +42,9 @@ test_serialize = testSerialize "serialize" cases_valid
 cases_valid :: [(Text, PID)]
 cases_valid =
   [ ( "PID=0",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"PID"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"PID"),
+          genericParamValue =
             NonEmpty.singleton $
               PIDValue
                 { pidValueWholePart = NonEmpty.singleton 0,
@@ -53,9 +53,9 @@ cases_valid =
         }
     ),
     ( "pid=1,5,10,52,200,419",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"pid"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"pid"),
+          genericParamValue =
             PIDValue
               { pidValueWholePart = 1 :| [],
                 pidValueDecimalPart = Nothing
@@ -84,9 +84,9 @@ cases_valid =
         }
     ),
     ( "Pid=00,0401,0009250,0.0,0.1,1.4",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"Pid"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"Pid"),
+          genericParamValue =
             PIDValue
               { pidValueWholePart = 0 :| [0],
                 pidValueDecimalPart = Nothing
@@ -115,9 +115,9 @@ cases_valid =
         }
     ),
     ( "pId=12.55,63.0098,83.27000,005310.021900",
-      Param
-        { paramName = CaseInsensitiveUpper (symbolSing @"pId"),
-          paramValue =
+      GenericParam
+        { genericParamName = CaseInsensitiveUpper (symbolSing @"pId"),
+          genericParamValue =
             PIDValue
               { pidValueWholePart = 1 :| [2],
                 pidValueDecimalPart = Just (5 :| [5])

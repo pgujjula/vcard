@@ -9,13 +9,13 @@ where
 
 import VCard.Parse (HasParser, parser)
 import VCard.Serialize (HasSerializer, serializer)
-import VCard.Types.Param.Generic (Param, mkParamParser, mkParamSerializer)
+import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Value.LanguageTag (LanguageTag)
 
-type Language = Param "LANGUAGE" LanguageTag
+type Language = GenericParam "LANGUAGE" LanguageTag
 
-instance HasParser (Param "LANGUAGE" LanguageTag) where
+instance HasParser (GenericParam "LANGUAGE" LanguageTag) where
   parser = mkParamParser (parser @LanguageTag)
 
-instance HasSerializer (Param "LANGUAGE" LanguageTag) where
+instance HasSerializer (GenericParam "LANGUAGE" LanguageTag) where
   serializer = mkParamSerializer (serializer @LanguageTag)
