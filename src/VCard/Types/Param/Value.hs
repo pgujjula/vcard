@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Types.Param.Value
-  ( Value,
+  ( ValueParam,
     ValueValue (..),
   )
 where
@@ -19,7 +19,7 @@ import VCard.Types.Param.Value.ValueValueSymbol
 import VCard.Types.Textual (CaseInsensitiveLower)
 import VCard.Util.Symbol (symbolSing)
 
-type Value s = GenericParam "VALUE" (ValueValue s)
+type ValueParam s = GenericParam "VALUE" (ValueValue s)
 
 data ValueValue (s :: Symbol) where
   ValueValue :: (ValueValueSymbol s) => CaseInsensitiveLower s -> ValueValue s

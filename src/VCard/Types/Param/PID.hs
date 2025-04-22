@@ -4,7 +4,7 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module VCard.Types.Param.PID
-  ( PID,
+  ( PIDParam,
     PIDValue (..),
     Digit,
   )
@@ -23,7 +23,7 @@ import VCard.Serialize (HasSerializer, Serializer, serializer)
 import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Util (intToText, intersperseCommaNE, sepByNonEmpty)
 
-type PID = GenericParam "PID" (NonEmpty PIDValue)
+type PIDParam = GenericParam "PID" (NonEmpty PIDValue)
 
 type Digit = Finite 10
 
@@ -33,12 +33,12 @@ data PIDValue = PIDValue
   }
   deriving (Eq, Show, Ord)
 
-instance HasParser PID where
-  parser :: Parser PID
+instance HasParser PIDParam where
+  parser :: Parser PIDParam
   parser = mkParamParser (sepByNonEmpty (parser @PIDValue) (char ','))
 
-instance HasSerializer PID where
-  serializer :: Serializer PID
+instance HasSerializer PIDParam where
+  serializer :: Serializer PIDParam
   serializer = mkParamSerializer (intersperseCommaNE (serializer @PIDValue))
 
 instance HasParser PIDValue where

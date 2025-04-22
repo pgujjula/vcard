@@ -8,7 +8,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Types.Param.Calscale (Calscale, CalscaleValue (..))
+import VCard.Types.Param.Calscale (CalscaleParam, CalscaleValue (..))
 import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Textual
   ( CaseInsensitiveLower (..),
@@ -64,15 +64,15 @@ test_parse =
               CalscaleValue (CaseInsensitiveLower (symbolSing @"X-ABC"))
           }
 
-    parse "CALSCALE =gregorian" @?= (Nothing :: Maybe (Calscale "gregorian"))
-    parse "CALSCALE= gregorian" @?= (Nothing :: Maybe (Calscale "gregorian"))
-    parse " CALSCALE=gregorian" @?= (Nothing :: Maybe (Calscale "gregorian"))
-    parse "CALSCALE=gregorian " @?= (Nothing :: Maybe (Calscale "gregorian"))
-    parse "CALSCALE=gregorian;" @?= (Nothing :: Maybe (Calscale "gregorian"))
-    parse "CALSCALE=gregorian:" @?= (Nothing :: Maybe (Calscale "gregorian"))
+    parse "CALSCALE =gregorian" @?= (Nothing :: Maybe (CalscaleParam "gregorian"))
+    parse "CALSCALE= gregorian" @?= (Nothing :: Maybe (CalscaleParam "gregorian"))
+    parse " CALSCALE=gregorian" @?= (Nothing :: Maybe (CalscaleParam "gregorian"))
+    parse "CALSCALE=gregorian " @?= (Nothing :: Maybe (CalscaleParam "gregorian"))
+    parse "CALSCALE=gregorian;" @?= (Nothing :: Maybe (CalscaleParam "gregorian"))
+    parse "CALSCALE=gregorian:" @?= (Nothing :: Maybe (CalscaleParam "gregorian"))
 
-    parse "CALSCALE=gregorian" @?= (Nothing :: Maybe (Calscale "x-abc"))
-    parse "CALSCALE=x-abc" @?= (Nothing :: Maybe (Calscale "gregorian"))
+    parse "CALSCALE=gregorian" @?= (Nothing :: Maybe (CalscaleParam "x-abc"))
+    parse "CALSCALE=x-abc" @?= (Nothing :: Maybe (CalscaleParam "gregorian"))
 
 test_serialize :: TestTree
 test_serialize =

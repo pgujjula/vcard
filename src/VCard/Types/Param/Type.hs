@@ -2,12 +2,12 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Types.Param.Type
-  ( Type,
-    TypeGeneral,
+  ( TypeParam,
+    TypeParamGeneral,
     TypeGeneralSymbol,
-    TypeTel,
+    TypeParamTel,
     TypeTelSymbol,
-    TypeRelated,
+    TypeParamRelated,
     TypeRelatedSymbol,
     TypeValue (..),
   )
@@ -43,13 +43,13 @@ import VCard.Util.Symbol
     withSomeSSymbol,
   )
 
-type Type symbol_class = GenericParam "TYPE" (NonEmpty (TypeValue symbol_class))
+type TypeParam symbol_class = GenericParam "TYPE" (NonEmpty (TypeValue symbol_class))
 
-type TypeGeneral = Type TypeGeneralSymbol
+type TypeParamGeneral = TypeParam TypeGeneralSymbol
 
-type TypeRelated = Type TypeRelatedSymbol
+type TypeParamRelated = TypeParam TypeRelatedSymbol
 
-type TypeTel = Type TypeTelSymbol
+type TypeParamTel = TypeParam TypeTelSymbol
 
 data TypeValue (symbol_class :: Symbol -> Constraint) where
   TypeValue ::

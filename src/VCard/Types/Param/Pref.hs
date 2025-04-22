@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Types.Param.Pref
-  ( Pref,
+  ( PrefParam,
     PrefValue (..),
   )
 where
@@ -15,7 +15,7 @@ import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer
 import VCard.Types.Value.Integer (naturalP)
 import VCard.Util (intToText)
 
-type Pref = GenericParam "PREF" PrefValue
+type PrefParam = GenericParam "PREF" PrefValue
 
 -- | 'PrefValue' is 0-indexed, so in this context `finite 0` represents 1 and
 --   `finite 99` represents 100

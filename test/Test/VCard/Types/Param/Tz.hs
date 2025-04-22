@@ -16,7 +16,7 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
-import VCard.Types.Param.Tz (Tz, TzValue (..))
+import VCard.Types.Param.Tz (TzParam, TzValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
 import Vary qualified (from)
@@ -36,13 +36,13 @@ test_parse =
   testGroup
     "parse"
     [ testParseValid cases_valid,
-      testParseInvalid (Proxy @Tz) cases_invalid
+      testParseInvalid (Proxy @TzParam) cases_invalid
     ]
 
 test_serialize :: TestTree
 test_serialize = testSerialize "serialize" cases_valid
 
-cases_valid :: [(Text, Tz)]
+cases_valid :: [(Text, TzParam)]
 cases_valid =
   [ ( "TZ=",
       GenericParam

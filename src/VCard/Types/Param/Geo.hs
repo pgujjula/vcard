@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Types.Param.Geo
-  ( Geo,
+  ( GeoParam,
     GeoValue (..),
   )
 where
@@ -15,7 +15,7 @@ import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer
 import VCard.Types.Value.URI (URI)
 import VCard.Util (dquote)
 
-type Geo = GenericParam "GEO" GeoValue
+type GeoParam = GenericParam "GEO" GeoValue
 
 newtype GeoValue = GeoValue {unGeoValue :: URI}
   deriving (Eq, Show, Ord)

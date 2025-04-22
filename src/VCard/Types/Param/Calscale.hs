@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Types.Param.Calscale
-  ( Calscale,
+  ( CalscaleParam,
     CalscaleValue (..),
   )
 where
@@ -19,7 +19,7 @@ import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer
 import VCard.Types.Textual (CaseInsensitiveLower)
 import VCard.Util.Symbol (symbolSing)
 
-type Calscale s = GenericParam "CALSCALE" (CalscaleValue s)
+type CalscaleParam s = GenericParam "CALSCALE" (CalscaleValue s)
 
 data CalscaleValue (s :: Symbol) where
   CalscaleValue ::

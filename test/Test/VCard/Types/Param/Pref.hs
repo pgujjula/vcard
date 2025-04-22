@@ -10,7 +10,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
-import VCard.Types.Param.Pref (Pref, PrefValue (..))
+import VCard.Types.Param.Pref (PrefParam, PrefValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
 
@@ -50,18 +50,18 @@ test_parse =
             genericParamValue = PrefValue (finite 99)
           }
     --
-    parse "PREF=0" @?= (Nothing :: Maybe Pref)
-    parse "PREF=01" @?= (Nothing :: Maybe Pref)
-    parse "PREF=002" @?= (Nothing :: Maybe Pref)
-    parse "PREF=0099" @?= (Nothing :: Maybe Pref)
-    parse "PREF=0100" @?= (Nothing :: Maybe Pref)
+    parse "PREF=0" @?= (Nothing :: Maybe PrefParam)
+    parse "PREF=01" @?= (Nothing :: Maybe PrefParam)
+    parse "PREF=002" @?= (Nothing :: Maybe PrefParam)
+    parse "PREF=0099" @?= (Nothing :: Maybe PrefParam)
+    parse "PREF=0100" @?= (Nothing :: Maybe PrefParam)
     --
-    parse "PREF =5" @?= (Nothing :: Maybe Pref)
-    parse "PREF= 5" @?= (Nothing :: Maybe Pref)
-    parse " PREF=5" @?= (Nothing :: Maybe Pref)
-    parse "PREF=5 " @?= (Nothing :: Maybe Pref)
-    parse "PREF=5;" @?= (Nothing :: Maybe Pref)
-    parse "PREF=5:" @?= (Nothing :: Maybe Pref)
+    parse "PREF =5" @?= (Nothing :: Maybe PrefParam)
+    parse "PREF= 5" @?= (Nothing :: Maybe PrefParam)
+    parse " PREF=5" @?= (Nothing :: Maybe PrefParam)
+    parse "PREF=5 " @?= (Nothing :: Maybe PrefParam)
+    parse "PREF=5;" @?= (Nothing :: Maybe PrefParam)
+    parse "PREF=5:" @?= (Nothing :: Maybe PrefParam)
 
 test_serialize :: TestTree
 test_serialize =

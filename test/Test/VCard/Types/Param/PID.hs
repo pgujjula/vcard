@@ -14,7 +14,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
-import VCard.Types.Param.PID (PID, PIDValue (..))
+import VCard.Types.Param.PID (PIDParam, PIDValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
 
@@ -33,13 +33,13 @@ test_parse =
   testGroup
     "parse"
     [ testParseValid cases_valid,
-      testParseInvalid (Proxy @PID) cases_invalid
+      testParseInvalid (Proxy @PIDParam) cases_invalid
     ]
 
 test_serialize :: TestTree
 test_serialize = testSerialize "serialize" cases_valid
 
-cases_valid :: [(Text, PID)]
+cases_valid :: [(Text, PIDParam)]
 cases_valid =
   [ ( "PID=0",
       GenericParam

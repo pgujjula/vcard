@@ -9,7 +9,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
-import VCard.Types.Param.Value (Value, ValueValue (..))
+import VCard.Types.Param.Value (ValueParam, ValueValue (..))
 import VCard.Types.Textual
   ( CaseInsensitiveLower (..),
     CaseInsensitiveUpper (..),
@@ -106,13 +106,13 @@ test_parse =
             genericParamValue =
               ValueValue (CaseInsensitiveLower (symbolSing @"language-tag"))
           }
-    parse "VALUE =text" @?= (Nothing :: Maybe (Value "text"))
-    parse "VALUE= text" @?= (Nothing :: Maybe (Value "text"))
-    parse " VALUE=text" @?= (Nothing :: Maybe (Value "text"))
-    parse "VALUE=text " @?= (Nothing :: Maybe (Value "text"))
-    parse "VALUE=text;" @?= (Nothing :: Maybe (Value "text"))
-    parse "VALUE=text:" @?= (Nothing :: Maybe (Value "text"))
-    parse "VALUE=text" @?= (Nothing :: Maybe (Value "uri"))
+    parse "VALUE =text" @?= (Nothing :: Maybe (ValueParam "text"))
+    parse "VALUE= text" @?= (Nothing :: Maybe (ValueParam "text"))
+    parse " VALUE=text" @?= (Nothing :: Maybe (ValueParam "text"))
+    parse "VALUE=text " @?= (Nothing :: Maybe (ValueParam "text"))
+    parse "VALUE=text;" @?= (Nothing :: Maybe (ValueParam "text"))
+    parse "VALUE=text:" @?= (Nothing :: Maybe (ValueParam "text"))
+    parse "VALUE=text" @?= (Nothing :: Maybe (ValueParam "uri"))
 
 test_serialize :: TestTree
 test_serialize =

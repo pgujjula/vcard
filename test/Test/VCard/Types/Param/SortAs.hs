@@ -15,7 +15,7 @@ import VCard.Parse (HasParser, parse)
 import VCard.Serialize (HasSerializer, serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
-import VCard.Types.Param.SortAs (SortAs)
+import VCard.Types.Param.SortAs (SortAsParam)
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Util.Symbol (symbolSing)
 
@@ -34,13 +34,13 @@ test_parse =
   testGroup
     "parse"
     [ testParseValid cases_valid,
-      testParseInvalid (Proxy @SortAs) cases_invalid
+      testParseInvalid (Proxy @SortAsParam) cases_invalid
     ]
 
 test_serialize :: TestTree
 test_serialize = testSerialize cases_valid
 
-cases_valid :: [(Text, SortAs)]
+cases_valid :: [(Text, SortAsParam)]
 cases_valid =
   [ ( "SORT-AS=foo",
       GenericParam

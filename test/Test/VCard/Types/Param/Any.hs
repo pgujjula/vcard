@@ -10,7 +10,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
-import VCard.Types.Param.Any (Any (..))
+import VCard.Types.Param.Any (AnyParam (..))
 import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.ParamValue (SParamValue (..), paramValueVal)
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
@@ -27,9 +27,9 @@ tests =
 test_parse :: TestTree
 test_parse =
   testCase "parse" $ do
-    parse @Any "x-foo="
+    parse @AnyParam "x-foo="
       @?= Just
-        ( Any
+        ( AnyParam
             ( GenericParam
                 { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo"),
                   genericParamValue =
@@ -40,7 +40,7 @@ test_parse =
         )
     parse "X-FOO=bar"
       @?= Just
-        ( Any
+        ( AnyParam
             ( GenericParam
                 { genericParamName = CaseInsensitiveUpper (symbolSing @"X-FOO"),
                   genericParamValue =
@@ -51,7 +51,7 @@ test_parse =
         )
     parse "x-foo-12bar= alice,,\"\",\"bob,carter;\",dave"
       @?= Just
-        ( Any
+        ( AnyParam
             ( GenericParam
                 { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo-12bar"),
                   genericParamValue =
@@ -66,16 +66,16 @@ test_parse =
             )
         )
 
-    parse @Any "x-foo =bar" @?= Nothing
-    parse @Any "x-=bar" @?= Nothing
-    parse @Any "xfoo=bar" @?= Nothing
-    parse @Any "foo=bar" @?= Nothing
+    parse @AnyParam "x-foo =bar" @?= Nothing
+    parse @AnyParam "x-=bar" @?= Nothing
+    parse @AnyParam "xfoo=bar" @?= Nothing
+    parse @AnyParam "foo=bar" @?= Nothing
 
 test_serialize :: TestTree
 test_serialize =
   testCase "serialize" $ do
     serialize
-      ( Any
+      ( AnyParam
           ( GenericParam
               { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo"),
                 genericParamValue =
@@ -87,7 +87,7 @@ test_serialize =
       @?= "x-foo="
 
     serialize
-      ( Any
+      ( AnyParam
           ( GenericParam
               { genericParamName = CaseInsensitiveUpper (symbolSing @"X-FOO"),
                 genericParamValue =
@@ -99,7 +99,7 @@ test_serialize =
       @?= "X-FOO=bar"
 
     serialize
-      ( Any
+      ( AnyParam
           ( GenericParam
               { genericParamName = CaseInsensitiveUpper (symbolSing @"x-foo-12bar"),
                 genericParamValue =

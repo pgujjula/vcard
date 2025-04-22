@@ -3,7 +3,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module VCard.Types.Param.SortAs
-  ( SortAs,
+  ( SortAsParam,
   )
 where
 
@@ -15,12 +15,12 @@ import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer
 import VCard.Types.Param.ParamValue (ParamValue)
 import VCard.Util (intersperseCommaNE, sepByNonEmpty)
 
-type SortAs = GenericParam "SORT-AS" (NonEmpty ParamValue)
+type SortAsParam = GenericParam "SORT-AS" (NonEmpty ParamValue)
 
-instance HasParser SortAs where
-  parser :: Parser SortAs
+instance HasParser SortAsParam where
+  parser :: Parser SortAsParam
   parser = mkParamParser (sepByNonEmpty (parser @ParamValue) (char ','))
 
-instance HasSerializer SortAs where
-  serializer :: Serializer SortAs
+instance HasSerializer SortAsParam where
+  serializer :: Serializer SortAsParam
   serializer = mkParamSerializer (intersperseCommaNE (serializer @ParamValue))

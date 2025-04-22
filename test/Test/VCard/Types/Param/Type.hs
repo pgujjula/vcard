@@ -12,9 +12,9 @@ import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.Type
-  ( TypeGeneral,
-    TypeRelated,
-    TypeTel,
+  ( TypeParamGeneral,
+    TypeParamRelated,
+    TypeParamTel,
     TypeValue (..),
   )
 import VCard.Types.Textual
@@ -27,40 +27,40 @@ tests :: TestTree
 tests =
   testGroup
     "Type"
-    [ test_TypeGeneral,
-      test_TypeTel,
-      test_TypeRelated
+    [ test_TypeParamGeneral,
+      test_TypeParamTel,
+      test_TypeParamRelated
     ]
 
-test_TypeGeneral :: TestTree
-test_TypeGeneral =
+test_TypeParamGeneral :: TestTree
+test_TypeParamGeneral =
   testGroup
-    "TypeGeneral"
-    [ test_TypeGeneral_parse,
-      test_TypeGeneral_serialize
+    "TypeParamGeneral"
+    [ test_TypeParamGeneral_parse,
+      test_TypeParamGeneral_serialize
     ]
 
-test_TypeTel :: TestTree
-test_TypeTel =
+test_TypeParamTel :: TestTree
+test_TypeParamTel =
   testGroup
-    "TypeTel"
-    [ test_TypeTel_parse,
-      test_TypeTel_serialize
+    "TypeParamTel"
+    [ test_TypeParamTel_parse,
+      test_TypeParamTel_serialize
     ]
 
-test_TypeRelated :: TestTree
-test_TypeRelated =
+test_TypeParamRelated :: TestTree
+test_TypeParamRelated =
   testGroup
-    "TypeRelated"
-    [ test_TypeRelated_parse,
-      test_TypeRelated_serialize
+    "TypeParamRelated"
+    [ test_TypeParamRelated_parse,
+      test_TypeParamRelated_serialize
     ]
 
-test_TypeGeneral_parse :: TestTree
-test_TypeGeneral_parse =
+test_TypeParamGeneral_parse :: TestTree
+test_TypeParamGeneral_parse =
   testCase "parse" $ do
     (parse "TYPE=home" @?=) $
-      Just @TypeGeneral
+      Just @TypeParamGeneral
         ( GenericParam
             { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
               genericParamValue =
@@ -70,7 +70,7 @@ test_TypeGeneral_parse =
         )
 
     (parse "type=work,X-ab1-c" @?=) $
-      Just @TypeGeneral
+      Just @TypeParamGeneral
         ( GenericParam
             { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
               genericParamValue =
@@ -81,26 +81,26 @@ test_TypeGeneral_parse =
         )
 
     --
-    parse "TYPE=" @?= (Nothing @TypeGeneral)
-    parse "TYPE=text" @?= (Nothing @TypeGeneral)
-    parse "TYPE=xabc" @?= (Nothing @TypeGeneral)
-    parse "TYPE=x-" @?= (Nothing @TypeGeneral)
-    parse "TYPE= work" @?= (Nothing @TypeGeneral)
-    parse "TYPE =work" @?= (Nothing @TypeGeneral)
-    parse " TYPE=work" @?= (Nothing @TypeGeneral)
-    parse "TYPE=work;" @?= (Nothing @TypeGeneral)
-    parse "TYPE=work:" @?= (Nothing @TypeGeneral)
+    parse "TYPE=" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=text" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=xabc" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=x-" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE= work" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE =work" @?= (Nothing @TypeParamGeneral)
+    parse " TYPE=work" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=work;" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=work:" @?= (Nothing @TypeParamGeneral)
     --
-    parse "TYPE=work,text,x-abc" @?= (Nothing @TypeGeneral)
-    parse "TYPE= work,home,x-abc" @?= (Nothing @TypeGeneral)
-    parse "TYPE=work, home,x-abc" @?= (Nothing @TypeGeneral)
-    parse "TYPE=work,home,x-abc;" @?= (Nothing @TypeGeneral)
-    parse "TYPE=work,home,x-abc:" @?= (Nothing @TypeGeneral)
+    parse "TYPE=work,text,x-abc" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE= work,home,x-abc" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=work, home,x-abc" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=work,home,x-abc;" @?= (Nothing @TypeParamGeneral)
+    parse "TYPE=work,home,x-abc:" @?= (Nothing @TypeParamGeneral)
 
-test_TypeGeneral_serialize :: TestTree
-test_TypeGeneral_serialize =
+test_TypeParamGeneral_serialize :: TestTree
+test_TypeParamGeneral_serialize =
   testCase "serialize" $ do
-    serialize @TypeGeneral
+    serialize @TypeParamGeneral
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
             genericParamValue =
@@ -110,7 +110,7 @@ test_TypeGeneral_serialize =
       )
       @?= "TYPE=home"
 
-    serialize @TypeGeneral
+    serialize @TypeParamGeneral
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
             genericParamValue =
@@ -121,11 +121,11 @@ test_TypeGeneral_serialize =
       )
       @?= "type=work,X-ab1-c"
 
-test_TypeTel_parse :: TestTree
-test_TypeTel_parse =
-  testCase "TypeTel" $ do
+test_TypeParamTel_parse :: TestTree
+test_TypeParamTel_parse =
+  testCase "TypeParamTel" $ do
     (parse "TYPE=home" @?=) $
-      Just @TypeTel
+      Just @TypeParamTel
         ( GenericParam
             { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
               genericParamValue =
@@ -135,7 +135,7 @@ test_TypeTel_parse =
         )
 
     (parse "Type=work,text,voice" @?=) $
-      Just @TypeTel
+      Just @TypeParamTel
         ( GenericParam
             { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
               genericParamValue =
@@ -147,7 +147,7 @@ test_TypeTel_parse =
         )
 
     (parse "type=fax,CELL,Video,pAger,textphone,x-ab1-c" @?=) $
-      Just @TypeTel $
+      Just @TypeParamTel $
         GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
             genericParamValue =
@@ -161,26 +161,26 @@ test_TypeTel_parse =
           }
 
     --
-    parse "TYPE=" @?= (Nothing @TypeTel)
-    parse "TYPE=contact" @?= (Nothing @TypeTel)
-    parse "TYPE=xabc" @?= (Nothing @TypeTel)
-    parse "TYPE=x-" @?= (Nothing @TypeTel)
-    parse "TYPE= work" @?= (Nothing @TypeTel)
-    parse "TYPE =work" @?= (Nothing @TypeTel)
-    parse " TYPE=work" @?= (Nothing @TypeTel)
-    parse "TYPE=work;" @?= (Nothing @TypeTel)
-    parse "TYPE=work:" @?= (Nothing @TypeTel)
+    parse "TYPE=" @?= (Nothing @TypeParamTel)
+    parse "TYPE=contact" @?= (Nothing @TypeParamTel)
+    parse "TYPE=xabc" @?= (Nothing @TypeParamTel)
+    parse "TYPE=x-" @?= (Nothing @TypeParamTel)
+    parse "TYPE= work" @?= (Nothing @TypeParamTel)
+    parse "TYPE =work" @?= (Nothing @TypeParamTel)
+    parse " TYPE=work" @?= (Nothing @TypeParamTel)
+    parse "TYPE=work;" @?= (Nothing @TypeParamTel)
+    parse "TYPE=work:" @?= (Nothing @TypeParamTel)
     --
-    parse "TYPE=work,contact,x-abc" @?= (Nothing @TypeTel)
-    parse "TYPE=work ,home,x-abc" @?= (Nothing @TypeTel)
-    parse "TYPE=work, home,x-abc" @?= (Nothing @TypeTel)
-    parse "TYPE=work,home,x-abc;" @?= (Nothing @TypeTel)
-    parse "TYPE=work,home,x-abc:" @?= (Nothing @TypeTel)
+    parse "TYPE=work,contact,x-abc" @?= (Nothing @TypeParamTel)
+    parse "TYPE=work ,home,x-abc" @?= (Nothing @TypeParamTel)
+    parse "TYPE=work, home,x-abc" @?= (Nothing @TypeParamTel)
+    parse "TYPE=work,home,x-abc;" @?= (Nothing @TypeParamTel)
+    parse "TYPE=work,home,x-abc:" @?= (Nothing @TypeParamTel)
 
-test_TypeTel_serialize :: TestTree
-test_TypeTel_serialize =
+test_TypeParamTel_serialize :: TestTree
+test_TypeParamTel_serialize =
   testCase "serialize" $ do
-    serialize @TypeTel
+    serialize @TypeParamTel
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
             genericParamValue =
@@ -190,7 +190,7 @@ test_TypeTel_serialize =
       )
       @?= "TYPE=home"
 
-    serialize @TypeTel
+    serialize @TypeParamTel
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
             genericParamValue =
@@ -203,7 +203,7 @@ test_TypeTel_serialize =
       @?= "Type=work,text,voice"
 
     serialize
-      @TypeTel
+      @TypeParamTel
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
             genericParamValue =
@@ -218,11 +218,11 @@ test_TypeTel_serialize =
       )
       @?= "type=fax,CELL,Video,pAger,textphone,x-ab1-c"
 
-test_TypeRelated_parse :: TestTree
-test_TypeRelated_parse =
-  testCase "TypeRelated" $ do
+test_TypeParamRelated_parse :: TestTree
+test_TypeParamRelated_parse =
+  testCase "TypeParamRelated" $ do
     (parse "TYPE=home" @?=) $
-      Just @TypeRelated
+      Just @TypeParamRelated
         ( GenericParam
             { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
               genericParamValue =
@@ -232,7 +232,7 @@ test_TypeRelated_parse =
         )
 
     (parse "Type=work,contact,acquaintance" @?=) $
-      Just @TypeRelated
+      Just @TypeParamRelated
         ( GenericParam
             { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
               genericParamValue =
@@ -245,7 +245,7 @@ test_TypeRelated_parse =
         )
 
     (parse "type=friend,MET,Co-Worker,cOlleague,co-residenT,neighbor" @?=) $
-      Just @TypeRelated $
+      Just @TypeParamRelated $
         GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
             genericParamValue =
@@ -260,7 +260,7 @@ test_TypeRelated_parse =
           }
 
     (parse "TYPE=child,parent,sibling,spouse,kin,muse,crush,date" @?=) $
-      Just @TypeRelated $
+      Just @TypeParamRelated $
         GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
             genericParamValue =
@@ -276,7 +276,7 @@ test_TypeRelated_parse =
           }
 
     (parse "TYPE=me,agent,emergency,x-ab1-c" @?=) $
-      Just @TypeRelated $
+      Just @TypeParamRelated $
         GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
             genericParamValue =
@@ -288,26 +288,26 @@ test_TypeRelated_parse =
           }
 
     --
-    parse "TYPE=" @?= (Nothing @TypeRelated)
-    parse "TYPE=text" @?= (Nothing @TypeRelated)
-    parse "TYPE=xabc" @?= (Nothing @TypeRelated)
-    parse "TYPE=x-" @?= (Nothing @TypeRelated)
-    parse "TYPE= work" @?= (Nothing @TypeRelated)
-    parse "TYPE =work" @?= (Nothing @TypeRelated)
-    parse " TYPE=work" @?= (Nothing @TypeRelated)
-    parse "TYPE=work;" @?= (Nothing @TypeRelated)
-    parse "TYPE=work:" @?= (Nothing @TypeRelated)
+    parse "TYPE=" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=text" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=xabc" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=x-" @?= (Nothing @TypeParamRelated)
+    parse "TYPE= work" @?= (Nothing @TypeParamRelated)
+    parse "TYPE =work" @?= (Nothing @TypeParamRelated)
+    parse " TYPE=work" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=work;" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=work:" @?= (Nothing @TypeParamRelated)
     --
-    parse "TYPE=work,text,x-abc" @?= (Nothing @TypeRelated)
-    parse "TYPE=work ,home,x-abc" @?= (Nothing @TypeRelated)
-    parse "TYPE=work, home,x-abc" @?= (Nothing @TypeRelated)
-    parse "TYPE=work,home,x-abc;" @?= (Nothing @TypeRelated)
-    parse "TYPE=work,home,x-abc:" @?= (Nothing @TypeRelated)
+    parse "TYPE=work,text,x-abc" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=work ,home,x-abc" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=work, home,x-abc" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=work,home,x-abc;" @?= (Nothing @TypeParamRelated)
+    parse "TYPE=work,home,x-abc:" @?= (Nothing @TypeParamRelated)
 
-test_TypeRelated_serialize :: TestTree
-test_TypeRelated_serialize =
+test_TypeParamRelated_serialize :: TestTree
+test_TypeParamRelated_serialize =
   testCase "serialize" $ do
-    serialize @TypeRelated
+    serialize @TypeParamRelated
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
             genericParamValue =
@@ -317,7 +317,7 @@ test_TypeRelated_serialize =
       )
       @?= "TYPE=home"
 
-    serialize @TypeRelated
+    serialize @TypeParamRelated
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"Type"),
             genericParamValue =
@@ -330,7 +330,7 @@ test_TypeRelated_serialize =
       )
       @?= "Type=work,contact,acquaintance"
 
-    serialize @TypeRelated
+    serialize @TypeParamRelated
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"type"),
             genericParamValue =
@@ -346,7 +346,7 @@ test_TypeRelated_serialize =
       )
       @?= "type=friend,MET,Co-Worker,cOlleague,co-residenT,neighbor"
 
-    serialize @TypeRelated
+    serialize @TypeParamRelated
       ( GenericParam
           { genericParamName = CaseInsensitiveUpper (symbolSing @"TYPE"),
             genericParamValue =

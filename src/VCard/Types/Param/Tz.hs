@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Types.Param.Tz
-  ( Tz,
+  ( TzParam,
     TzValue (..),
   )
 where
@@ -19,7 +19,7 @@ import VCard.Types.Value.URI (URI)
 import Vary (Vary)
 import Vary qualified (exhaustiveCase, from, on)
 
-type Tz = GenericParam "TZ" TzValue
+type TzParam = GenericParam "TZ" TzValue
 
 newtype TzValue = TzValue {unTzValue :: Vary '[ParamValue, URI]}
   deriving (Eq, Show)
@@ -33,8 +33,8 @@ instance HasParser TzValue where
           Vary.from <$> parser @ParamValue
         ]
 
-instance HasParser Tz where
-  parser :: Parser Tz
+instance HasParser TzParam where
+  parser :: Parser TzParam
   parser = mkParamParser (parser @TzValue)
 
 instance HasSerializer TzValue where
@@ -49,6 +49,6 @@ instance HasSerializer TzValue where
     )
       . unTzValue
 
-instance HasSerializer Tz where
-  serializer :: Serializer Tz
+instance HasSerializer TzParam where
+  serializer :: Serializer TzParam
   serializer = mkParamSerializer (serializer @TzValue)

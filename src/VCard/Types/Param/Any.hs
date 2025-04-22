@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 
 module VCard.Types.Param.Any
-  ( Any (..),
+  ( AnyParam (..),
   )
 where
 
@@ -37,23 +37,23 @@ import VCard.Util.Symbol
 
 -- | /Reference:/ [@any-param@]
 --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L1224)
-data Any where
-  Any :: (XNameUpperSymbol xname) => GenericParam xname (NonEmpty ParamValue) -> Any
+data AnyParam where
+  AnyParam :: (XNameUpperSymbol xname) => GenericParam xname (NonEmpty ParamValue) -> AnyParam
 
-instance Eq Any where
+instance Eq AnyParam where
   (==)
-    (Any (xparam1 :: GenericParam xname1 (NonEmpty ParamValue)))
-    (Any (xparam2 :: GenericParam xname2 (NonEmpty ParamValue))) =
+    (AnyParam (xparam1 :: GenericParam xname1 (NonEmpty ParamValue)))
+    (AnyParam (xparam2 :: GenericParam xname2 (NonEmpty ParamValue))) =
       case (genericParamName xparam1, genericParamName xparam2) of
         (CaseInsensitiveUpper ss1, CaseInsensitiveUpper ss2) ->
           case testSSymbolEquality ss1 ss2 of
             Nothing -> False
             Just Refl -> xparam1 == xparam2
 
-deriving instance Show Any
+deriving instance Show AnyParam
 
-instance HasParser Any where
-  parser :: Parser Any
+instance HasParser AnyParam where
+  parser :: Parser AnyParam
   parser = do
     xname <- parser @XName
     case someXNameVal xname of
@@ -69,13 +69,13 @@ instance HasParser Any where
               Just Dict -> do
                 void (char '=')
                 values <- sepByNonEmpty (parser @ParamValue) (char ',')
-                pure . Any $
+                pure . AnyParam $
                   GenericParam
                     { genericParamName = CaseInsensitiveUpper st,
                       genericParamValue = values
                     }
 
-instance HasSerializer Any where
-  serializer :: Serializer Any
-  serializer (Any xparam) =
+instance HasSerializer AnyParam where
+  serializer :: Serializer AnyParam
+  serializer (AnyParam xparam) =
     mkParamSerializer (intersperseCommaNE (serializer @ParamValue)) xparam

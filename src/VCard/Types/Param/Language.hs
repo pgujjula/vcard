@@ -3,7 +3,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module VCard.Types.Param.Language
-  ( Language,
+  ( LanguageParam,
   )
 where
 
@@ -12,7 +12,7 @@ import VCard.Serialize (HasSerializer, serializer)
 import VCard.Types.Param.Generic (GenericParam, mkParamParser, mkParamSerializer)
 import VCard.Types.Value.LanguageTag (LanguageTag)
 
-type Language = GenericParam "LANGUAGE" LanguageTag
+type LanguageParam = GenericParam "LANGUAGE" LanguageTag
 
 instance HasParser (GenericParam "LANGUAGE" LanguageTag) where
   parser = mkParamParser (parser @LanguageTag)

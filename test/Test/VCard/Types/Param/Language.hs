@@ -11,7 +11,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
-import VCard.Types.Param.Language (Language)
+import VCard.Types.Param.Language (LanguageParam)
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Types.Value.LanguageTag (LanguageTag (..))
 import VCard.Util.Symbol (symbolSing)
@@ -28,14 +28,14 @@ test_parse :: TestTree
 test_parse =
   testCase "parse" $ do
     forM_ units_valid $ \(text, value) -> parse text @?= Just value
-    forM_ units_invalid $ \text -> parse @Language text @?= Nothing
+    forM_ units_invalid $ \text -> parse @LanguageParam text @?= Nothing
 
 test_serialize :: TestTree
 test_serialize = testCase "serialize" $
   forM_ units_valid $
     \(text, value) -> serialize value @?= text
 
-units_valid :: [(Text, Language)]
+units_valid :: [(Text, LanguageParam)]
 units_valid =
   [ ( "LANGUAGE=en",
       GenericParam

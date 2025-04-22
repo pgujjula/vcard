@@ -12,7 +12,7 @@ import Test.Tasty.HUnit (testCase, (@?=))
 import VCard.Parse (parse)
 import VCard.Serialize (serialize)
 import VCard.Types.Param.Generic (GenericParam (..))
-import VCard.Types.Param.Geo (Geo, GeoValue (..))
+import VCard.Types.Param.Geo (GeoParam, GeoValue (..))
 import VCard.Types.Textual (CaseInsensitiveUpper (..))
 import VCard.Types.Value.URI (URI)
 import VCard.Util.Symbol (symbolSing)
@@ -35,9 +35,9 @@ test_parse =
             genericParamValue =
               GeoValue (parseURIUnsafe "https://www.proton.me")
           }
-    parse "GEO=https://www.proton.me" @?= (Nothing :: Maybe Geo)
-    parse "GEO=\"https://www.proton.me" @?= (Nothing :: Maybe Geo)
-    parse "GEO=https://www.proton.me\"" @?= (Nothing :: Maybe Geo)
+    parse "GEO=https://www.proton.me" @?= (Nothing :: Maybe GeoParam)
+    parse "GEO=\"https://www.proton.me" @?= (Nothing :: Maybe GeoParam)
+    parse "GEO=https://www.proton.me\"" @?= (Nothing :: Maybe GeoParam)
 
 test_serialize :: TestTree
 test_serialize =
