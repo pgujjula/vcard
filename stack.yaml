@@ -6,6 +6,11 @@ packages:
 - .
 
 extra-deps:
+- ghc-lib-parser-9.6.7.20250325
+- ghc-tcplugin-api-0.14.0.0
+- large-anon-0.3.2
+- large-generics-0.2.2
+- typelet-0.1.5
 - vary-0.1.1.0
 
 flags:
