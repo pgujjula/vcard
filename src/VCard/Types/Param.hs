@@ -110,6 +110,9 @@ module VCard.Types.Param
     --     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L1224)
     Tz,
     TzValue (..),
+
+    -- * Any Param
+    Any (..),
   )
 where
 
@@ -120,6 +123,7 @@ import VCard.Types.Param.AltID
     altIDVal,
     someAltIDVal,
   )
+import VCard.Types.Param.Any (Any (..))
 import VCard.Types.Param.Calscale (Calscale, CalscaleValue (..))
 import VCard.Types.Param.Generic (GenericParam (..))
 import VCard.Types.Param.Geo (Geo, GeoValue (..))

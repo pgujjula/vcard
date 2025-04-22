@@ -35,6 +35,8 @@ import VCard.Util.Symbol
     testSSymbolEquality,
   )
 
+-- | /Reference:/ [@any-param@]
+--     (https://gist.github.com/pgujjula/af9bacba47664a58eea383a5ae44b10b#file-rfc6350-txt-L1224)
 data Any where
   Any :: (XNameUpperSymbol xname) => GenericParam xname (NonEmpty ParamValue) -> Any
 
