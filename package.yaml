@@ -71,7 +71,11 @@ library:
   - VCard
   - VCard.Types.Param
   - VCard.Types.Param.Mediatype
+  - VCard.Types.Param.Type.TypeValueSymbol
   - VCard.Types.Property
+  # TODO: Move back to other-modules?
+  - VCard.Types.Property.ParamMap
+  - VCard.Types.Property.ParamMap1
   - VCard.Types.Textual
   - VCard.Types.VCard
   - VCard.Types.Value
@@ -95,10 +99,10 @@ library:
   - VCard.Types.Param.Pref
   - VCard.Types.Param.SortAs
   - VCard.Types.Param.Type
-  - VCard.Types.Param.Type.TypeValueSymbol
   - VCard.Types.Param.Tz
   - VCard.Types.Param.Value
   - VCard.Types.Param.Value.ValueValueSymbol
+  - VCard.Types.Property.Generic
   - VCard.Types.Property.Version
   - VCard.Types.Textual.Private.AlphaNumDash
   - VCard.Types.Textual.Private.CaseInsensitive
@@ -129,8 +133,11 @@ library:
   dependencies:
   - constraints ^>= {0.13, 0.14}
   - containers ^>= {0.6, 0.7, 0.8}
+  - dependent-map ^>= {0.4}
+  - dependent-sum ^>= {0.7}
   - finite-typelits ^>= {0.1, 0.2}
   - megaparsec >= 9.0 && < 10
+  - large-anon ^>= {0.3}
   - network-uri ^>= {2.6}
   - parser-combinators ^>= {1.3}
   - scientific ^>= {0.3}
@@ -235,6 +242,9 @@ tests:
     - VCard.Types.Param.Value.ValueValueSymbol
     - VCard.Types.Param.Tz
     - VCard.Types.Property
+    - VCard.Types.Property.Generic
+    - VCard.Types.Property.ParamMap
+    - VCard.Types.Property.ParamMap1
     - VCard.Types.Property.Version
     - VCard.Types.Textual
     - VCard.Types.Textual.Private.AlphaNumDash
@@ -276,8 +286,11 @@ tests:
     - containers ^>= {0.6, 0.7, 0.8}
     - data-ordlist ^>= {0.4}
     - deepseq ^>= {1.4, 1.5, 1.6}
+    - dependent-map ^>= {0.4}
+    - dependent-sum ^>= {0.7}
     - finite-typelits ^>= {0.1, 0.2}
     - genvalidity-network-uri ^>= {0.0}
+    - large-anon ^>= {0.3}
     - megaparsec >= 9.0 && < 10
     - network-uri ^>= {2.6}
     - parser-combinators ^>= {1.3}

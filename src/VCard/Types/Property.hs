@@ -10,8 +10,26 @@
 --
 -- Types for the properties described in Section 6 of RFC 6350.
 module VCard.Types.Property
-  ( Version (..),
+  ( -- GenericProperty (..),
+--    BeginProperty (..),
+--    EndProperty (..),
   )
 where
 
-import VCard.Types.Property.Version (Version (..))
+import Data.Kind (Type)
+import GHC.TypeLits (Symbol)
+-- import VCard.Types.Property.ParamMap1 (ParamMap)
+import VCard.Types.Textual (CaseInsensitiveUpper)
+
+-- | A generic type for parameters. The different vCard parameters are type
+--   synonyms of this type.
+--data GenericProperty (name :: Symbol) (params :: [Type]) (value :: Type)
+--  = GenericProperty
+--  { genericPropertyName :: CaseInsensitiveUpper name,
+--    genericPropertyParams :: ParamMap params,
+--    genericPropertyValue :: value
+--  }
+
+--type BeginProperty = GenericProperty "BEGIN" '[] (CaseInsensitiveUpper "VCARD")
+--
+--type EndProperty = GenericProperty "END" '[] (CaseInsensitiveUpper "VCARD")
