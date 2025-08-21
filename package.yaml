@@ -288,7 +288,7 @@ tests:
     - tasty-hunit ^>= {0.10}
     - tasty-quickcheck ^>= {0.10, 0.11}
     - text ^>= {1.2, 2.0, 2.1}
-    - time ^>= {1.11, 1.12, 1.14}
+    - time ^>= {1.11, 1.12, 1.14, 1.15}
     - vary ^>= {0.1}
     when:
     - condition: impl(ghc >= 9.6)
