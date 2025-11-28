@@ -4,11 +4,13 @@
 module Test.VCard.Types.Property (tests) where
 
 import Test.Tasty (TestTree, testGroup)
+import Test.VCard.Types.Property.ParamMap qualified
 import Test.VCard.Types.Property.Version qualified
 
 tests :: TestTree
 tests =
   testGroup
     "Property"
-    [ Test.VCard.Types.Property.Version.tests
+    [ Test.VCard.Types.Property.ParamMap.tests,
+      Test.VCard.Types.Property.Version.tests
     ]

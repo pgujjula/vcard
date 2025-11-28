@@ -163,6 +163,7 @@ test-suite vcard-tests
       Test.VCard.Types.Param.Type
       Test.VCard.Types.Param.Tz
       Test.VCard.Types.Property
+      Test.VCard.Types.Property.ParamMap
       Test.VCard.Types.Property.Version
       Test.VCard.Types.Textual
       Test.VCard.Types.Textual.Private.AlphaNumDash
