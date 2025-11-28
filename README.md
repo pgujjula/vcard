@@ -18,6 +18,8 @@ Documentation is available here: https://pgujjula.codeberg.page/vcard-docs
 
 This repository is hosted on [Codeberg] and mirrored on [GitHub].
 
+Testing CI.
+
 [RFC 6350]: https://datatracker.ietf.org/doc/html/rfc6350.
 [Codeberg]: https://codeberg.org/pgujjula/vcard
 [GitHub]: https://github.com/pgujjula/vcard
