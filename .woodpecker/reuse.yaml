@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: Copyright Preetham Gujjula
 # SPDX-License-Identifier: BSD-3-Clause
 when:
-    branch: main
-    event: [manual, pull_request]
+  - branch: main
+    event: [pull_request, pull_request_closed, push]
+  - event: manual
 
 steps:
   - name: reuse
