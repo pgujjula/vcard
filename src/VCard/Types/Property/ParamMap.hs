@@ -2,6 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
 -- |
@@ -39,17 +40,21 @@ import Data.Finite (finite)
 import Data.Functor.Identity (Identity (..))
 import Data.GADT.Compare (GCompare (gcompare), GEq (geq), GOrdering (..))
 import Data.GADT.Show (GShow, defaultGshowsPrec, gshowsPrec)
+import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Type.Equality ((:~:) (Refl))
 import VCard.Types.Param
   ( GenericParam (..),
     PIDParam,
     PIDValue (..),
+    ParamValue,
     PrefParam,
     PrefValue (..),
+    SParamValue (..),
+    paramValueVal,
   )
-import VCard.Types.Textual (CaseInsensitiveUpper (..))
-import VCard.Util.Symbol (symbolSing)
+import VCard.Types.Textual (CaseInsensitiveUpper (..), XNameUpperSymbol)
+import VCard.Util.Symbol (SSymbol, fromSSymbol, symbolSing, testSSymbolEquality)
 import Prelude hiding (lookup)
 
 --
@@ -59,6 +64,9 @@ import Prelude hiding (lookup)
 data EmailParamTag a where
   PIDParamTag :: EmailParamTag PIDParam
   PrefParamTag :: EmailParamTag PrefParam
+  AnyParamTag ::
+    (XNameUpperSymbol s) =>
+    SSymbol s -> EmailParamTag (GenericParam s (NonEmpty ParamValue))
 
 -- We cannot derive Eq or Ord for EmailParamTag a when base < 4.19.0 because we
 -- don't have Eq or Ord instances available for SSymbol s.
@@ -81,20 +89,40 @@ instance GShow EmailParamTag where gshowsPrec = defaultGshowsPrec
 instance GEq EmailParamTag where
   geq PIDParamTag PIDParamTag = Just Refl
   geq PrefParamTag PrefParamTag = Just Refl
+  geq (AnyParamTag ss) (AnyParamTag st) =
+    case testSSymbolEquality ss st of
+      Just Refl -> Just Refl
+      Nothing -> Nothing
   geq _ _ = Nothing
 
 instance GCompare EmailParamTag where
   gcompare PIDParamTag PIDParamTag = GEQ
   gcompare PIDParamTag PrefParamTag = GLT
+  gcompare PIDParamTag (AnyParamTag _) = GLT
   gcompare PrefParamTag PIDParamTag = GGT
   gcompare PrefParamTag PrefParamTag = GEQ
+  gcompare PrefParamTag (AnyParamTag _) = GLT
+  gcompare (AnyParamTag _) PIDParamTag = GGT
+  gcompare (AnyParamTag _) PrefParamTag = GGT
+  gcompare (AnyParamTag ss) (AnyParamTag st) =
+    case (testSSymbolEquality ss st, fromSSymbol ss < fromSSymbol st) of
+      (Just Refl, _) -> GEQ
+      (_, True) -> GLT
+      _ -> GGT
 
 -- For the Show instance of DSum EmailParamTag Identity
-instance (c PIDParam, c PrefParam) => Has c EmailParamTag where
+instance
+  ( c PIDParam,
+    c PrefParam,
+    forall s. c (GenericParam s (NonEmpty ParamValue))
+  ) =>
+  Has c EmailParamTag
+  where
   argDict :: EmailParamTag a -> Dict (c a)
   argDict = \case
     PIDParamTag -> Dict
     PrefParamTag -> Dict
+    AnyParamTag _ -> Dict
 
 -- | 'EmailParamMap' is a data structure for the parameters of an `EMAIL` property.
 --
@@ -151,6 +179,24 @@ emailParams =
           ( GenericParam
               { genericParamName = CaseInsensitiveUpper (symbolSing @"PREF"),
                 genericParamValue = PrefValue (finite 10)
+              }
+          ),
+      AnyParamTag (symbolSing @"X-CAT")
+        :=> Identity
+          ( GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"X-CAT"),
+                genericParamValue =
+                  NonEmpty.singleton $
+                    paramValueVal (SParamValue (symbolSing @"Foo"))
+              }
+          ),
+      AnyParamTag (symbolSing @"X-DOG")
+        :=> Identity
+          ( GenericParam
+              { genericParamName = CaseInsensitiveUpper (symbolSing @"X-DOG"),
+                genericParamValue =
+                  NonEmpty.singleton $
+                    paramValueVal (SParamValue (symbolSing @"Bar"))
               }
           )
     ]
