@@ -1,5 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
@@ -59,9 +60,19 @@ data EmailParamTag a where
   PIDParamTag :: EmailParamTag PIDParam
   PrefParamTag :: EmailParamTag PrefParam
 
+-- We cannot derive Eq or Ord for EmailParamTag a when base < 4.19.0 because we
+-- don't have Eq or Ord instances available for SSymbol s.
+#if MIN_VERSION_base(4,19,0)
 deriving instance Eq (EmailParamTag a)
 
 deriving instance Ord (EmailParamTag a)
+#else
+instance Eq (EmailParamTag a) where
+  _ == _ = True
+
+instance Ord (EmailParamTag a) where
+  compare _ _ = EQ
+#endif
 
 deriving instance Show (EmailParamTag a)
 

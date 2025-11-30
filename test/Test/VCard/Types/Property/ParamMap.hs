@@ -50,7 +50,9 @@ test_EmailParamTag =
   testGroup
     "EmailParamTag"
     [ test_EmailParamTag_geq,
-      test_EmailParamTag_gcompare
+      test_EmailParamTag_gcompare,
+      test_EmailParamTag_eq,
+      test_EmailParamTag_compare
     ]
 
 test_EmailParamTag_geq :: TestTree
@@ -66,6 +68,16 @@ test_EmailParamTag_gcompare = testCase "gcompare" $ do
   gcompare PIDParamTag PrefParamTag @?= GLT
   gcompare PrefParamTag PIDParamTag @?= GGT
   gcompare PrefParamTag PrefParamTag @?= GEQ
+
+test_EmailParamTag_eq :: TestTree
+test_EmailParamTag_eq = testCase "(==)" $ do
+  PIDParamTag == PIDParamTag @?= True
+  PrefParamTag == PrefParamTag @?= True
+
+test_EmailParamTag_compare :: TestTree
+test_EmailParamTag_compare = testCase "compare" $ do
+  compare PIDParamTag PIDParamTag @?= EQ
+  compare PrefParamTag PrefParamTag @?= EQ
 
 test_EmailParamMap :: TestTree
 test_EmailParamMap =
