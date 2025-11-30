@@ -56,7 +56,6 @@ import Prelude hiding (lookup)
 -- Types
 --
 
--- For the Show instance of DSum EmailParamTag Identity
 data EmailParamTag a where
   PIDParamTag :: EmailParamTag PIDParam
   PrefParamTag :: EmailParamTag PrefParam
