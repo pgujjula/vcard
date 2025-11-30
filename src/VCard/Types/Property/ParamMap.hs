@@ -1,9 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TemplateHaskell #-}
 
 -- |
 -- Module     : VCard.Types.Property.ParamMap
@@ -31,7 +29,8 @@ module VCard.Types.Property.ParamMap
   )
 where
 
-import Data.Constraint.Extras.TH (deriveArgDict)
+import Data.Constraint (Dict (..))
+import Data.Constraint.Extras (Has, argDict)
 import Data.Dependent.Map (DMap)
 import Data.Dependent.Map qualified as DMap
 import Data.Dependent.Sum (DSum ((:=>)))
@@ -80,7 +79,11 @@ instance GCompare EmailParamTag where
   gcompare PrefParamTag PrefParamTag = GEQ
 
 -- For the Show instance of DSum EmailParamTag Identity
-$(deriveArgDict ''EmailParamTag)
+instance (c PIDParam, c PrefParam) => Has c EmailParamTag where
+  argDict :: EmailParamTag a -> Dict (c a)
+  argDict = \case
+    PIDParamTag -> Dict
+    PrefParamTag -> Dict
 
 -- | 'EmailParamMap' is a data structure for the parameters of an `EMAIL` property.
 --
