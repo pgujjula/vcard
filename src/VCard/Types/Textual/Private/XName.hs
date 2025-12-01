@@ -1,5 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE StandaloneKindSignatures #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -36,6 +38,7 @@ import Data.Constraint (Dict (..))
 import Data.Kind (Constraint)
 import Data.Maybe (isJust)
 import Data.Ord.Singletons ((%>), type (>))
+import Data.Singletons.TH (genDefunSymbols)
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Data.Type.Bool (type (&&))
@@ -190,3 +193,5 @@ sIsXNameUpperSymbol ss =
   sIsPrefixOf (symbolSing @"X-") ss
     %&& sLength ss %> natSing @2
     %&& sIsAlphaNumDashUpperSymbol ss
+
+$(genDefunSymbols [''IsXNameSymbol])
